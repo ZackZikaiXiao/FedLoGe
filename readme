@@ -1,0 +1,3 @@
+main_FL.py是global longtail 。main_global.py是global balanced
+main_normweight.py: 计算normweight并进行可视化
+main_normweight_gradient_instance.py: 计算实时梯度并可视化
