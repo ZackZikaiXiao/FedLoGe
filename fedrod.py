@@ -39,6 +39,7 @@ def get_acc_file_path(args):
         args.dataset, args.model, args.frac, args.iid, args.rounds, args.local_ep, args.lr, args.num_users, args.num_classes, args.seed, args.non_iid_prob_class, args.alpha_dirichlet, args.IF, args.loss_type)
     return fpath
    
+
 if __name__ == '__main__':
     # parse args
     args = args_parser()
@@ -82,7 +83,6 @@ if __name__ == '__main__':
     # w_locals = fedbn_assign(w_locals, w_glob)
     # w_locals = dispatch_fedper(w_locals, w_glob)
 
-
     # training
     args.frac = 1
     m = max(int(args.frac * args.num_users), 1) #num_select_clients 
@@ -90,7 +90,7 @@ if __name__ == '__main__':
 
     g_head = nn.Linear(512, 100).to(args.device)   # res34是512
     g_aux = nn.Linear(512, 100).to(args.device)
-    nn.init.sparse_(g_aux.weight, sparsity=0.6)
+    nn.init.sparse_(g_head.weight, sparsity=0.6)
     l_heads = []
     for i in range(args.num_users):
         l_heads.append(nn.Linear(512, 100).to(args.device))
@@ -107,7 +107,7 @@ if __name__ == '__main__':
         for client_id in range(args.num_users):  # training over the subset, in fedper, all clients train
             model.load_state_dict(copy.deepcopy(w_locals[client_id]))
             local = LocalUpdate(args=args, dataset=dataset_train, idxs=dict_users[client_id])
-            w_locals[client_id], g_aux_temp, l_heads[client_id], loss_local = local.update_weights_balsoft(net=copy.deepcopy(model).to(args.device), g_head = copy.deepcopy(g_head).to(args.device), g_aux = copy.deepcopy(g_aux).to(args.device), l_head = l_heads[client_id], seed=args.seed, net_glob=model.to(args.device), epoch=args.local_ep)
+            w_locals[client_id], g_aux_temp, l_heads[client_id], loss_local = local.update_weights_balsoft(net=copy.deepcopy(model).to(args.device), g_head = copy.deepcopy(g_head).to(args.device), g_aux = copy.deepcopy(g_aux).to(args.device), l_head = l_heads[client_id], epoch=args.local_ep)
             g_auxs.append(g_aux_temp)
 
         ## aggregation
@@ -183,11 +183,9 @@ if __name__ == '__main__':
         # end
 
         avg_local_acc = sum(acc_list)/len(acc_list)
-        # print('Calculate the local average acc')
         
         avg_f1_macro = Weighted_avg_f1(f1_macro_list,dict_len=dict_len)
         avg_f1_weighted = Weighted_avg_f1(f1_weighted_list,dict_len)
-        model.load_state_dict(copy.deepcopy(w_glob))
 
         print('round %d, local average test acc  %.4f \n'%(rnd, avg_local_acc))
         print('round %d, local macro average F1 score  %.4f \n'%(rnd, avg_f1_macro))

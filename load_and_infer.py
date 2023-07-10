@@ -90,7 +90,6 @@ if __name__ == '__main__':
     # w_locals = fedbn_assign(w_locals, w_glob)
     # w_locals = dispatch_fedper(w_locals, w_glob)
 
-
     # training
     args.frac = 1
     m = max(int(args.frac * args.num_users), 1) #num_select_clients 
@@ -99,12 +98,12 @@ if __name__ == '__main__':
     # acc_s2, global_3shot_acc = globaltest(copy.deepcopy(model).to(args.device), g_head, dataset_test, args, dataset_class = datasetObj)
 
     # add fl training
-    model = torch.load("/home/zikaixiao/zikai/aapfl/pfl_sparnorm/output/aux_ghead_lhead/netglob_499.pth").to(args.device)
-    g_head = torch.load("/home/zikaixiao/zikai/aapfl/pfl_sparnorm/output/aux_ghead_lhead/g_head_499.pth").to(args.device)
-    g_aux = torch.load("/home/zikaixiao/zikai/aapfl/pfl_sparnorm/output/aux_ghead_lhead/g_aux_499.pth").to(args.device)
+    model = torch.load("./output_fix/model_91.pth").to(args.device)
+    g_head = torch.load("./output_fix/g_head_91.pth").to(args.device)
+    g_aux = torch.load("./output_fix/g_aux_91.pth").to(args.device)
     l_heads = []
     for i in range(args.num_users):
-        l_heads.append(torch.load("/home/zikaixiao/zikai/aapfl/pfl_sparnorm//output/aux_ghead_lhead/" + "l_head_" + str(i) + ".pth").to(args.device))
+        l_heads.append(torch.load("./output_fix/" + "l_head_" + str(i) + ".pth").to(args.device))
 
     # norm = torch.norm(g_aux.weight, p=2, dim=1)
     # 将g_head.weight转换为torch.nn.Parameter类型
@@ -122,24 +121,20 @@ if __name__ == '__main__':
     print(acc_s2)
     print(global_3shot_acc)
     
-
-
     w_glob = model.state_dict()  # return a dictionary containing a whole state of the module
     w_locals = [copy.deepcopy(w_glob) for i in range(args.num_users)]
     g_auxs_intervaria = []
-    epoch = 5
+    epoch = 1
     for client_id in range(args.num_users):  # training over the subset, in fedper, all clients train
-            # model.load_state_dict(copy.deepcopy(w_locals[client_id]))
         local = LocalUpdate(args=args, dataset=dataset_train, idxs=dict_users[client_id])
         w_locals[client_id], g_aux_intervaria, l_heads[client_id], loss_local = local.update_weights_unlearning(net=copy.deepcopy(model).to(args.device), g_head = copy.deepcopy(g_head).to(args.device), g_aux = copy.deepcopy(g_aux).to(args.device), l_head = l_heads[client_id], seed=args.seed, net_glob=model.to(args.device), epoch=epoch)
         g_auxs_intervaria.append(g_aux_intervaria)
-
 
      # local test 
     acc_list = []
     f1_macro_list = []
     f1_weighted_list = []
-    acc_3shot_local_list = []      
+    acc_3shot_local_list = []
     for i in range(args.num_users):
         # model.load_state_dict(copy.deepcopy(w_locals[i]))
         # print('copy sucess')

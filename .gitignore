@@ -11,3 +11,9 @@
 /mytools/visualization
 /mytools/__pycache__
 /model/__pycache__
+fedrod_noseed_backup.log
+fedrod_noseed.log
+fedrod_save.log
+fedrod_seed_bigweightdecay.log
+fedrod_weightdecay.log
+/output_fix

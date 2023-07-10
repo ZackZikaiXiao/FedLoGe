@@ -166,23 +166,21 @@ class LocalUpdate(object):
         return net.state_dict(), sum(epoch_loss) / len(epoch_loss)
 
 
-    def update_weights_balsoft(self, net, g_head, g_aux, l_head, seed, net_glob, epoch, mu=1, lr=None):
-        net_glob = net_glob
-
+    def update_weights_balsoft(self, net, g_head, g_aux, l_head, epoch, mu=1, lr=None):
         net.train()
         # train and update
         optimizer_g_backbone = torch.optim.SGD(list(net.parameters()), lr=self.args.lr, momentum=self.args.momentum)
-        # optimizer_g_aux = torch.optim.SGD(g_aux.parameters(), lr=self.args.lr, momentum=self.args.momentum)
-        optimizer_g_aux = torch.optim.SGD([
-                            {'params': g_aux.weight, 'weight_decay': 1e-1},  # 对权重使用weight_decay
-                            {'params': g_aux.bias, 'weight_decay': 0}  # 对偏置不使用weight_decay
-                        ], lr=self.args.lr, momentum=self.args.momentum)
-        # optimizer_l_head = torch.optim.SGD(l_head.parameters(), lr=self.args.lr, momentum=self.args.momentum)
+        optimizer_g_aux = torch.optim.SGD(g_aux.parameters(), lr=self.args.lr, momentum=self.args.momentum)
+        # optimizer_g_aux = torch.optim.SGD([
+        #                     {'params': g_aux.weight, 'weight_decay': 1e-1},  # 对权重使用weight_decay
+        #                     {'params': g_aux.bias, 'weight_decay': 0}  # 对偏置不使用weight_decay
+        #                 ], lr=self.args.lr, momentum=self.args.momentum)
+        optimizer_l_head = torch.optim.SGD(l_head.parameters(), lr=self.args.lr, momentum=self.args.momentum)
         # 定义优化器
-        optimizer_l_head = torch.optim.SGD([
-                            {'params': l_head.weight, 'weight_decay': 1e-1},  # 对权重使用weight_decay
-                            {'params': l_head.bias, 'weight_decay': 0}  # 对偏置不使用weight_decay
-                        ], lr=self.args.lr, momentum=self.args.momentum)
+        # optimizer_l_head = torch.optim.SGD([
+        #                     {'params': l_head.weight, 'weight_decay': 1e-1},  # 对权重使用weight_decay
+        #                     {'params': l_head.bias, 'weight_decay': 0}  # 对偏置不使用weight_decay
+        #                 ], lr=self.args.lr, momentum=self.args.momentum)
 
         criterion_l = nn.CrossEntropyLoss()
         criterion_g = nn.CrossEntropyLoss()
@@ -378,7 +376,7 @@ class LocalUpdate(object):
                 
                 # loss_ce = criterion_ce(outputs_g_aux, labels)
                 loss_kl = criterion_kl(nn.functional.log_softmax(outputs_g_aux_normalized, dim=1),
-                                    nn.functional.softmax(outputs_l_head, dim=1))
+                                    nn.functional.softmax(outputs_l_head_normalized, dim=1))
                 loss = loss_kl
                 loss.backward()
                 optimizer_g_aux.step()
