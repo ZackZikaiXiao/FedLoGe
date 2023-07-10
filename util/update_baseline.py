@@ -8,7 +8,7 @@ from torch.utils.data import DataLoader, Dataset
 import torch.nn.functional as F
 import numpy as np
 from util.util import shot_split
-
+import copy
 
 import sklearn.metrics as metrics
 from util.losses import FocalLoss
@@ -172,8 +172,18 @@ class LocalUpdate(object):
         net.train()
         # train and update
         optimizer_g_backbone = torch.optim.SGD(list(net.parameters()), lr=self.args.lr, momentum=self.args.momentum)
-        optimizer_g_aux = torch.optim.SGD(list(g_aux.parameters()), lr=self.args.lr, momentum=self.args.momentum)
-        optimizer_l_head = torch.optim.SGD(l_head.parameters(), lr=self.args.lr, momentum=self.args.momentum)
+        # optimizer_g_aux = torch.optim.SGD(g_aux.parameters(), lr=self.args.lr, momentum=self.args.momentum)
+        optimizer_g_aux = torch.optim.SGD([
+                            {'params': g_aux.weight, 'weight_decay': 1e-1},  # 对权重使用weight_decay
+                            {'params': g_aux.bias, 'weight_decay': 0}  # 对偏置不使用weight_decay
+                        ], lr=self.args.lr, momentum=self.args.momentum)
+        # optimizer_l_head = torch.optim.SGD(l_head.parameters(), lr=self.args.lr, momentum=self.args.momentum)
+        # 定义优化器
+        optimizer_l_head = torch.optim.SGD([
+                            {'params': l_head.weight, 'weight_decay': 1e-1},  # 对权重使用weight_decay
+                            {'params': l_head.bias, 'weight_decay': 0}  # 对偏置不使用weight_decay
+                        ], lr=self.args.lr, momentum=self.args.momentum)
+
         criterion_l = nn.CrossEntropyLoss()
         criterion_g = nn.CrossEntropyLoss()
 
@@ -205,7 +215,7 @@ class LocalUpdate(object):
                 optimizer_g_aux.step()
 
                 # p_head
-                output_l_head = g_head(features.detach())
+                output_l_head = l_head(features.detach())
                 loss_l_head = criterion_l(output_l_head, labels)
                 loss_l_head.backward()
                 optimizer_l_head.step()
@@ -215,6 +225,176 @@ class LocalUpdate(object):
 
             epoch_loss.append(sum(batch_loss)/len(batch_loss))
         return net.state_dict(), g_aux, l_head, sum(epoch_loss) / len(epoch_loss)
+
+    def update_weights_balsoft_backup(self, net, g_head, g_aux, l_head, seed, net_glob, epoch, mu=1, lr=None):
+
+        net.train()
+        # train and update
+        optimizer_g = torch.optim.SGD(list(net.parameters()), lr=self.args.lr, momentum=self.args.momentum)
+        optimizer_l = torch.optim.SGD(l_head.parameters(), lr=self.args.lr, momentum=self.args.momentum)
+        optimizer_g_aux = torch.optim.SGD(g_aux.parameters(), lr=self.args.lr, momentum=self.args.momentum)
+
+        criterion_l = nn.CrossEntropyLoss()
+        criterion_g = nn.CrossEntropyLoss()
+
+        epoch_loss = []
+        for iter in range(epoch):
+            batch_loss = []
+            # use/load data from split training set "ldr_train"
+            for batch_idx, (images, labels) in enumerate(self.ldr_train):
+                images, labels = images.to(
+                    self.args.device), labels.to(self.args.device)
+
+                labels = labels.long()
+                optimizer_g.zero_grad()
+                optimizer_l.zero_grad()
+                optimizer_g_aux.zero_grad()
+
+                # backbone更新
+                features = net(images, latent_output=True)
+                output_g = g_head(features)
+                loss_g = criterion_g(output_g, labels)
+                loss_g.backward()
+                optimizer_g.step()
+
+                # aux更新
+                output_g_aux = g_aux(features.detach())
+                loss_g_aux = criterion_g(output_g_aux, labels)
+                loss_g_aux.backward()
+                optimizer_g_aux.step()
+
+                # p cls更新
+                output_l = l_head(features.detach())
+                loss_l = criterion_l(output_l, labels)
+                loss_l.backward()
+                optimizer_l.step()
+
+                loss = loss_g + loss_g_aux + loss_l
+                batch_loss.append(loss.item())
+
+            epoch_loss.append(sum(batch_loss)/len(batch_loss))
+        return net.state_dict(), g_aux, l_head, sum(epoch_loss) / len(epoch_loss)
+    
+
+    def update_weights_phead_backup(self, net, g_aux, g_head, l_head, seed, net_glob, epoch, mu=1, lr=None):
+
+        net.train()
+        # train and update
+        optimizer_g = torch.optim.SGD(list(net.parameters()), lr=self.args.lr, momentum=self.args.momentum)
+        optimizer_l = torch.optim.SGD(l_head.parameters(), lr=self.args.lr, momentum=self.args.momentum)
+        optimizer_g_aux = torch.optim.SGD(g_aux.parameters(), lr=self.args.lr, momentum=self.args.momentum)
+        # criterion_g = balsoft_loss
+        criterion_l = nn.CrossEntropyLoss()
+        criterion_g = nn.CrossEntropyLoss()
+
+        epoch_loss = []
+        for iter in range(epoch):
+            batch_loss = []
+            # use/load data from split training set "ldr_train"
+            for batch_idx, (images, labels) in enumerate(self.ldr_train):
+                images, labels = images.to(
+                    self.args.device), labels.to(self.args.device)
+
+                labels = labels.long()
+                optimizer_g.zero_grad()
+                optimizer_l.zero_grad()
+                optimizer_g_aux.zero_grad()
+
+                # backbone更新
+                features = net(images, latent_output=True)
+                # output_g = g_head(features)
+                # loss_g = criterion_g(output_g, labels)
+                # loss_g.backward()
+                # optimizer_g.step()
+
+                # aux更新
+                # output_g_aux = g_aux(features.detach())
+                # loss_g_aux = criterion_g(output_g_aux, labels)
+                # loss_g_aux.backward()
+                # optimizer_g_aux.step()
+
+                # p cls更新
+                output_l = l_head(features.detach())
+                loss_l = criterion_l(output_l, labels)
+                loss_l.backward()
+                optimizer_l.step()
+
+                loss = loss_l
+                batch_loss.append(loss.item())
+
+            epoch_loss.append(sum(batch_loss)/len(batch_loss))
+        return net.state_dict(), g_aux, l_head, sum(epoch_loss) / len(epoch_loss)
+    
+
+    def update_weights_unlearning(self, net, g_aux, g_head, l_head, seed, net_glob, epoch, mu=1, lr=None):
+
+        net.train()
+        # train and update
+        optimizer_g = torch.optim.SGD(list(net.parameters()), lr=self.args.lr, momentum=self.args.momentum)
+        optimizer_l = torch.optim.SGD(l_head.parameters(), lr=self.args.lr, momentum=self.args.momentum)
+        optimizer_g_aux = torch.optim.SGD(g_aux.parameters(), lr=self.args.lr, momentum=self.args.momentum)
+        optimizer = torch.optim.SGD(list(g_aux.parameters()) + list(l_head.parameters()), lr=self.args.lr, momentum=self.args.momentum)
+        # criterion_g = balsoft_loss
+        criterion_l = nn.CrossEntropyLoss()
+        criterion_g = nn.CrossEntropyLoss()
+        
+        criterion_kl = nn.KLDivLoss(reduction='batchmean')
+        criterion_ce = nn.CrossEntropyLoss()
+
+        epoch_loss = []
+        for iter in range(epoch):
+            batch_loss = []
+            # use/load data from split training set "ldr_train"
+            for batch_idx, (images, labels) in enumerate(self.ldr_train):
+                images, labels = images.to(
+                    self.args.device), labels.to(self.args.device)
+
+                labels = labels.long()
+                # optimizer_g.zero_grad()
+                # optimizer_l.zero_grad()
+                optimizer_g_aux.zero_grad()
+                # optimizer.zero_grad()
+
+                # backbone更新
+                features = net(images, latent_output=True)
+                # output_g = g_head(features)
+                # loss_g = criterion_g(output_g, labels)
+                # loss_g.backward()
+                # optimizer_g.step()
+
+                # aux更新
+                # output_g_aux = g_aux(features.detach())
+                # loss_g_aux = criterion_g(output_g_aux, labels)
+                # loss_g_aux.backward()
+                # optimizer_g_aux.step()
+
+                # 迁移学习
+                outputs_g_aux = g_aux(features.detach())
+                outputs_l_head = l_head(features.detach())
+                
+                outputs_g_aux_normalized = F.normalize(outputs_g_aux, dim=1)
+                outputs_l_head_normalized = F.normalize(outputs_l_head, dim=1)
+
+                
+                # loss_ce = criterion_ce(outputs_g_aux, labels)
+                loss_kl = criterion_kl(nn.functional.log_softmax(outputs_g_aux_normalized, dim=1),
+                                    nn.functional.softmax(outputs_l_head, dim=1))
+                loss = loss_kl
+                loss.backward()
+                optimizer_g_aux.step()
+
+
+                # p cls更新
+                # output_l = l_head(features.detach())
+                # loss_l = criterion_l(output_l, labels)
+                # loss_l.backward()
+                # optimizer_l.step()
+
+                # loss = loss_l
+                batch_loss.append(loss.item())
+
+            epoch_loss.append(sum(batch_loss)/len(batch_loss))
+        return net.state_dict(), copy.deepcopy(g_aux), copy.deepcopy(l_head), sum(epoch_loss) / len(epoch_loss)
     
 
     def pfedme_update_weights(self, net, seed, net_glob, epoch, mu=1, lr=None):

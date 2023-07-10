@@ -140,11 +140,11 @@ if __name__ == '__main__':
             acc_3shot_local_list.append(acc_3shot_local) ###################
 
 
-        torch.save(model, "./output/model_" + str(rnd) + ".pth")
-        torch.save(g_head, "./output/g_head_" + str(rnd) + ".pth")
-        torch.save(g_aux, "./output/g_aux_" + str(rnd) + ".pth")
-        for i in range(args.num_users):
-            torch.save(l_heads[i], "./output/" + "l_head_" + str(i) + ".pth")
+        # torch.save(model, "./output/model_" + str(rnd) + ".pth")
+        # torch.save(g_head, "./output/g_head_" + str(rnd) + ".pth")
+        # torch.save(g_aux, "./output/g_aux_" + str(rnd) + ".pth")
+        # for i in range(args.num_users):
+        #     torch.save(l_heads[i], "./output/" + "l_head_" + str(i) + ".pth")
 
         # start:calculate acc_3shot_local
         avg3shot_acc={"head":0, "middle":0, "tail":0}
@@ -195,4 +195,8 @@ if __name__ == '__main__':
         print('round %d, global test acc  %.4f \n'%(rnd, acc_s2))
         print('round %d, average 3shot acc: [head: %.4f, middle: %.4f, tail: %.4f] \n'%(rnd, avg3shot_acc["head"], avg3shot_acc["middle"], avg3shot_acc["tail"]))
         print('round %d, global 3shot acc: [head: %.4f, middle: %.4f, tail: %.4f] \n'%(rnd, global_3shot_acc["head"], global_3shot_acc["middle"], global_3shot_acc["tail"]))
+        
+        print("l_head", torch.norm(l_heads[0].weight, p=2, dim=1))
+        print("g_head", torch.norm(g_head.weight, p=2, dim=1))
+        print("g_aux", torch.norm(g_aux.weight, p=2, dim=1))
     torch.cuda.empty_cache()
