@@ -206,7 +206,7 @@ class LocalUpdate(object):
 
                 # p_head
                 output_l_head = g_head(features.detach())
-                loss_l_head = criterion_g(output_l_head, labels)
+                loss_l_head = criterion_l(output_l_head, labels)
                 loss_l_head.backward()
                 optimizer_l_head.step()
 

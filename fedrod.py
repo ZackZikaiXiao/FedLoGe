@@ -90,7 +90,7 @@ if __name__ == '__main__':
 
     g_head = nn.Linear(512, 100).to(args.device)   # res34是512
     g_aux = nn.Linear(512, 100).to(args.device)
-    nn.init.sparse(g_head.weight, 0.6)
+    nn.init.sparse_(g_aux.weight, sparsity=0.6)
     l_heads = []
     for i in range(args.num_users):
         l_heads.append(nn.Linear(512, 100).to(args.device))
@@ -122,7 +122,7 @@ if __name__ == '__main__':
 
         ## global test
         model.load_state_dict(copy.deepcopy(w_glob))
-        acc_s2, global_3shot_acc = globaltest(copy.deepcopy(model).to(args.device), g_aux, dataset_test, args, dataset_class = datasetObj)
+        acc_s2, global_3shot_acc = globaltest(copy.deepcopy(model).to(args.device), copy.deepcopy(g_head).to(args.device), dataset_test, args, dataset_class = datasetObj)
 
         # local test 
         acc_list = []
