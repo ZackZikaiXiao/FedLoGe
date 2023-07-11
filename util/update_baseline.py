@@ -349,8 +349,8 @@ class LocalUpdate(object):
 
                 labels = labels.long()
                 # optimizer_g.zero_grad()
-                # optimizer_l.zero_grad()
-                optimizer_g_aux.zero_grad()
+                optimizer_l.zero_grad()
+                # optimizer_g_aux.zero_grad()
                 # optimizer.zero_grad()
 
                 # backbone更新
@@ -375,11 +375,11 @@ class LocalUpdate(object):
 
                 
                 # loss_ce = criterion_ce(outputs_g_aux, labels)
-                loss_kl = criterion_kl(nn.functional.log_softmax(outputs_g_aux_normalized, dim=1),
-                                    nn.functional.softmax(outputs_l_head_normalized, dim=1))
+                loss_kl = criterion_kl(nn.functional.log_softmax(outputs_l_head_normalized, dim=1),
+                                    nn.functional.softmax(outputs_g_aux_normalized, dim=1))
                 loss = loss_kl
                 loss.backward()
-                optimizer_g_aux.step()
+                optimizer_l.step()
 
 
                 # p cls更新
@@ -721,11 +721,19 @@ def localtest(net, g_head, l_head, test_dataset, dataset_class, idxs, user_id):
 
     class_distribution = dataset_class.local_test_distribution[user_id]
 
-    zero_classes = np.where(class_distribution == 0)[0]
-    for i in zero_classes:
-        g_head.weight.data[i, :] = -1e10
-        l_head.weight.data[i, :] = -1e10
 
+    p_mode = 1
+    if p_mode == 1:
+        # 方案1：
+        zero_classes = np.where(class_distribution == 0)[0]
+        for i in zero_classes:
+            g_head.weight.data[i, :] = -1e10
+            l_head.weight.data[i, :] = -1e10
+    elif p_mode == 2:
+        # 方案2：
+        norm = torch.norm(l_head.weight, p=2, dim=1)
+        # 将g_head.weight转换为torch.nn.Parameter类型
+        g_head.weight = nn.Parameter(g_head.weight * norm.unsqueeze(1))
 
     three_shot_dict, _ = shot_split(
         class_distribution, threshold_3shot=[75, 95])
