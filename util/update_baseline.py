@@ -329,8 +329,8 @@ class LocalUpdate(object):
         net.train()
         # train and update
         optimizer_g = torch.optim.SGD(list(net.parameters()), lr=self.args.lr, momentum=self.args.momentum)
-        optimizer_l = torch.optim.SGD(l_head.parameters(), lr=self.args.lr, momentum=self.args.momentum)
-        optimizer_g_aux = torch.optim.SGD(g_aux.parameters(), lr=self.args.lr, momentum=self.args.momentum)
+        optimizer_l = torch.optim.SGD(list(l_head.parameters()), lr=self.args.lr, momentum=self.args.momentum)
+        optimizer_g_aux = torch.optim.SGD(list(g_aux.parameters()), lr=self.args.lr, momentum=self.args.momentum)
         optimizer = torch.optim.SGD(list(g_aux.parameters()) + list(l_head.parameters()), lr=self.args.lr, momentum=self.args.momentum)
         # criterion_g = balsoft_loss
         criterion_l = nn.CrossEntropyLoss()
@@ -349,8 +349,8 @@ class LocalUpdate(object):
 
                 labels = labels.long()
                 # optimizer_g.zero_grad()
-                optimizer_l.zero_grad()
-                # optimizer_g_aux.zero_grad()
+                # optimizer_l.zero_grad()
+                optimizer_g_aux.zero_grad()
                 # optimizer.zero_grad()
 
                 # backbone更新
@@ -375,11 +375,11 @@ class LocalUpdate(object):
 
                 
                 # loss_ce = criterion_ce(outputs_g_aux, labels)
-                loss_kl = criterion_kl(nn.functional.log_softmax(outputs_l_head_normalized, dim=1),
-                                    nn.functional.softmax(outputs_g_aux_normalized, dim=1))
+                loss_kl = criterion_kl(nn.functional.log_softmax(outputs_g_aux_normalized, dim=1),
+                                    nn.functional.softmax(outputs_l_head_normalized, dim=1))
                 loss = loss_kl
                 loss.backward()
-                optimizer_l.step()
+                optimizer_g_aux.step()
 
 
                 # p cls更新
@@ -395,6 +395,87 @@ class LocalUpdate(object):
         return net.state_dict(), copy.deepcopy(g_aux), copy.deepcopy(l_head), sum(epoch_loss) / len(epoch_loss)
     
 
+    def update_weights_norm_init(self, net, g_aux, g_head, l_head, seed, net_glob, epoch, mu=1, lr=None):
+
+        net.train()
+        # train and update
+
+
+        # 权重norm初始化
+        norm = torch.norm(l_head.weight, p=2, dim=1)
+        # 将g_head.weight转换为torch.nn.Parameter类型
+        g_aux.weight = nn.Parameter(g_aux.weight * norm.unsqueeze(1))
+
+
+        optimizer_g = torch.optim.SGD(list(net.parameters()), lr=self.args.lr, momentum=self.args.momentum)
+        optimizer_l = torch.optim.SGD(l_head.parameters(), lr=self.args.lr, momentum=self.args.momentum)
+        optimizer_g_aux = torch.optim.SGD(g_aux.parameters(), lr=self.args.lr, momentum=self.args.momentum)
+        optimizer = torch.optim.SGD(list(g_aux.parameters()) + list(l_head.parameters()), lr=self.args.lr, momentum=self.args.momentum)
+        # criterion_g = balsoft_loss
+        criterion_l = nn.CrossEntropyLoss()
+        criterion_g = nn.CrossEntropyLoss()
+        
+        # criterion_kl = nn.KLDivLoss(reduction='batchmean')
+        criterion_ce = nn.CrossEntropyLoss()
+
+        epoch_loss = []
+
+
+        for iter in range(epoch):
+            batch_loss = []
+            # use/load data from split training set "ldr_train"
+            for batch_idx, (images, labels) in enumerate(self.ldr_train):
+                images, labels = images.to(
+                    self.args.device), labels.to(self.args.device)
+
+                labels = labels.long()
+                # optimizer_g.zero_grad()
+                # optimizer_l.zero_grad()
+                optimizer_g_aux.zero_grad()
+                # optimizer.zero_grad()
+
+                # backbone更新
+                features = net(images, latent_output=True)
+                # output_g = g_head(features)
+                # loss_g = criterion_g(output_g, labels)
+                # loss_g.backward()
+                # optimizer_g.step()
+
+                # aux更新
+                # output_g_aux = g_aux(features.detach())
+                # loss_g_aux = criterion_g(output_g_aux, labels)
+                # loss_g_aux.backward()
+                # optimizer_g_aux.step()
+
+                # 迁移学习
+                outputs_g_aux = g_aux(features.detach())
+                # outputs_l_head = l_head(features.detach())
+                
+                # outputs_g_aux_normalized = F.normalize(outputs_g_aux, dim=1)
+                # outputs_l_head_normalized = F.normalize(outputs_l_head, dim=1)
+
+                
+                loss = criterion_ce(outputs_g_aux, labels)
+                # loss_kl = criterion_kl(nn.functional.log_softmax(outputs_l_head_normalized, dim=1),
+                #                     nn.functional.softmax(outputs_g_aux_normalized, dim=1))
+                # loss = loss_kl
+                loss.backward()
+                optimizer_g_aux.step()
+                
+
+
+                # p cls更新
+                # output_l = l_head(features.detach())
+                # loss_l = criterion_l(output_l, labels)
+                # loss_l.backward()
+                # optimizer_l.step()
+
+                # loss = loss_l
+                batch_loss.append(loss.item())
+
+            epoch_loss.append(sum(batch_loss)/len(batch_loss))
+        return net.state_dict(), copy.deepcopy(g_aux), copy.deepcopy(l_head), sum(epoch_loss) / len(epoch_loss)
+    
     def pfedme_update_weights(self, net, seed, net_glob, epoch, mu=1, lr=None):
         net_glob = net_glob
 
@@ -723,6 +804,7 @@ def localtest(net, g_head, l_head, test_dataset, dataset_class, idxs, user_id):
 
 
     p_mode = 1
+
     if p_mode == 1:
         # 方案1：
         zero_classes = np.where(class_distribution == 0)[0]
@@ -734,11 +816,30 @@ def localtest(net, g_head, l_head, test_dataset, dataset_class, idxs, user_id):
         norm = torch.norm(l_head.weight, p=2, dim=1)
         # 将g_head.weight转换为torch.nn.Parameter类型
         g_head.weight = nn.Parameter(g_head.weight * norm.unsqueeze(1))
+    elif p_mode == 3:
+        # 将class_distribution转换为PyTorch的Tensor
+        class_distribution_tensor = torch.from_numpy(class_distribution)
+        # 由于g_head.weight的形状是[100, 512]，而class_distribution的形状是[100,]，
+        # 所以我们需要将class_distribution扩展为[100, 1]，以便进行元素级别的乘法
+        class_distribution_tensor = class_distribution_tensor.view(-1, 1)
+        # 将class_distribution_tensor移动到与g_head.weight相同的设备上
+        class_distribution_tensor = class_distribution_tensor.to(g_head.weight.device)
+        # 进行元素级别的乘法
+        g_head.weight = nn.Parameter(g_head.weight * class_distribution_tensor)
+    elif p_mode == 4:
+        # 将权重和偏置相加，并转换为torch.nn.Parameter
+        g_head.weight = nn.Parameter(g_head.weight + l_head.weight)
+        g_head.bias = nn.Parameter(g_head.bias + l_head.bias)
+    elif p_mode == 5:
+        g_head.weight = nn.Parameter(g_head.weight * l_head.weight)
+        # g_head.bias = nn.Parameter(g_head.bias * l_head.bias)
+
+
 
     three_shot_dict, _ = shot_split(
         class_distribution, threshold_3shot=[75, 95])
     # three_shot_dict: {"head":[], "middle":[], "tail":[]}   # containg the class id of head, middle and tail respectively
-
+    
     ypred = []
     ytrue = []
     acc_3shot_local = {"head": None, "middle": None, "tail": None}
@@ -756,9 +857,29 @@ def localtest(net, g_head, l_head, test_dataset, dataset_class, idxs, user_id):
             images = images.to(args.device)
             labels = labels.to(args.device)
             features = net(images, latent_output=True)
-            outputs = g_head(features) + l_head(features) 
-            # outputs = l_head(features) 
-            _, predicted = torch.max(outputs.data, 1)
+
+            if p_mode != 8:
+                outputs = g_head(features) + l_head(features)
+                # outputs = g_head(features) 
+                _, predicted = torch.max(outputs.data, 1)
+            else:
+                 # use l_head for initial prediction
+                l_outputs = l_head(features)
+                
+                # select top 30% classes
+                top_30_percent = int(0.1 * l_outputs.size(1))
+                _, top_classes = l_outputs.topk(top_30_percent, dim=1)
+                
+                # create a mask for selected classes
+                mask = torch.zeros_like(l_outputs).scatter_(1, top_classes, 1).bool()
+                
+                # use g_head for final prediction
+                g_outputs = g_head(features)
+                
+                # apply mask to g_head outputs
+                masked_g_outputs = g_outputs.masked_fill(~mask, float('-inf')) 
+                
+                _, predicted = torch.max(masked_g_outputs.data, 1)
 
             # calc total metrics
             total += labels.size(0)     # numble of all samples

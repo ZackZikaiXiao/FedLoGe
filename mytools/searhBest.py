@@ -69,11 +69,47 @@ import matplotlib.pyplot as plt
 # print(context[loc])
 
 # 根据总的acc找
-keyword = "local average test a"
+# keyword = "local average test a"
+keyword = "global test acc"
 # fpath = "/home/zikaixiao/zikai/aaFL/fl_framework_lss/前向后向都没有weight_if100.log"
 # fpath = "/home/zikaixiao/zikai/aaFL/fl_framework_lss/weightmask[0,6]_if100.log"
-fpath = "/home/zikaixiao/zikai/aapfl/fl_gba_cifar100/fedbabu_sparse06_formal_save.log"
+fpath = "/home/zikaixiao/zikai/aapfl/pfed_lastest/fedrod_save.log"
+# fpath = "/home/zikaixiao/zikai/aaFL/fl_framework_lss/eql参数8.log"
+context = []
+# fpath = os.path.join(basefolder,file)
+f = open(fpath,'r')
+for line in f.readlines():
+    if keyword in line:     # only the line containing keyword will be added to context
+        context.append(line)
+    else:
+        continue
+evaluationList = []
+heads = []
+middles = []
+tails = []
+for i in range(len(context)):
+    evaluationList.append(float(context[i].split(" ")[-2]))
+# search the top acc line
+loc = 0
+max_item = 0
+for i in range(len(evaluationList)):
+    if evaluationList[i] > max_item:
+        max_item = evaluationList[i] 
+        loc = i
+    
+print("File \"{0}\" containing keyword \"{1}\" reaches to \"{2}\"".format(fpath.split('/')[-1], keyword, max(evaluationList)))
+print(context[loc])
 
+
+
+
+
+# 根据总的acc找
+keyword = "local average test a"
+# keyword = "global test acc"
+# fpath = "/home/zikaixiao/zikai/aaFL/fl_framework_lss/前向后向都没有weight_if100.log"
+# fpath = "/home/zikaixiao/zikai/aaFL/fl_framework_lss/weightmask[0,6]_if100.log"
+# fpath = "/home/zikaixiao/zikai/aapfl/fl_gba_cifar100/fedbn_formal.log"
 # fpath = "/home/zikaixiao/zikai/aaFL/fl_framework_lss/eql参数8.log"
 context = []
 # fpath = os.path.join(basefolder,file)
