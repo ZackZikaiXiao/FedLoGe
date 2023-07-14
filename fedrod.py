@@ -110,7 +110,7 @@ if __name__ == '__main__':
             w_locals[client_id], g_aux_temp, l_heads[client_id], loss_local = local.update_weights_balsoft(net=copy.deepcopy(model).to(args.device), g_head = copy.deepcopy(g_head).to(args.device), g_aux = copy.deepcopy(g_aux).to(args.device), l_head = l_heads[client_id], epoch=args.local_ep)
             g_auxs.append(g_aux_temp)
 
-        ## aggregation
+        ## aggregation 
         dict_len = [len(dict_users[idx]) for idx in idxs_users]
         w_glob = FedAvg_noniid(w_locals, dict_len)
         g_aux = FedAvg_noniid_classifier(g_auxs, dict_len)
@@ -139,12 +139,12 @@ if __name__ == '__main__':
             f1_weighted_list.append(f1_weighted)
             acc_3shot_local_list.append(acc_3shot_local) ###################
 
-
-        # torch.save(model, "./output/model_" + str(rnd) + ".pth")
-        # torch.save(g_head, "./output/g_head_" + str(rnd) + ".pth")
-        # torch.save(g_aux, "./output/g_aux_" + str(rnd) + ".pth")
-        # for i in range(args.num_users):
-        #     torch.save(l_heads[i], "./output/" + "l_head_" + str(i) + ".pth")
+        load_dir = "./output_cifar100_nofix/"
+        torch.save(model, load_dir + "model_" + str(rnd) + ".pth")
+        torch.save(g_head, load_dir + "g_head_" + str(rnd) + ".pth")
+        torch.save(g_aux, load_dir + "g_aux_" + str(rnd) + ".pth")
+        for i in range(args.num_users):
+            torch.save(l_heads[i], load_dir + "l_head_" + str(i) + ".pth")
 
         # start:calculate acc_3shot_local
         avg3shot_acc={"head":0, "middle":0, "tail":0}

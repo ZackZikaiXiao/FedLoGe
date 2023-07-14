@@ -98,12 +98,12 @@ if __name__ == '__main__':
     # acc_s2, global_3shot_acc = globaltest(copy.deepcopy(model).to(args.device), g_head, dataset_test, args, dataset_class = datasetObj)
 
     # add fl training
-    model = torch.load("./output_fix/model_244.pth").to(args.device)
-    g_head = torch.load("./output_fix/g_head_244.pth").to(args.device)
-    g_aux = torch.load("./output_fix/g_aux_244.pth").to(args.device)
+    model = torch.load("./output1/model_312.pth").to(args.device)
+    g_head = torch.load("./output1/g_head_312.pth").to(args.device)
+    g_aux = torch.load("./output1/g_aux_312.pth").to(args.device)
     l_heads = []
     for i in range(args.num_users):
-        l_heads.append(torch.load("./output_fix/" + "l_head_" + str(i) + ".pth").to(args.device))
+        l_heads.append(torch.load("./output1/" + "l_head_" + str(i) + ".pth").to(args.device))
 
     # norm = torch.norm(g_aux.weight, p=2, dim=1)
     # # 将g_head.weight转换为torch.nn.Parameter类型
@@ -115,20 +115,32 @@ if __name__ == '__main__':
     # print("g_aux", torch.norm(g_aux.weight, p=2, dim=1))
     
 
+
+    # local tuning
+    w_glob = model.state_dict()  # return a dictionary containing a whole state of the module
+    w_locals = [copy.deepcopy(w_glob) for i in range(args.num_users)]
+    g_auxs_intervaria = []
+    epoch = 30
+    for client_id in range(args.num_users):  # training over the subset, in fedper, all clients train
+        local = LocalUpdate(args=args, dataset=dataset_train, idxs=dict_users[client_id])
+        w_locals[client_id], g_aux_intervaria, l_heads[client_id], loss_local = local.update_weights_norm_init(net=copy.deepcopy(model).to(args.device), g_head = copy.deepcopy(g_head).to(args.device), g_aux = copy.deepcopy(g_aux).to(args.device), l_head = copy.deepcopy(l_heads[client_id]).to(args.device), seed=args.seed, net_glob=model.to(args.device), epoch=epoch)
+        g_auxs_intervaria.append(g_aux_intervaria)
+
+
+    # global tuning
+    
+
+
+
+
+    # global test
     # 将g_head除以norm
     # g_head.weight = g_head.weight / norm.unsqueeze(1)
     acc_s2, global_3shot_acc = globaltest(copy.deepcopy(model).to(args.device), copy.deepcopy(g_head).to(args.device), dataset_test, args, dataset_class = datasetObj)
     print(acc_s2)
     print(global_3shot_acc)
-    
-    w_glob = model.state_dict()  # return a dictionary containing a whole state of the module
-    w_locals = [copy.deepcopy(w_glob) for i in range(args.num_users)]
-    g_auxs_intervaria = []
-    epoch = 50
-    for client_id in range(args.num_users):  # training over the subset, in fedper, all clients train
-        local = LocalUpdate(args=args, dataset=dataset_train, idxs=dict_users[client_id])
-        w_locals[client_id], g_aux_intervaria, l_heads[client_id], loss_local = local.update_weights_norm_init(net=copy.deepcopy(model).to(args.device), g_head = copy.deepcopy(g_head).to(args.device), g_aux = copy.deepcopy(g_aux).to(args.device), l_head = copy.deepcopy(l_heads[client_id]).to(args.device), seed=args.seed, net_glob=model.to(args.device), epoch=epoch)
-        g_auxs_intervaria.append(g_aux_intervaria)
+
+
 
      # local test 
     acc_list = []

@@ -5,6 +5,7 @@ import copy
 from pydoc import cli
 import torch
 import numpy as np
+from torch import nn
 
 # Averaging processing in coordinator for various model weights
 
@@ -56,6 +57,30 @@ def FedAvg_noniid_classifier(w, dict_len):
         w[i] = w[i].state_dict()
         
     w_avg = copy.deepcopy(w[0])
+    for k in w_avg.keys():        
+        w_avg[k] = w_avg[k] * dict_len[0] 
+        for i in range(1, len(w)):
+            w_avg[k] += w[i][k] * dict_len[i]
+            #w_avg[k] += w[i][k]
+        #w_avg[k] = w_avg[k] / len(w)
+        w_avg[k] = w_avg[k] / sum(dict_len)
+    model.load_state_dict(w_avg)
+    return model
+
+def Balanced_Aggre(w, dict_len, l_heads):
+
+    model = copy.deepcopy(w[0])
+    for i in range(len(w)):
+        w[i] = w[i].state_dict()
+        
+    w_avg = copy.deepcopy(w[0])
+
+    for i in range(len(w)):
+        # 权重norm初始化
+        norm = torch.norm(l_heads[i].weight, p=2, dim=1)
+        # 将g_head.weight转换为torch.nn.Parameter类型
+        w[i].weight = nn.Parameter(w[i].weight * norm.unsqueeze(1))
+    
     for k in w_avg.keys():        
         w_avg[k] = w_avg[k] * dict_len[0] 
         for i in range(1, len(w)):
