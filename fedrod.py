@@ -21,10 +21,11 @@ from util.losses import *
 
 np.set_printoptions(threshold=np.inf)
 
-save_switch = False
-dataset_switch = 'cifar100' # cifar 10
-aggregation_switch = 'class_wise' # fedavg
-global_test_head = 'g_aux'  # g_head
+save_switch = False # True / False
+dataset_switch = 'cifar100' # cifar10 / cifar100
+aggregation_switch = 'fedavg' # fedavg / class_wise
+global_test_head = 'g_head'  # g_aux / g_head
+internal_frozen = True  # True / False
 
 def get_acc_file_path(args):
 
@@ -83,6 +84,13 @@ if __name__ == '__main__':
 
     # build model
     model = build_model(args) 
+    # 冻结特定层
+    if internal_frozen:
+        model.layer1[0].conv1.weight.requires_grad = False
+
+        # 如果Conv2d层有bias，也需要冻结
+        if model.layer1[0].conv1.bias is not None:
+            model.layer1[0].conv1.bias.requires_grad = False
     # acc_local, f1_macro, f1_weighted, acc_3shot_local = localtest(copy.deepcopy(netglob).to(args.device), dataset_test, dataset_class = datasetObj, idxs=dict_localtest[0], user_id = 0)
     # copy weights
     w_glob = model.state_dict()  # return a dictionary containing a whole state of the module
@@ -116,7 +124,7 @@ if __name__ == '__main__':
         for client_id in range(args.num_users):  # training over the subset, in fedper, all clients train
             model.load_state_dict(copy.deepcopy(w_locals[client_id]))
             local = LocalUpdate(args=args, dataset=dataset_train, idxs=dict_users[client_id])
-            w_locals[client_id], g_aux_temp, l_heads[client_id], loss_local = local.update_weights_balsoft(net=copy.deepcopy(model).to(args.device), g_head = copy.deepcopy(g_head).to(args.device), g_aux = copy.deepcopy(g_aux).to(args.device), l_head = l_heads[client_id], epoch=args.local_ep)
+            w_locals[client_id], g_aux_temp, l_heads[client_id], loss_local = local.update_weights_gaux(net=copy.deepcopy(model).to(args.device), g_head = copy.deepcopy(g_head).to(args.device), g_aux = copy.deepcopy(g_aux).to(args.device), l_head = l_heads[client_id], epoch=args.local_ep)
             g_auxs.append(g_aux_temp)
 
         ## aggregation 
