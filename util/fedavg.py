@@ -67,27 +67,56 @@ def FedAvg_noniid_classifier(w, dict_len):
     model.load_state_dict(w_avg)
     return model
 
-def Balanced_Aggre(w, dict_len, l_heads):
+# 针对于classifier的norm aggregation
+def cls_norm_agg(w, dict_len, l_heads, distributions):
+    
 
     model = copy.deepcopy(w[0])
     for i in range(len(w)):
         w[i] = w[i].state_dict()
-        
+    
+    # 新建一个全空的return tensor
     w_avg = copy.deepcopy(w[0])
+    w_avg = {k: torch.zeros_like(v) for k, v in w_avg.items()}
 
+
+    # norm_map[i][c]: 第i的client，类别为c的vector的norm
+    norm_map = []
     for i in range(len(w)):
         # 权重norm初始化
         norm = torch.norm(l_heads[i].weight, p=2, dim=1)
         # 将g_head.weight转换为torch.nn.Parameter类型
-        w[i].weight = nn.Parameter(w[i].weight * norm.unsqueeze(1))
-    
-    for k in w_avg.keys():        
-        w_avg[k] = w_avg[k] * dict_len[0] 
-        for i in range(1, len(w)):
-            w_avg[k] += w[i][k] * dict_len[i]
-            #w_avg[k] += w[i][k]
-        #w_avg[k] = w_avg[k] / len(w)
-        w_avg[k] = w_avg[k] / sum(dict_len)
+        norm_map.append(norm)
+    # 将norm_map从list转换为tensor
+    norm_map = torch.stack(norm_map)
+
+
+    distributions = torch.from_numpy(distributions)
+    distributions = distributions.to(norm_map.dtype)
+
+
+    classes = l_heads[0].out_features
+
+    # weight
+    for i in range(0, len(w)):  # 对于每个client
+        for c in range(0, classes):    # 对于每个类别
+            # w_avg['weight'][c] += w[i]['weight'][c] * (dict_len[i] / sum(dict_len)) * (norm_map[i][c] / torch.sum(norm_map, dim=0)[c])  # 第一个client的第一个类别向量
+            # w_avg['weight'][c] += w[i]['weight'][c] * (dict_len[i] / sum(dict_len)) 
+            # client & class wise
+            # w_avg['weight'][c] += w[i]['weight'][c] * (dict_len[i] / sum(dict_len)) * (distributions[i][c] / torch.sum(distributions, dim=0)[c])  
+            w_avg['weight'][c] += w[i]['weight'][c] * (distributions[i][c] / torch.sum(distributions, dim=0)[c])  
+
+
+    # bias
+    for i in range(0, len(w)):  # 对于每个client
+        for c in range(0, classes):
+            # w_avg['bias'][c] += w[i]['bias'][c] * (dict_len[i] / sum(dict_len)) * (norm_map[i][c] / torch.sum(norm_map, dim=0)[c])
+            # w_avg['bias'][c] += w[i]['bias'][c] * (dict_len[i] / sum(dict_len)) 
+            # w_avg['bias'][c] += w[i]['bias'][c] * (dict_len[i] / sum(dict_len)) * (distributions[i][c] / torch.sum(distributions, dim=0)[c])
+            w_avg['bias'][c] += w[i]['bias'][c]  * (distributions[i][c] / torch.sum(distributions, dim=0)[c])
+
+
+
     model.load_state_dict(w_avg)
     return model
 

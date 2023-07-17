@@ -10,7 +10,7 @@ import torch
 import pdb
 import torch.nn as nn
 from tqdm import tqdm
-from options import args_parser
+from options import args_parser, args_parser_cifar10
 from util.update_baseline import LocalUpdate, globaltest, localtest
 from util.fedavg import *
 # from util.util import add_noise
@@ -41,7 +41,7 @@ def get_acc_file_path(args):
    
 if __name__ == '__main__':
     # parse args
-    args = args_parser()
+    args = args_parser_cifar10()
     # print("STOP")
     # return
     torch.manual_seed(args.seed)
@@ -98,12 +98,14 @@ if __name__ == '__main__':
     # acc_s2, global_3shot_acc = globaltest(copy.deepcopy(model).to(args.device), g_head, dataset_test, args, dataset_class = datasetObj)
 
     # add fl training
-    model = torch.load("./output1/model_312.pth").to(args.device)
-    g_head = torch.load("./output1/g_head_312.pth").to(args.device)
-    g_aux = torch.load("./output1/g_aux_312.pth").to(args.device)
+    load_dir = "./output_cifar10/"
+    # save_id = "73"
+    model = torch.load(load_dir + "model_101.pth").to(args.device)
+    g_head = torch.load(load_dir + "g_head_101.pth").to(args.device)
+    g_aux = torch.load(load_dir + "g_aux_101.pth").to(args.device)
     l_heads = []
     for i in range(args.num_users):
-        l_heads.append(torch.load("./output1/" + "l_head_" + str(i) + ".pth").to(args.device))
+        l_heads.append(torch.load(load_dir +  "l_head_" + str(i) + ".pth").to(args.device))
 
     # norm = torch.norm(g_aux.weight, p=2, dim=1)
     # # 将g_head.weight转换为torch.nn.Parameter类型
@@ -120,7 +122,7 @@ if __name__ == '__main__':
     w_glob = model.state_dict()  # return a dictionary containing a whole state of the module
     w_locals = [copy.deepcopy(w_glob) for i in range(args.num_users)]
     g_auxs_intervaria = []
-    epoch = 30
+    epoch = 5
     for client_id in range(args.num_users):  # training over the subset, in fedper, all clients train
         local = LocalUpdate(args=args, dataset=dataset_train, idxs=dict_users[client_id])
         w_locals[client_id], g_aux_intervaria, l_heads[client_id], loss_local = local.update_weights_norm_init(net=copy.deepcopy(model).to(args.device), g_head = copy.deepcopy(g_head).to(args.device), g_aux = copy.deepcopy(g_aux).to(args.device), l_head = copy.deepcopy(l_heads[client_id]).to(args.device), seed=args.seed, net_glob=model.to(args.device), epoch=epoch)

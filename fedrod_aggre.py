@@ -1,6 +1,5 @@
 # python version 3.7.1
 # -*- coding: utf-8 -*-
-# 用local classifier来指导aggregation过程
 
 import os
 import copy
@@ -11,7 +10,7 @@ import torch
 import pdb
 import torch.nn as nn
 from tqdm import tqdm
-from options import args_parser
+from options import args_parser, args_parser_cifar10
 from util.update_baseline import LocalUpdate, globaltest, localtest
 from util.fedavg import *
 # from util.util import add_noise
@@ -89,15 +88,17 @@ if __name__ == '__main__':
     m = max(int(args.frac * args.num_users), 1) #num_select_clients 
     prob = [1/args.num_users for j in range(args.num_users)]
 
-    g_head = nn.Linear(512, 100).to(args.device)   # res34是512
-    g_aux = nn.Linear(512, 100).to(args.device)
+    in_features = model.linear.in_features
+    out_features = model.linear.out_features
+    g_head = nn.Linear(in_features, out_features).to(args.device)   # res34是512
+    g_aux = nn.Linear(in_features, out_features).to(args.device)
     nn.init.sparse_(g_head.weight, sparsity=0.6)
     l_heads = []
     for i in range(args.num_users):
-        l_heads.append(nn.Linear(512, 100).to(args.device))
+        l_heads.append(nn.Linear(in_features, out_features).to(args.device))
+        
 
     # acc_s2, global_3shot_acc = globaltest(copy.deepcopy(model).to(args.device), g_head, dataset_test, args, dataset_class = datasetObj)
-    
     # add fl training
     for rnd in tqdm(range(args.rounds)):
         g_auxs = []
@@ -108,13 +109,13 @@ if __name__ == '__main__':
         for client_id in range(args.num_users):  # training over the subset, in fedper, all clients train
             model.load_state_dict(copy.deepcopy(w_locals[client_id]))
             local = LocalUpdate(args=args, dataset=dataset_train, idxs=dict_users[client_id])
-            w_locals[client_id], g_aux_temp, l_heads[client_id], loss_local = local.update_weights_balsoft(net=copy.deepcopy(model).to(args.device), g_head = copy.deepcopy(g_head).to(args.device), g_aux = copy.deepcopy(g_aux).to(args.device), l_head = l_heads[client_id], epoch=args.local_ep)
+            w_locals[client_id], g_aux_temp, l_heads[client_id], loss_local = local.update_weights_fedrod(net=copy.deepcopy(model).to(args.device), g_head = copy.deepcopy(g_head).to(args.device), g_aux = copy.deepcopy(g_aux).to(args.device), l_head = l_heads[client_id], epoch=args.local_ep)
             g_auxs.append(g_aux_temp)
 
         ## aggregation 
         dict_len = [len(dict_users[idx]) for idx in idxs_users]
         w_glob = FedAvg_noniid(w_locals, dict_len)
-        g_aux = Balanced_Aggre(g_auxs, dict_len, copy.deepcopy(l_heads))
+        g_aux = cls_norm_agg(g_auxs, dict_len, l_heads=l_heads, distributions = datasetObj.training_set_distribution)
 
 
         ## assign
@@ -123,7 +124,7 @@ if __name__ == '__main__':
 
         ## global test
         model.load_state_dict(copy.deepcopy(w_glob))
-        acc_s2, global_3shot_acc = globaltest(copy.deepcopy(model).to(args.device), copy.deepcopy(g_head).to(args.device), dataset_test, args, dataset_class = datasetObj)
+        acc_s2, global_3shot_acc = globaltest(copy.deepcopy(model).to(args.device), copy.deepcopy(g_aux).to(args.device), dataset_test, args, dataset_class = datasetObj)
 
         # local test 
         acc_list = []
@@ -140,12 +141,12 @@ if __name__ == '__main__':
             f1_weighted_list.append(f1_weighted)
             acc_3shot_local_list.append(acc_3shot_local) ###################
 
-
-        torch.save(model, "./output1/model_" + str(rnd) + ".pth")
-        torch.save(g_head, "./output1/g_head_" + str(rnd) + ".pth")
-        torch.save(g_aux, "./output1/g_aux_" + str(rnd) + ".pth")
+        load_dir = "./output_aggre/"
+        torch.save(model, load_dir + "model_" + str(rnd) + ".pth")
+        torch.save(g_head, load_dir + "g_head_" + str(rnd) + ".pth")
+        torch.save(g_aux, load_dir + "g_aux_" + str(rnd) + ".pth")
         for i in range(args.num_users):
-            torch.save(l_heads[i], "./output1/" + "l_head_" + str(i) + ".pth")
+            torch.save(l_heads[i], load_dir + "l_head_" + str(i) + ".pth")
 
         # start:calculate acc_3shot_local
         avg3shot_acc={"head":0, "middle":0, "tail":0}

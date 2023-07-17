@@ -10,7 +10,7 @@ import torch
 import pdb
 import torch.nn as nn
 from tqdm import tqdm
-from options import args_parser
+from options import args_parser, args_parser_cifar10
 from util.update_baseline import LocalUpdate, globaltest, localtest
 from util.fedavg import *
 # from util.util import add_noise
@@ -21,7 +21,10 @@ from util.losses import *
 
 np.set_printoptions(threshold=np.inf)
 
-
+save_switch = False
+dataset_switch = 'cifar100' # cifar 10
+aggregation_switch = 'class_wise' # fedavg
+global_test_head = 'g_aux'  # g_head
 
 def get_acc_file_path(args):
 
@@ -42,7 +45,11 @@ def get_acc_file_path(args):
 
 if __name__ == '__main__':
     # parse args
-    args = args_parser()
+    if dataset_switch == 'cifar100':
+        args = args_parser()
+    elif dataset_switch == 'cifar10':
+        args = args_parser_cifar10()
+
     # print("STOP")
     # return
     torch.manual_seed(args.seed)
@@ -88,12 +95,14 @@ if __name__ == '__main__':
     m = max(int(args.frac * args.num_users), 1) #num_select_clients 
     prob = [1/args.num_users for j in range(args.num_users)]
 
-    g_head = nn.Linear(512, 100).to(args.device)   # res34是512
-    g_aux = nn.Linear(512, 100).to(args.device)
+    in_features = model.linear.in_features
+    out_features = model.linear.out_features
+    g_head = nn.Linear(in_features, out_features).to(args.device)   # res34是512
+    g_aux = nn.Linear(in_features, out_features).to(args.device)
     nn.init.sparse_(g_head.weight, sparsity=0.6)
     l_heads = []
     for i in range(args.num_users):
-        l_heads.append(nn.Linear(512, 100).to(args.device))
+        l_heads.append(nn.Linear(in_features, out_features).to(args.device))
 
     # acc_s2, global_3shot_acc = globaltest(copy.deepcopy(model).to(args.device), g_head, dataset_test, args, dataset_class = datasetObj)
     
@@ -113,7 +122,11 @@ if __name__ == '__main__':
         ## aggregation 
         dict_len = [len(dict_users[idx]) for idx in idxs_users]
         w_glob = FedAvg_noniid(w_locals, dict_len)
-        g_aux = FedAvg_noniid_classifier(g_auxs, dict_len)
+
+        if aggregation_switch == 'fedavg':
+            g_aux = FedAvg_noniid_classifier(g_auxs, dict_len)
+        elif aggregation_switch == 'class_wise':
+            g_aux = cls_norm_agg(g_auxs, dict_len, l_heads=l_heads, distributions = datasetObj.training_set_distribution)
 
 
         ## assign
@@ -122,7 +135,12 @@ if __name__ == '__main__':
 
         ## global test
         model.load_state_dict(copy.deepcopy(w_glob))
-        acc_s2, global_3shot_acc = globaltest(copy.deepcopy(model).to(args.device), copy.deepcopy(g_head).to(args.device), dataset_test, args, dataset_class = datasetObj)
+
+        if global_test_head == 'g_head':
+            acc_s2, global_3shot_acc = globaltest(copy.deepcopy(model).to(args.device), copy.deepcopy(g_head).to(args.device), dataset_test, args, dataset_class = datasetObj)
+        elif global_test_head == 'g_aux':
+            acc_s2, global_3shot_acc = globaltest(copy.deepcopy(model).to(args.device), copy.deepcopy(g_head).to(args.device), dataset_test, args, dataset_class = datasetObj)
+
 
         # local test 
         acc_list = []
@@ -139,12 +157,13 @@ if __name__ == '__main__':
             f1_weighted_list.append(f1_weighted)
             acc_3shot_local_list.append(acc_3shot_local) ###################
 
-        load_dir = "./output_cifar100_nofix/"
-        torch.save(model, load_dir + "model_" + str(rnd) + ".pth")
-        torch.save(g_head, load_dir + "g_head_" + str(rnd) + ".pth")
-        torch.save(g_aux, load_dir + "g_aux_" + str(rnd) + ".pth")
-        for i in range(args.num_users):
-            torch.save(l_heads[i], load_dir + "l_head_" + str(i) + ".pth")
+        if save_switch == True:
+            load_dir = "./output_cifar10/"
+            torch.save(model, load_dir + "model_" + str(rnd) + ".pth")
+            torch.save(g_head, load_dir + "g_head_" + str(rnd) + ".pth")
+            torch.save(g_aux, load_dir + "g_aux_" + str(rnd) + ".pth")
+            for i in range(args.num_users):
+                torch.save(l_heads[i], load_dir + "l_head_" + str(i) + ".pth")
 
         # start:calculate acc_3shot_local
         avg3shot_acc={"head":0, "middle":0, "tail":0}
