@@ -9,6 +9,7 @@ import torch.nn.functional as F
 import numpy as np
 from util.util import shot_split
 import copy
+from util.losses import *
 
 import sklearn.metrics as metrics
 from util.losses import FocalLoss
@@ -166,7 +167,7 @@ class LocalUpdate(object):
         return net.state_dict(), sum(epoch_loss) / len(epoch_loss)
 
 
-    def update_weights_gaux(self, net, g_head, g_aux, l_head, epoch, mu=1, lr=None):
+    def update_weights_gaux(self, net, g_head, g_aux, l_head, epoch, mu=1, lr=None, loss_switch=None):
         net.train()
         # train and update
         optimizer_g_backbone = torch.optim.SGD(list(net.parameters()), lr=self.args.lr, momentum=self.args.momentum)
@@ -184,6 +185,8 @@ class LocalUpdate(object):
 
         criterion_l = nn.CrossEntropyLoss()
         criterion_g = nn.CrossEntropyLoss()
+        if loss_switch == "focus_loss":
+            criterion_l = focus_loss(num_classes=100)
 
         epoch_loss = []
         for iter in range(epoch):
@@ -210,7 +213,7 @@ class LocalUpdate(object):
                 
                 # g_aux
                 output_g_aux = g_aux(features.detach())
-                loss_g_aux = criterion_g(output_g_aux, labels)
+                loss_g_aux = criterion_l(output_g_aux, labels)
                 loss_g_aux.backward()
                 optimizer_g_aux.step()
 

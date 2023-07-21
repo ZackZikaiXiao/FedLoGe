@@ -41,7 +41,7 @@ def get_acc_file_path(args):
    
 if __name__ == '__main__':
     # parse args
-    args = args_parser_cifar10()
+    args = args_parser()
     # print("STOP")
     # return
     torch.manual_seed(args.seed)
@@ -98,11 +98,11 @@ if __name__ == '__main__':
     # acc_s2, global_3shot_acc = globaltest(copy.deepcopy(model).to(args.device), g_head, dataset_test, args, dataset_class = datasetObj)
 
     # add fl training
-    load_dir = "./output_cifar10/"
+    load_dir = "./output1/"
     # save_id = "73"
-    model = torch.load(load_dir + "model_101.pth").to(args.device)
-    g_head = torch.load(load_dir + "g_head_101.pth").to(args.device)
-    g_aux = torch.load(load_dir + "g_aux_101.pth").to(args.device)
+    model = torch.load(load_dir + "model_499.pth").to(args.device)
+    g_head = torch.load(load_dir + "g_head_499.pth").to(args.device)
+    g_aux = torch.load(load_dir + "g_aux_499.pth").to(args.device)
     l_heads = []
     for i in range(args.num_users):
         l_heads.append(torch.load(load_dir +  "l_head_" + str(i) + ".pth").to(args.device))

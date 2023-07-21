@@ -21,11 +21,13 @@ from util.losses import *
 
 np.set_printoptions(threshold=np.inf)
 
+load_switch = False  # True / False
 save_switch = False # True / False
 dataset_switch = 'cifar100' # cifar10 / cifar100
-aggregation_switch = 'fedavg' # fedavg / class_wise
-global_test_head = 'g_head'  # g_aux / g_head
-internal_frozen = True  # True / False
+aggregation_switch = 'class_wise' # fedavg / class_wise
+global_test_head = 'g_aux'  # g_aux / g_head
+internal_frozen = False  # True / False
+loss_switch = "None" # focous_loss / any others
 
 def get_acc_file_path(args):
 
@@ -112,6 +114,16 @@ if __name__ == '__main__':
     for i in range(args.num_users):
         l_heads.append(nn.Linear(in_features, out_features).to(args.device))
 
+    if load_switch == True:
+            rnd = 499
+            load_dir = "./output_aggre/"
+            model = torch.load(load_dir + "model_" + str(rnd) + ".pth").to(args.device)
+            g_head = torch.load(load_dir + "g_head_" + str(rnd) + ".pth").to(args.device)
+            g_aux = torch.load(load_dir + "g_aux_" + str(rnd) + ".pth").to(args.device)
+            for i in range(args.num_users):
+                l_heads[i] = torch.load(load_dir + "l_head_" + str(i) + ".pth").to(args.device)
+            w_glob = model.state_dict()  # return a dictionary containing a whole state of the module
+            w_locals = [copy.deepcopy(w_glob) for i in range(args.num_users)]
     # acc_s2, global_3shot_acc = globaltest(copy.deepcopy(model).to(args.device), g_head, dataset_test, args, dataset_class = datasetObj)
     
     # add fl training
@@ -124,7 +136,7 @@ if __name__ == '__main__':
         for client_id in range(args.num_users):  # training over the subset, in fedper, all clients train
             model.load_state_dict(copy.deepcopy(w_locals[client_id]))
             local = LocalUpdate(args=args, dataset=dataset_train, idxs=dict_users[client_id])
-            w_locals[client_id], g_aux_temp, l_heads[client_id], loss_local = local.update_weights_gaux(net=copy.deepcopy(model).to(args.device), g_head = copy.deepcopy(g_head).to(args.device), g_aux = copy.deepcopy(g_aux).to(args.device), l_head = l_heads[client_id], epoch=args.local_ep)
+            w_locals[client_id], g_aux_temp, l_heads[client_id], loss_local = local.update_weights_gaux(net=copy.deepcopy(model).to(args.device), g_head = copy.deepcopy(g_head).to(args.device), g_aux = copy.deepcopy(g_aux).to(args.device), l_head = l_heads[client_id], epoch=args.local_ep, loss_switch = loss_switch)
             g_auxs.append(g_aux_temp)
 
         ## aggregation 
@@ -147,7 +159,7 @@ if __name__ == '__main__':
         if global_test_head == 'g_head':
             acc_s2, global_3shot_acc = globaltest(copy.deepcopy(model).to(args.device), copy.deepcopy(g_head).to(args.device), dataset_test, args, dataset_class = datasetObj)
         elif global_test_head == 'g_aux':
-            acc_s2, global_3shot_acc = globaltest(copy.deepcopy(model).to(args.device), copy.deepcopy(g_head).to(args.device), dataset_test, args, dataset_class = datasetObj)
+            acc_s2, global_3shot_acc = globaltest(copy.deepcopy(model).to(args.device), copy.deepcopy(g_aux).to(args.device), dataset_test, args, dataset_class = datasetObj)
 
 
         # local test 

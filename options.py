@@ -33,7 +33,7 @@ def args_parser():
 
     parser.add_argument('--balanced_global', default=False, action='store_true', help="balanced global distribution or long tailed global distribution, clients are heterogeneous.")
     parser.add_argument('--IF', type=float, default=0.01, help="imbalance factor: Min/Max") # 0.1
-    parser.add_argument('--gpu', type=int, default=7, help="gpu")
+    parser.add_argument('--gpu', type=int, default=6, help="gpu")
     return parser.parse_args()
 
 

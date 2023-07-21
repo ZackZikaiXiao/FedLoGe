@@ -90,30 +90,50 @@ def cls_norm_agg(w, dict_len, l_heads, distributions):
     # 将norm_map从list转换为tensor
     norm_map = torch.stack(norm_map)
 
+    
+
 
     distributions = torch.from_numpy(distributions)
     distributions = distributions.to(norm_map.dtype)
-
-
     classes = l_heads[0].out_features
+
+
+    weight_map = copy.deepcopy(distributions)
+    for i in range(0, len(w)):
+        for c in range(0, classes):
+           weight_map[i][c] =  (dict_len[i] / sum(dict_len)) * (distributions[i][c] / torch.sum(distributions, dim=0)[c])
+        #    weight_map[i][c] =  (dict_len[i] / sum(dict_len)) * (norm_map[i][c] / torch.sum(norm_map, dim=0)[c])
+
 
     # weight
     for i in range(0, len(w)):  # 对于每个client
         for c in range(0, classes):    # 对于每个类别
+            # norm
             # w_avg['weight'][c] += w[i]['weight'][c] * (dict_len[i] / sum(dict_len)) * (norm_map[i][c] / torch.sum(norm_map, dim=0)[c])  # 第一个client的第一个类别向量
+            # w_avg['weight'][c] += w[i]['weight'][c] * (norm_map[i][c] / torch.sum(norm_map, dim=0)[c]) 
+
+            # dataset size
             # w_avg['weight'][c] += w[i]['weight'][c] * (dict_len[i] / sum(dict_len)) 
-            # client & class wise
+
+            # distritbution
             # w_avg['weight'][c] += w[i]['weight'][c] * (dict_len[i] / sum(dict_len)) * (distributions[i][c] / torch.sum(distributions, dim=0)[c])  
-            w_avg['weight'][c] += w[i]['weight'][c] * (distributions[i][c] / torch.sum(distributions, dim=0)[c])  
+            
+            # 归一化加权dataset size和distribution
+            w_avg['weight'][c] += w[i]['weight'][c] * (weight_map[i][c] / torch.sum(weight_map, dim=0)[c])  
+
 
 
     # bias
     for i in range(0, len(w)):  # 对于每个client
         for c in range(0, classes):
             # w_avg['bias'][c] += w[i]['bias'][c] * (dict_len[i] / sum(dict_len)) * (norm_map[i][c] / torch.sum(norm_map, dim=0)[c])
+            # w_avg['bias'][c] += w[i]['bias'][c] * (norm_map[i][c] / torch.sum(norm_map, dim=0)[c])
+
             # w_avg['bias'][c] += w[i]['bias'][c] * (dict_len[i] / sum(dict_len)) 
             # w_avg['bias'][c] += w[i]['bias'][c] * (dict_len[i] / sum(dict_len)) * (distributions[i][c] / torch.sum(distributions, dim=0)[c])
-            w_avg['bias'][c] += w[i]['bias'][c]  * (distributions[i][c] / torch.sum(distributions, dim=0)[c])
+            
+            # 归一化加权dataset size和distribution
+            w_avg['bias'][c] += w[i]['bias'][c]  * (weight_map[i][c] / torch.sum(weight_map, dim=0)[c])
 
 
 
