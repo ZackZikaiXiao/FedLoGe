@@ -95,6 +95,77 @@ class LocalUpdate(object):
             # print(label_debug)
         return net.state_dict(), sum(epoch_loss) / len(epoch_loss)
     
+
+    def update_weights_backbone_only(self, net, seed, epoch, criterion=None, mu=1, lr=None):
+        # 再固定head，训练表征
+        count = 0
+        for p in net.parameters():
+            if count >= 108:        # 108
+                p.requires_grad = True
+            else:
+                p.requires_grad = False
+            count += 1
+
+        filter(lambda p: p.requires_grad, net.parameters())
+        # criterion = nn.CrossEntropyLoss()
+        net.train()
+        if criterion is None:
+            criterion = nn.CrossEntropyLoss()
+        # train and update
+        if lr is None:
+            optimizer = torch.optim.SGD(
+                filter(lambda p: p.requires_grad, net.parameters()), lr=self.args.lr, momentum=self.args.momentum)
+        else:
+            optimizer = torch.optim.SGD(
+                filter(lambda p: p.requires_grad, net.parameters()), lr=lr, momentum=self.args.momentum)
+
+        epoch_loss = []
+
+        # 假设 model 是你的模型
+        linear_weights = net.linear.weight
+
+
+        # 创建一个掩码，原始权重为0的位置为1，其他为0
+        # spar_mask = (linear_weights == 0).float()
+
+        # 开放尾部的authority
+        # 创建一个全0的掩码
+        spar_mask = torch.zeros_like(linear_weights)
+        # 对权重矩阵的后75行，原始权重为0的位置为1，其他为0
+        # spar_mask[-75:] = (linear_weights[-75:] == 0).float()   
+        spar_mask[:25] = (linear_weights[:25] == 0).float()   
+
+
+        for iter in range(epoch):
+            batch_loss = []
+            # use/load data from split training set "ldr_train"
+            for batch_idx, (images, labels) in enumerate(self.ldr_train):
+                images, labels = images.to(
+                    self.args.device), labels.to(self.args.device)
+                labels = labels.long()
+                net.zero_grad()
+                logits = net(images)
+                loss = criterion(logits, labels)
+
+                loss.backward()
+
+
+                # 在优化步骤之前，应用掩码
+                net.linear.weight.grad *= spar_mask
+                # Assume you have a model 'model'
+
+                # After calling loss.backward(), you can check the gradients
+                # max_grad = max(p.grad.data.abs().max() for p in net.parameters() if p.grad is not None)
+                # print('Max gradient:', max_grad)
+
+                optimizer.step()
+
+                batch_loss.append(loss.item())
+                # print(criterion.pn_diff[70])
+            epoch_loss.append(sum(batch_loss)/len(batch_loss))
+        return net.state_dict(), sum(epoch_loss) / len(epoch_loss)
+    
+
     def update_weights_fedrep(self, net, seed, net_glob, epoch, mu=1, lr=None):
         net_glob = net_glob
 
@@ -734,9 +805,72 @@ class LocalUpdate(object):
         # print("-----------------------------------------------------------------------")
         return net.state_dict(), GBA_Layer.state_dict(), sum(epoch_loss) / len(epoch_loss)
 # global dataset is balanced
+def globaltest_villina(net, test_dataset, args, dataset_class=None):
+    global_test_distribution = dataset_class.global_test_distribution
+    three_shot_dict, _ = shot_split(global_test_distribution, threshold_3shot=[75, 95])
+    correct_3shot = {"head": 0, "middle": 0, "tail": 0}
+    total_3shot = {"head": 0, "middle": 0, "tail": 0}
+    acc_3shot_global = {"head": None, "middle": None, "tail": None}
+    net.eval()
+    test_loader = torch.utils.data.DataLoader(
+        dataset=test_dataset, batch_size=100, shuffle=False)
+    # 监视真实情况下所有样本的类别分布
+    total_class_label = [0 for i in range(args.num_classes)]
+
+    # global_test_distribution = global_test_distribution + 100*[0]
+    # zero_classes = np.where(global_test_distribution == 0)[0]
+    # for i in zero_classes:
+    #     net.linear.weight.data[i, :] = -1e10
+
+    predict_true_class = [0 for i in range(args.num_classes)]
+    with torch.no_grad():
+        correct = 0
+        total = 0
+        for images, labels in test_loader:
+            images = images.to(args.device)
+            labels = labels.to(args.device)
+            outputs = net(images)
+            _, predicted = torch.max(outputs.data, 1)
+            total += labels.size(0)
+            correct += (predicted == labels).sum().item()
+
+            # class-wise acc calc
+            for i in range(len(labels)):
+                total_class_label[int(labels[i])] += 1      # total
+                if predicted[i] == labels[i]:
+                    predict_true_class[int(labels[i])] += 1
+
+            # start: cal 3shot metrics
+            for label in labels:
+                if label in three_shot_dict["head"]:
+                    total_3shot["head"] += 1
+                elif label in three_shot_dict["middle"]:
+                    total_3shot["middle"] += 1
+                else:
+                    total_3shot["tail"] += 1
+            for i in range(len(predicted)):
+                if predicted[i] == labels[i] and labels[i] in three_shot_dict["head"]:   # 预测正确且在head中
+                    correct_3shot["head"] += 1
+                # 预测正确且在middle中
+                elif predicted[i] == labels[i] and labels[i] in three_shot_dict["middle"]:
+                    correct_3shot["middle"] += 1
+                # 预测正确且在tail中
+                elif predicted[i] == labels[i] and labels[i] in three_shot_dict["tail"]:
+                    correct_3shot["tail"] += 1      # 在tail中
+            # end
+    acc_class_wise = [predict_true_class[i] / (total_class_label[i] + 1e-10) for i in range(args.num_classes)]
+    # print(acc_class_wise)
+    acc = correct / total
+    acc_3shot_global["head"] = correct_3shot["head"] / \
+        (total_3shot["head"] + 1e-10)
+    acc_3shot_global["middle"] = correct_3shot["middle"] / \
+        (total_3shot["middle"] + 1e-10)
+    acc_3shot_global["tail"] = correct_3shot["tail"] / \
+        (total_3shot["tail"] + 1e-10)
+    return acc, acc_3shot_global
 
 
-def globaltest(net, g_head, test_dataset, args, dataset_class=None):
+def globaltest(net, g_head, test_dataset, args, dataset_class=None, head_switch=True):
     global_test_distribution = dataset_class.global_test_distribution
     three_shot_dict, _ = shot_split(global_test_distribution, threshold_3shot=[75, 95])
     correct_3shot = {"head": 0, "middle": 0, "tail": 0}
@@ -755,7 +889,10 @@ def globaltest(net, g_head, test_dataset, args, dataset_class=None):
             images = images.to(args.device)
             labels = labels.to(args.device)
             features = net(images, latent_output=True)
-            outputs = g_head(features)
+            if head_switch == True:
+                outputs = g_head(features)
+            else:
+                outputs = features
             _, predicted = torch.max(outputs.data, 1)
             total += labels.size(0)
             correct += (predicted == labels).sum().item()
@@ -841,6 +978,114 @@ def globaltest_GBA_Layer(backbone, classifier, test_dataset, args, dataset_class
     acc_3shot_global["middle"] = correct_3shot["middle"] / (total_3shot["middle"] + 1e-10)
     acc_3shot_global["tail"] = correct_3shot["tail"] / (total_3shot["tail"] + 1e-10)
     return acc, acc_3shot_global
+
+def localtest_villina(net, test_dataset, dataset_class, idxs, user_id):
+    from sklearn.metrics import f1_score
+    import copy
+    args = dataset_class.get_args()
+    net.eval()
+    test_loader = torch.utils.data.DataLoader(DatasetSplit(
+        test_dataset, idxs), batch_size=args.local_bs, shuffle=False)
+
+    # get overall distribution
+    # class_distribution = [0 for _ in range(10000)]  # 10000 >
+    # for images, labels in test_loader:
+    #     labels = labels.tolist()
+    class_distribution_dict = {}
+
+    class_distribution = dataset_class.local_test_distribution[user_id]
+
+    # class_distribution = class_distribution + 100*[0]
+    # zero_classes = np.where(class_distribution == 0)[0]
+    # for i in zero_classes:
+    #     net.linear.weight.data[i, :] = -1e10
+
+    three_shot_dict, _ = shot_split(
+        class_distribution, threshold_3shot=[75, 95])
+    # three_shot_dict: {"head":[], "middle":[], "tail":[]}   # containg the class id of head, middle and tail respectively
+
+    ypred = []
+    ytrue = []
+    acc_3shot_local = {"head": None, "middle": None, "tail": None}
+
+    with torch.no_grad():
+        correct = 0
+        total = 0
+        correct_3shot = {"head": 0, "middle": 0, "tail": 0}
+        total_3shot = {"head": 0, "middle": 0, "tail": 0}
+        correct_classwise = [0 for i in range(args.num_classes)]
+        total_classwise = [0 for i in range(args.num_classes)]
+        acc_classwise = [0 for i in range(args.num_classes)]
+        for images, labels in test_loader:
+            # inference
+            images = images.to(args.device)
+            labels = labels.to(args.device)
+            outputs = net(images)
+            _, predicted = torch.max(outputs.data, 1)
+
+            # calc total metrics
+            total += labels.size(0)     # numble of all samples
+            # numble of correct predictions
+            correct += (predicted == labels).sum().item()
+            predicted = predicted.tolist()
+            gts = copy.deepcopy(labels)
+            gts = gts.tolist()
+            ypred.append(predicted)
+            ytrue.append(gts)
+            # f1 = f1_score(y_true=labels,y_pred=predicted)
+            # print(f1)
+            # all_f1.append(f1)
+
+            # start: cal 3shot metrics
+            for label in labels:
+                total_classwise[label.cpu().tolist()] += 1 
+                if label in three_shot_dict["head"]:
+                    total_3shot["head"] += 1
+                elif label in three_shot_dict["middle"]:
+                    total_3shot["middle"] += 1
+                else:
+                    total_3shot["tail"] += 1
+            for i in range(len(predicted)):
+                if predicted[i] == labels[i]:
+                    correct_classwise[labels[i].cpu().tolist()] += 1 
+                if predicted[i] == labels[i] and labels[i] in three_shot_dict["head"]:   # 预测正确且在head中
+                    correct_3shot["head"] += 1
+                # 预测正确且在middle中
+                elif predicted[i] == labels[i] and labels[i] in three_shot_dict["middle"]:
+                    correct_3shot["middle"] += 1
+                # 预测正确且在tail中
+                elif predicted[i] == labels[i] and labels[i] in three_shot_dict["tail"]:
+                    correct_3shot["tail"] += 1      # 在tail中
+            # end
+
+
+
+    ypred = sum(ypred, [])
+    ytrue = sum(ytrue, [])
+    # print(ypred)
+    # print(ytrue)
+    f1_macro = f1_score(y_true=ytrue, y_pred=ypred, average='macro')
+    f1_weighted = f1_score(y_true=ytrue, y_pred=ypred, average='weighted')
+    # print(f1)
+    # import pdb;pdb.set_trace()
+    acc = correct / total
+
+    # start: calc acc_3shot_local
+    # acc_3shot_local["head"] = [0, False],False代表无效，平均的时候分母减1
+    # 分布不为0，如果没有head，则返回-1，-1不参与平均计算
+    acc_3shot_local["head"] = [0, False] if total_3shot["head"] == 0 else [
+        (correct_3shot["head"] / total_3shot["head"]), True]
+    acc_3shot_local["middle"] = [0, False] if total_3shot["middle"] == 0 else [
+        (correct_3shot["middle"] / total_3shot["middle"]), True]
+    acc_3shot_local["tail"] = [0, False] if total_3shot["tail"] == 0 else [
+        (correct_3shot["tail"] / total_3shot["tail"]), True]
+    # end
+    for i in range(len(acc_classwise)):
+        acc_classwise[i] = correct_classwise[i] / (total_classwise[i]+1e-10)
+    # acc = sum(acc_classwise) / len(acc_classwise)
+    # print("F1: "+ str(np.mean(f1)))
+    return acc, f1_macro, f1_weighted, acc_3shot_local
+
 
 def localtest(net, g_head, l_head, test_dataset, dataset_class, idxs, user_id):
     from sklearn.metrics import f1_score
