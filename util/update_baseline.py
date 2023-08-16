@@ -301,6 +301,68 @@ class LocalUpdate(object):
         return net.state_dict(), g_aux, l_head, sum(epoch_loss) / len(epoch_loss)
 
 
+    def update_weights_auto_selective_ghead(self, net, g_head, g_aux, l_head, epoch, mu=1, lr=None, loss_switch=None):
+        net.train()
+        # train and update
+        optimizer_g_backbone = torch.optim.SGD(list(net.parameters()) + [g_head.weights], lr=self.args.lr, momentum=self.args.momentum)
+        optimizer_g_aux = torch.optim.SGD(g_aux.parameters(), lr=self.args.lr, momentum=self.args.momentum)
+        # optimizer_g_aux = torch.optim.SGD([
+        #                     {'params': g_aux.weight, 'weight_decay': 1e-1},  # 对权重使用weight_decay
+        #                     {'params': g_aux.bias, 'weight_decay': 0}  # 对偏置不使用weight_decay
+        #                 ], lr=self.args.lr, momentum=self.args.momentum)
+        optimizer_l_head = torch.optim.SGD(l_head.parameters(), lr=self.args.lr, momentum=self.args.momentum)
+        # 定义优化器
+        # optimizer_l_head = torch.optim.SGD([
+        #                     {'params': l_head.weight, 'weight_decay': 1e-1},  # 对权重使用weight_decay
+        #                     {'params': l_head.bias, 'weight_decay': 0}  # 对偏置不使用weight_decay
+        #                 ], lr=self.args.lr, momentum=self.args.momentum)
+
+        criterion_l = nn.CrossEntropyLoss()
+        criterion_g = nn.CrossEntropyLoss()
+        if loss_switch == "focus_loss":
+            criterion_l = focus_loss(num_classes=100)
+
+        epoch_loss = []
+        for iter in range(epoch):
+            batch_loss = []
+            # use/load data from split training set "ldr_train"
+            for batch_idx, (images, labels) in enumerate(self.ldr_train):
+                images, labels = images.to(
+                    self.args.device), labels.to(self.args.device)
+
+                labels = labels.long()
+                optimizer_g_backbone.zero_grad()
+                optimizer_g_aux.zero_grad()
+                optimizer_l_head.zero_grad()
+                # net.zero_grad()
+
+                # backbone
+                features = net(images, latent_output=True)
+                output_g_backbone = g_head(features)
+                loss_g_backbone = criterion_g(output_g_backbone, labels)
+                loss_g_backbone.backward()
+                # max_grad = max(p.grad.data.abs().max() for p in net.parameters() if p.grad is not None)
+                # print('Max gradient:', max_grad)
+                optimizer_g_backbone.step()
+                
+                # g_aux
+                output_g_aux = g_aux(features.detach())
+                loss_g_aux = criterion_l(output_g_aux, labels)
+                loss_g_aux.backward()
+                optimizer_g_aux.step()
+
+                # p_head
+                output_l_head = l_head(features.detach())
+                loss_l_head = criterion_l(output_l_head, labels)
+                loss_l_head.backward()
+                optimizer_l_head.step()
+
+                loss = loss_g_backbone + loss_g_aux + loss_l_head
+                batch_loss.append(loss.item())
+
+            epoch_loss.append(sum(batch_loss)/len(batch_loss))
+        return net.state_dict(), g_aux, g_head, l_head, sum(epoch_loss) / len(epoch_loss)
+    
     def update_weights_fedrod(self, net, g_head, g_aux, l_head, epoch, mu=1, lr=None):
         net.train()
         # train and update

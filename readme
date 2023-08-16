@@ -1,3 +1,6 @@
-main_FL.py是global longtail 。main_global.py是global balanced
-main_normweight.py: 计算normweight并进行可视化
-main_normweight_gradient_instance.py: 计算实时梯度并可视化
+global model training:
+nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 2 > fedrod_repeat1.log 2>&1 &
+
+
+personalized model training:
+nohup python load_and_infer.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 0 > load_and_infer.log 2>&1 &
