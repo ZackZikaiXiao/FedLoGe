@@ -129,7 +129,9 @@ class ResNet(nn.Module):
         self.layer4 = self._make_layer(block, 512, num_blocks[3], stride=2)
         #self.avgpool = nn.AvgPool2d(7, stride=1)
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
+        self.projection = nn.Linear(512*block.expansion, 512*block.expansion)
         self.linear = nn.Linear(512*block.expansion, num_classes)
+        
 
     def _make_layer(self, block, planes, num_blocks, stride):
         strides = [stride] + [1]*(num_blocks-1)
@@ -152,6 +154,8 @@ class ResNet(nn.Module):
         out = self.avgpool(out)
         out = out.view(out.size(0), -1)
         #print(out.size())
+        # out = self.projection(out)      ## projection layer
+        # out = out / out.norm(dim=1, keepdim=True)   # 形成etf的”相同norm“
         x1 = self.linear(out)
         if  latent_output == False:
             output = x1

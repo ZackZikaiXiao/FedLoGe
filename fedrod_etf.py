@@ -1,6 +1,7 @@
 # python version 3.7.1
 # -*- coding: utf-8 -*-
-
+# 把etf移植过来来，包括etf classifier和dot regression loss
+# projection layer 一会也移植过来
 import os
 import copy
 import numpy as np
@@ -11,87 +12,28 @@ import pdb
 import torch.nn as nn
 from tqdm import tqdm
 from options import args_parser, args_parser_cifar10
-from util.update_baseline import LocalUpdate, globaltest, localtest, globaltest_classmean
+from util.update_baseline import *
 from util.fedavg import *
 # from util.util import add_noise
 from util.dataset import *
 from model.build_model import build_model
 from util.dispatch import *
 from util.losses import *
-from util.etf_methods import ETF_Classifier
+from util.etf_methods import *
 
 np.set_printoptions(threshold=np.inf)
 
 load_switch = False  # True / False
 save_switch = False # True / False
-cls_switch = "dropout_ETF" # ETF / sparfix / dropout_ETF / w_dropout_ETF
-pretrain_cls = False
 dataset_switch = 'cifar100' # cifar10 / cifar100
 aggregation_switch = 'fedavg' # fedavg / class_wise
 global_test_head = 'g_head'  # g_aux / g_head
 internal_frozen = False  # True / False
-loss_switch = "None" # focous_loss / any others
 
-class dropout_ETF(nn.Module):
-    def __init__(self, in_features, out_features, dropout_rate):
-        super(dropout_ETF, self).__init__()
-        self.linear = nn.Linear(in_features, out_features)
-        etf = ETF_Classifier(in_features, out_features) 
-        self.linear.weight.data = etf.ori_M.to(args.device)
-        self.linear.weight.data = self.linear.weight.data.t()
-        self.dropout_rate = dropout_rate
-        self.mask = self.get_dropout_mask((1, in_features), dropout_rate)
-
-    def forward(self, x):
-        if self.training:  # apply dropout only during training
-            x = x * self.mask  # Change matrix multiplication to element-wise multiplication
-        x = self.linear(x)
-        return x
-    
-    def reassign(self):
-        with torch.no_grad():
-            self.mask = self.get_dropout_mask((1, self.linear.in_features), self.dropout_rate)
-
-    def get_dropout_mask(self, shape, dropout_rate):
-        # save current RNG state
-        rng_state = torch.random.get_rng_state()
-        # generate dropout mask
-        mask = (torch.rand(shape) > dropout_rate).float().to(args.device)
-        # restore RNG state
-        torch.random.set_rng_state(rng_state)
-        return mask
+etf_layer = True
+loss_switch = "dot_reg_loss" # focous_loss / dot_reg_loss / any others
 
 
-class w_dropout_ETF(nn.Module):
-    def __init__(self, in_features, out_features, dropout_rate):
-        super(w_dropout_ETF, self).__init__()
-        self.linear = nn.Linear(in_features, out_features)
-        etf = ETF_Classifier(in_features, out_features) 
-        self.linear.weight.data = etf.ori_M.to(args.device)
-        self.linear.weight.data = self.linear.weight.data.t()
-        self.dropout_rate = dropout_rate
-        self.mask = self.get_dropout_mask((out_features, in_features), dropout_rate)
-
-    def forward(self, x):
-        if self.training:  # apply dropout only during training
-            weight = self.linear.weight * self.mask  # Apply mask to the weight
-        else:
-            weight = self.linear.weight
-        return F.linear(x, weight, self.linear.bias)  # Use F.linear to apply the modified weight
-    
-    def reassign(self):
-        with torch.no_grad():
-            self.mask = self.get_dropout_mask((self.linear.out_features, self.linear.in_features), self.dropout_rate)
-
-    def get_dropout_mask(self, shape, dropout_rate):
-        # save current RNG state
-        rng_state = torch.random.get_rng_state()
-        # generate dropout mask
-        mask = (torch.rand(shape) > dropout_rate).float().to(args.device)
-        # restore RNG state
-        torch.random.set_rng_state(rng_state)
-        return mask
-    
 def get_acc_file_path(args):
 
     rootpath = './temp/'
@@ -170,67 +112,25 @@ if __name__ == '__main__':
 
     in_features = model.linear.in_features
     out_features = model.linear.out_features
-
-    if cls_switch == "ETF":
-        # 初始化ETF分类器 
-        etf = ETF_Classifier(in_features, out_features) 
-        # 新建线性层,权重使用ETF分类器的ori_M
-        g_head = nn.Linear(in_features, out_features).to(args.device) 
-        g_head.weight.data = etf.ori_M.to(args.device)
-        g_head.weight.data = g_head.weight.data.t()
-
-    elif cls_switch == "dropout_ETF":    
-        g_head = dropout_ETF(in_features, out_features, dropout_rate=0.5).to(args.device)
-    elif cls_switch == "w_dropout_ETF":    
-        g_head = w_dropout_ETF(in_features, out_features, dropout_rate=0.5).to(args.device)
-
-    elif cls_switch == "sparfix":
-        g_head = nn.Linear(in_features, out_features).to(args.device)   # res34是512
-
-        # kaiming初始化
-        # torch.nn.init.kaiming_uniform_(g_head.weight, a=math.sqrt(5))
-        # torch.nn.init.kaiming_normal_(g_head.weight)
-        # # torch.nn.init.kaiming_normal_(g_head.bias)
-        # # xavier初始化
-        # torch.nn.init.xavier_uniform_(g_head.weight)
-        # # torch.nn.init.xavier_uniform_(g_head.bias)
-        # # 设置为0
-        # torch.nn.init.constant_(g_head.weight, 0)
-        # torch.nn.init.constant_(g_head.bias, 0)
-        # # 设置为0.05
-        # torch.nn.init.constant_(g_head.weight, 0.05)
-        # torch.nn.init.constant_(g_head.bias, 0.5)
-        # # 设置为0.1
-        # torch.nn.init.constant_(g_head.weight, 0.1)
-        # torch.nn.init.constant_(g_head.bias, 0.1)
-        # # 均匀分布
-        # torch.nn.init.uniform_(g_head.weight, a=0, b=1)
-        # torch.nn.init.uniform_(g_head.bias, a=0, b=1)
-        # # 高斯分布
-        # torch.nn.init.normal_(g_head.weight, mean=0.0, std=0.5)
-        # torch.nn.init.normal_(g_head.bias, mean=0.0, std=1.0)
-        # # 正交分布
-        # torch.nn.init.orthogonal_(g_head.weight, gain=1)
-        # # torch.nn.init.orthogonal_(g_head.bias, gain=1)
-        # # 稀疏初始化
-        nn.init.sparse_(g_head.weight, sparsity=0.6)   # 在任意col上，10%类别为0
-
-
-
-
-    if pretrain_cls == True:
-        g_head.load_state_dict({k.replace('linear.', ''): v for k, v in torch.load("/home/zikaixiao/zikai/aapfl/pfed_lastest/demo.pth").items() if 'linear' in k})
+    # g_head = nn.Linear(in_features, out_features).to(args.device)   # res34是512
+    if etf_layer == True:
+        g_head = ETF_Classifier(feat_in = in_features, num_classes = out_features)
+        # g_head = g_head.to(args.device)
+        g_head.ori_M = g_head.ori_M.to(args.device)
+    else:
+        g_head = nn.Linear(in_features, out_features).to(args.device)
+        nn.init.sparse_(g_head.weight, sparsity=0.6)
 
 
     g_aux = nn.Linear(in_features, out_features).to(args.device)
-    
+
     l_heads = []
     for i in range(args.num_users):
         l_heads.append(nn.Linear(in_features, out_features).to(args.device))
 
     if load_switch == True:
             rnd = 499
-            load_dir = "./output_cifar100_nofix/"
+            load_dir = "./output_aggre/"
             model = torch.load(load_dir + "model_" + str(rnd) + ".pth").to(args.device)
             g_head = torch.load(load_dir + "g_head_" + str(rnd) + ".pth").to(args.device)
             g_aux = torch.load(load_dir + "g_aux_" + str(rnd) + ".pth").to(args.device)
@@ -239,24 +139,21 @@ if __name__ == '__main__':
             w_glob = model.state_dict()  # return a dictionary containing a whole state of the module
             w_locals = [copy.deepcopy(w_glob) for i in range(args.num_users)]
     # acc_s2, global_3shot_acc = globaltest(copy.deepcopy(model).to(args.device), g_head, dataset_test, args, dataset_class = datasetObj)
-    # globaltest_classmean
-    # acc_s2, global_3shot_acc = globaltest_classmean(copy.deepcopy(model).to(args.device), copy.deepcopy(g_head).to(args.device), dataset_test, args, dataset_class = datasetObj)
+    # if loss_switch == "dot_reg_loss":
+
     # add fl training
     for rnd in tqdm(range(args.rounds)):
-        if rnd % 10 == 0:
-            g_head.reassign()
         g_auxs = []
         # w_locals, loss_locals = [], []
         idxs_users = np.random.choice(range(args.num_users), m, replace=False, p=prob)
 
         ## local training       
-        g_head.train()  # 开启dropout
         for client_id in range(args.num_users):  # training over the subset, in fedper, all clients train
             model.load_state_dict(copy.deepcopy(w_locals[client_id]))
             local = LocalUpdate(args=args, dataset=dataset_train, idxs=dict_users[client_id])
-            w_locals[client_id], g_aux_temp, l_heads[client_id], loss_local = local.update_weights_gaux(net=copy.deepcopy(model).to(args.device), g_head = copy.deepcopy(g_head).to(args.device), g_aux = copy.deepcopy(g_aux).to(args.device), l_head = l_heads[client_id], epoch=args.local_ep, loss_switch = loss_switch)
+            w_locals[client_id], g_aux_temp, l_heads[client_id], loss_local = local.update_weights_etf(net=copy.deepcopy(model).to(args.device), g_head = copy.deepcopy(g_head).to(args.device), g_aux = copy.deepcopy(g_aux).to(args.device), l_head = l_heads[client_id], epoch=args.local_ep, loss_switch = loss_switch)
             g_auxs.append(g_aux_temp)
-        g_head.eval()  # 关闭dropout
+
         ## aggregation 
         dict_len = [len(dict_users[idx]) for idx in idxs_users]
         w_glob = FedAvg_noniid(w_locals, dict_len)
@@ -275,9 +172,9 @@ if __name__ == '__main__':
         model.load_state_dict(copy.deepcopy(w_glob))
 
         if global_test_head == 'g_head':
-            acc_s2, global_3shot_acc = globaltest(copy.deepcopy(model).to(args.device), copy.deepcopy(g_head).to(args.device), dataset_test, args, dataset_class = datasetObj)
+            acc_s2, global_3shot_acc = globaltest_etf(copy.deepcopy(model).to(args.device), copy.deepcopy(g_head).to(args.device), dataset_test, args, dataset_class = datasetObj)
         elif global_test_head == 'g_aux':
-            acc_s2, global_3shot_acc = globaltest(copy.deepcopy(model).to(args.device), copy.deepcopy(g_aux).to(args.device), dataset_test, args, dataset_class = datasetObj)
+            acc_s2, global_3shot_acc = globaltest_etf(copy.deepcopy(model).to(args.device), copy.deepcopy(g_aux).to(args.device), dataset_test, args, dataset_class = datasetObj)
 
 
         # local test 
@@ -288,7 +185,7 @@ if __name__ == '__main__':
         for i in range(args.num_users):
             model.load_state_dict(copy.deepcopy(w_locals[i]))
             # print('copy sucess')
-            acc_local, f1_macro, f1_weighted, acc_3shot_local = localtest(copy.deepcopy(model).to(args.device), copy.deepcopy(g_aux).to(args.device), copy.deepcopy(l_heads[i]).to(args.device), dataset_test, dataset_class = datasetObj, idxs=dict_localtest[i], user_id = i)
+            acc_local, f1_macro, f1_weighted, acc_3shot_local = localtest_etf(copy.deepcopy(model).to(args.device), copy.deepcopy(g_head).to(args.device), copy.deepcopy(l_heads[i]).to(args.device), dataset_test, dataset_class = datasetObj, idxs=dict_localtest[i], user_id = i)
             # print('local test success')
             acc_list.append(acc_local)
             f1_macro_list.append(f1_macro)

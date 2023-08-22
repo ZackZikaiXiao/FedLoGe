@@ -1,6 +1,108 @@
 global model training:
 nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 2 > fedrod_repeat1.log 2>&1 &
-
+只把classifier改成了etf
+nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 3 > fedrod_etf.log 2>&1 &
+2163606
 
 personalized model training:
 nohup python load_and_infer.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 0 > load_and_infer.log 2>&1 &
+
+
+测试etf：
+nohup python fedrod_etf.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 0 > etf.log 2>&1 &
+2113115
+
+features后接g_aux
+nohup python fedrod_etf.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 1 > etf_1.log 2>&1 &
+2113269
+
+加了个projection layer
+nohup python fedrod_etf.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 2 > etf_projec_layer.log 2>&1 &
+2113396
+
+
+尝试一下sparse和其他的init结合
+nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 0 > kaiming_uniform_spar.log 2>&1 &
+2212174
+nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 3 > kaiming_norm_spar.log 2>&1 &
+2212246
+nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 0 > xavier_spar.log 2>&1 &
+2212325
+nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 1 > uniform_spar.log 2>&1 &
+2212423
+nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 2 > gassian_spar.log 2>&1 &
+2212513
+nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 2 > orthogonal_spar.log 2>&1 &
+2212624
+
+nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 4 > kaiming_uniform.log 2>&1 &
+2214640
+nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 4 > kaiming_norm.log 2>&1 &
+2213604
+nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 5 > xavier.log 2>&1 &
+2213494
+nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 5 > uniform.log 2>&1 &
+2213371
+nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 6 > gassian.log 2>&1 &
+2213255
+nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 6 > orthogonal.log 2>&1 &
+2213147
+
+nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 7 > default_nospar.log 2>&1 &
+2213818
+nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 7 > default_spar.log 2>&1 &
+2214052
+
+nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 3 > etf_spar.log 2>&1 &
+2243334
+
+
+目前来看etf spar效果竟然是最好的。
+下面要将features也约束到etf，首先加一个norm，然后来做内积方差极小化。
+nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 4 > etf_spar_featNorm.log 2>&1 &
+2354658
+学的太慢了，lr改成了0.3，epoch=1000
+nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 5 > etf_spar_featNorm_1.log 2>&1 &
+2383230
+怀疑instance level的norm约束不稳定，我在前面加一个projection layer把
+nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 1 > etf_spar_featNorm_projection.log 2>&1 &
+2386528
+直接fintune吧
+nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 3 > etf_spar_featNorm_finetune.log 2>&1 &
+2378799
+# nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 0 > kaiming_spar.log 2>&1 &
+# nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 0 > kaiming_spar.log 2>&1 &
+# nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 0 > kaiming_spar.log 2>&1 &
+
+
+nohup python main.py --alpha_dirichlet 0.5 --IF 1 --beta 0 --gpu 1 > main.log 2>&1 &
+2279153
+
+
+预训练了一个cls
+nohup python centra_demo.py > demo.log 2>&1 &
+2325366
+用这个fixed cls去train from scratch for backbone
+nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 0 > pretrain_cls.log 2>&1 &
+2434027
+性能只有0.38左右，看来cls的初始化确实很重要
+
+dropout_ETF
+每个minibatch随机一批节点
+nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 0 > dropout_ETF_batch.log 2>&1 &
+效果不好，直接删了
+
+每个round随机一批activation
+nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 4 > dropout_ETF_round.log 2>&1 &
+2586465
+每10个round随机一批activation
+nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 3 > dropout_ETF_10round.log 2>&1 &
+2586578
+
+每个round随机一批cls权重
+nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 5 > w_dropout_ETF_round.log 2>&1 &
+2588472
+nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 6 > w_dropout_ETF_10round.log 2>&1 &
+2588984
+
+节点越少，positve/negtive越大?

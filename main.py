@@ -169,6 +169,8 @@ if __name__ == '__main__':
         # avg_f1_macro = Weighted_avg_f1(f1_macro_list,dict_len=dict_len)
         # avg_f1_weighted = Weighted_avg_f1(f1_weighted_list,dict_len)
         netglob.load_state_dict(copy.deepcopy(w_glob))
+        load_dir = "./output_main_cifar100/"
+        torch.save(netglob, load_dir + "model_" + str(rnd) + ".pth")
         # acc_s2, global_3shot_acc = globaltest(copy.deepcopy(netglob).to(args.device), dataset_test, dataset_class = datasetObj)
         print("norm", torch.norm(netglob.linear.weight, p=2, dim=1))
 
