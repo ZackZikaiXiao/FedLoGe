@@ -24,7 +24,7 @@ np.set_printoptions(threshold=np.inf)
 
 load_switch = False  # True / False
 save_switch = False # True / False
-cls_switch = "dropout_ETF" # ETF / sparfix / dropout_ETF / w_dropout_ETF
+cls_switch = "w_dropout_ETF" # ETF / sparfix / dropout_ETF / w_dropout_ETF
 pretrain_cls = False
 dataset_switch = 'cifar100' # cifar10 / cifar100
 aggregation_switch = 'fedavg' # fedavg / class_wise
@@ -40,17 +40,17 @@ class dropout_ETF(nn.Module):
         self.linear.weight.data = etf.ori_M.to(args.device)
         self.linear.weight.data = self.linear.weight.data.t()
         self.dropout_rate = dropout_rate
-        self.mask = self.get_dropout_mask((1, in_features), dropout_rate)
+        self.mask = self.get_dropout_mask((in_features, in_features), dropout_rate)
 
     def forward(self, x):
         if self.training:  # apply dropout only during training
-            x = x * self.mask  # Change matrix multiplication to element-wise multiplication
+            x = x * self.mask[0:x.shape[0], :]  # Change matrix multiplication to element-wise multiplication
         x = self.linear(x)
         return x
     
     def reassign(self):
         with torch.no_grad():
-            self.mask = self.get_dropout_mask((1, self.linear.in_features), self.dropout_rate)
+            self.mask = self.get_dropout_mask((in_features, self.linear.in_features), self.dropout_rate)
 
     def get_dropout_mask(self, shape, dropout_rate):
         # save current RNG state
@@ -61,6 +61,35 @@ class dropout_ETF(nn.Module):
         torch.random.set_rng_state(rng_state)
         return mask
 
+
+# class dropout_ETF(nn.Module):
+#     def __init__(self, in_features, out_features, dropout_rate):
+#         super(dropout_ETF, self).__init__()
+#         self.linear = nn.Linear(in_features, out_features)
+#         etf = ETF_Classifier(in_features, out_features) 
+#         self.linear.weight.data = etf.ori_M.to(args.device)
+#         self.linear.weight.data = self.linear.weight.data.t()
+#         self.dropout_rate = dropout_rate
+#         self.mask = self.get_dropout_mask((1, in_features), dropout_rate)
+
+#     def forward(self, x):
+#         if self.training:  # apply dropout only during training
+#             x = x * self.mask  # Change matrix multiplication to element-wise multiplication
+#         x = self.linear(x)
+#         return x
+    
+#     def reassign(self):
+#         with torch.no_grad():
+#             self.mask = self.get_dropout_mask((1, self.linear.in_features), self.dropout_rate)
+
+#     def get_dropout_mask(self, shape, dropout_rate):
+#         # save current RNG state
+#         rng_state = torch.random.get_rng_state()
+#         # generate dropout mask
+#         mask = (torch.rand(shape) > dropout_rate).float().to(args.device)
+#         # restore RNG state
+#         torch.random.set_rng_state(rng_state)
+#         return mask
 
 class w_dropout_ETF(nn.Module):
     def __init__(self, in_features, out_features, dropout_rate):
@@ -230,20 +259,22 @@ if __name__ == '__main__':
 
     if load_switch == True:
             rnd = 499
-            load_dir = "./output_cifar100_nofix/"
+            load_dir = "./output1/"
             model = torch.load(load_dir + "model_" + str(rnd) + ".pth").to(args.device)
             g_head = torch.load(load_dir + "g_head_" + str(rnd) + ".pth").to(args.device)
+            # g_head_t = torch.load(load_dir + "g_head_" + str(rnd) + ".pth").to(args.device)
+            # g_head.linear = g_head_t
             g_aux = torch.load(load_dir + "g_aux_" + str(rnd) + ".pth").to(args.device)
             for i in range(args.num_users):
                 l_heads[i] = torch.load(load_dir + "l_head_" + str(i) + ".pth").to(args.device)
             w_glob = model.state_dict()  # return a dictionary containing a whole state of the module
             w_locals = [copy.deepcopy(w_glob) for i in range(args.num_users)]
-    # acc_s2, global_3shot_acc = globaltest(copy.deepcopy(model).to(args.device), g_head, dataset_test, args, dataset_class = datasetObj)
+    # acc_s2, global_3shot_acc = globaltest_classmean(copy.deepcopy(model).to(args.device), g_head, dataset_test, args, dataset_class = datasetObj)
     # globaltest_classmean
     # acc_s2, global_3shot_acc = globaltest_classmean(copy.deepcopy(model).to(args.device), copy.deepcopy(g_head).to(args.device), dataset_test, args, dataset_class = datasetObj)
     # add fl training
     for rnd in tqdm(range(args.rounds)):
-        if rnd % 10 == 0:
+        if rnd % 1 == 0:
             g_head.reassign()
         g_auxs = []
         # w_locals, loss_locals = [], []

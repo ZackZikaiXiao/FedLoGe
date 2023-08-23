@@ -92,17 +92,37 @@ dropout_ETF
 nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 0 > dropout_ETF_batch.log 2>&1 &
 效果不好，直接删了
 
-每个round随机一批activation
+每个round随机一批activation，每个sample的activation mask一样
 nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 4 > dropout_ETF_round.log 2>&1 &
 2586465
-每10个round随机一批activation
+每10个round随机一批activation，每个sample的activation mask一样
 nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 3 > dropout_ETF_10round.log 2>&1 &
 2586578
+
+
+每个round随机一批activation，每个sample的activation mask一样
+nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 4 > dropout_ETF_round.log 2>&1 &
+2586465
+每10个round随机一批activation，每个sample的activation mask一样
+nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 3 > dropout_ETF_10round.log 2>&1 &
+2586578
+
+每个round随机一批activation，每个sample的activation mask不一样
+nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 6 > official_dropout_ETF_round.log 2>&1 &
+2594732
+每10个round随机一批activation，每个sample的activation mask不一样
+nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 7 > official_dropout_ETF_10round.log 2>&1 &
+2594842
 
 每个round随机一批cls权重
 nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 5 > w_dropout_ETF_round.log 2>&1 &
 2588472
 nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 6 > w_dropout_ETF_10round.log 2>&1 &
 2588984
+
+dropout这些统统效果不好。
+我先spar预训练，再用pick up吧：
+nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 3 > spar_pick_up_1round.log 2>&1 &
+2688009
 
 节点越少，positve/negtive越大?
