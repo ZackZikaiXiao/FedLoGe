@@ -1850,7 +1850,7 @@ def globaltest_feat_collapse(net, g_head, test_dataset, args, dataset_class=None
             zero_pos = zero_positions[label_item]
             
             # 计算方差和均值
-            diff = features[i] - class_mean
+            diff = torch.abs(features[i] - class_mean)
             diff_zero_pos = diff[zero_pos]
             diff_non_zero_pos = diff[~zero_pos]
             

@@ -23,3 +23,5 @@ fedrod_weightdecay.log
 /output_aggre
 /output_main_cifar100
 /output_nospar
+/demo.pth
+/demo.log
