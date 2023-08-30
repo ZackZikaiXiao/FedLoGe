@@ -152,6 +152,22 @@ def FedAvg_noniid(w, dict_len):
         w_avg[k] = w_avg[k] / sum(dict_len)
     return w_avg
 
+def FedAvg_noniid_class_means(class_means_for_agg, dict_len):
+    # 初始化一个字典，作为加权平均的结果
+    aggregated_means = copy.deepcopy(class_means_for_agg[0])
+
+    # 对每个类别的特征向量进行加权平均
+    for k in aggregated_means.keys():
+        aggregated_means[k] = aggregated_means[k] * dict_len[0]
+        for i in range(1, len(class_means_for_agg)):
+            if class_means_for_agg[i] is not None:
+                aggregated_means[k] += class_means_for_agg[i][k] * dict_len[i]
+
+        # 计算加权平均值
+        aggregated_means[k] = aggregated_means[k] / sum(dict_len)
+
+    return aggregated_means
+
 
 
 def FedAvg_Rod(backbone_w_locals, linear_w_locals, dict_len):

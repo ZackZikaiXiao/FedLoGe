@@ -11,7 +11,7 @@ import pdb
 import torch.nn as nn
 from tqdm import tqdm
 from options import args_parser, args_parser_cifar10
-from util.update_baseline import LocalUpdate, globaltest, localtest, globaltest_classmean, globaltest_calibra, globaltest_feat_collapse
+from util.update_baseline import LocalUpdate, globaltest, localtest, globaltest_classmean, globaltest_calibra
 from util.fedavg import *
 # from util.util import add_noise
 from util.dataset import *
@@ -235,7 +235,7 @@ if __name__ == '__main__':
         g_head = nn.Linear(in_features, out_features).to(args.device) 
         g_head.weight.data = etf.ori_M.to(args.device)
         g_head.weight.data = g_head.weight.data.t()
-        # nn.init.sparse_(g_head.weight, sparsity=0.5)
+        nn.init.sparse_(g_head.weight, sparsity=0.6)
 
     elif cls_switch == "dropout_ETF":    
         g_head = dropout_ETF(in_features, out_features, dropout_rate=0.5).to(args.device)
@@ -292,9 +292,15 @@ if __name__ == '__main__':
     for i in range(args.num_users):
         l_heads.append(nn.Linear(in_features, out_features).to(args.device))
 
+    class_means = {}
+    # 使用循环为字典添加索引和值
+    for idx in range(args.num_classes):
+        class_means[idx] = None  # 这里你可以设置初始值，如果有的话
+
+
     if load_switch == True:
-            rnd = 427
-            load_dir = "./output_nospar/"
+            rnd = 499
+            load_dir = "./output1/"
             model = torch.load(load_dir + "model_" + str(rnd) + ".pth").to(args.device)
             g_head = torch.load(load_dir + "g_head_" + str(rnd) + ".pth").to(args.device)
             # g_head_t = torch.load(load_dir + "g_head_" + str(rnd) + ".pth").to(args.device)
@@ -304,14 +310,16 @@ if __name__ == '__main__':
                 l_heads[i] = torch.load(load_dir + "l_head_" + str(i) + ".pth").to(args.device)
             w_glob = model.state_dict()  # return a dictionary containing a whole state of the module
             w_locals = [copy.deepcopy(w_glob) for i in range(args.num_users)]
-    acc_s2, global_3shot_acc, g_head = globaltest_feat_collapse(copy.deepcopy(model).to(args.device), g_head, dataset_test, args, dataset_class = datasetObj)
+    # acc_s2, global_3shot_acc = globaltest_classmean(copy.deepcopy(model).to(args.device), g_head, dataset_test, args, dataset_class = datasetObj)
     # globaltest_classmean
     # acc_s2, global_3shot_acc = globaltest_calibra(copy.deepcopy(model).to(args.device), copy.deepcopy(g_head).to(args.device), copy.deepcopy(g_aux).to(args.device), dataset_test, args, dataset_class = datasetObj)
     # add fl training
+    
     for rnd in tqdm(range(args.rounds)):
         # if rnd % 1 == 0:
         #     g_head.reassign()
         g_auxs = []
+        class_means_for_agg = []
         # w_locals, loss_locals = [], []
         idxs_users = np.random.choice(range(args.num_users), m, replace=False, p=prob)
 
@@ -320,12 +328,14 @@ if __name__ == '__main__':
         for client_id in range(args.num_users):  # training over the subset, in fedper, all clients train
             model.load_state_dict(copy.deepcopy(w_locals[client_id]))
             local = LocalUpdate(args=args, dataset=dataset_train, idxs=dict_users[client_id])
-            w_locals[client_id], g_aux_temp, l_heads[client_id], loss_local = local.update_weights_gaux(net=copy.deepcopy(model).to(args.device), g_head = copy.deepcopy(g_head).to(args.device), g_aux = copy.deepcopy(g_aux).to(args.device), l_head = l_heads[client_id], epoch=args.local_ep, loss_switch = loss_switch)
+            w_locals[client_id], g_aux_temp, l_heads[client_id], loss_local, class_means_tmp= local.update_weights_class_mean(net=copy.deepcopy(model).to(args.device), g_head = copy.deepcopy(g_head).to(args.device), g_aux = copy.deepcopy(g_aux).to(args.device), l_head = l_heads[client_id], epoch=args.local_ep, class_means=class_means, loss_switch = loss_switch)
             g_auxs.append(g_aux_temp)
+            class_means_for_agg.append(class_means_tmp)
         g_head.eval()  # 关闭dropout
         ## aggregation 
         dict_len = [len(dict_users[idx]) for idx in idxs_users]
         w_glob = FedAvg_noniid(w_locals, dict_len)
+        class_means = FedAvg_noniid_class_means(class_means_for_agg, dict_len)
 
         if aggregation_switch == 'fedavg':
             g_aux = FedAvg_noniid_classifier(g_auxs, dict_len)
@@ -362,7 +372,7 @@ if __name__ == '__main__':
             acc_3shot_local_list.append(acc_3shot_local) ###################
 
         if save_switch == True:
-            load_dir = "./output_nospar/"
+            load_dir = "./output_cifar10/"
             torch.save(model, load_dir + "model_" + str(rnd) + ".pth")
             torch.save(g_head, load_dir + "g_head_" + str(rnd) + ".pth")
             torch.save(g_aux, load_dir + "g_aux_" + str(rnd) + ".pth")

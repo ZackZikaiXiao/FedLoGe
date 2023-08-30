@@ -73,7 +73,7 @@ import matplotlib.pyplot as plt
 keyword = "global test acc"
 # fpath = "/home/zikaixiao/zikai/aaFL/fl_framework_lss/前向后向都没有weight_if100.log"
 # fpath = "/home/zikaixiao/zikai/aaFL/fl_framework_lss/weightmask[0,6]_if100.log"
-fpath = "/home/zikaixiao/zikai/aapfl/dct_augmentation/fedbabu_mixup_official_fixclassifier.log"
+fpath = "/home/zikaixiao/zikai/aapfl/pfed_lastest/cifar10_nospar_2.log"
 # fpath = "/home/zikaixiao/zikai/aaFL/fl_framework_lss/eql参数8.log"
 context = []
 # fpath = os.path.join(basefolder,file)

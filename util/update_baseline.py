@@ -257,6 +257,61 @@ class LocalUpdate(object):
 
         criterion_l = nn.CrossEntropyLoss()
         criterion_g = nn.CrossEntropyLoss()
+
+        def adaptive_angle_loss(features, labels):
+            similarity_matrix = F.cosine_similarity(features.unsqueeze(1), features.unsqueeze(0), dim=-1)
+            diff_mask = labels.unsqueeze(1) != labels.unsqueeze(0)
+            same_mask = labels.unsqueeze(1) == labels.unsqueeze(0)
+            loss_diff = (similarity_matrix * diff_mask.float()).sum() / diff_mask.float().sum()
+            loss_same = ((1 - similarity_matrix) * same_mask.float()).sum() / same_mask.float().sum()
+            return loss_diff + loss_same
+
+        def normalized_feature_loss(features):
+            # 计算特征向量的范数
+            norms = torch.norm(features, dim=1)
+            # 计算范数的均值
+            mean_norm = torch.mean(norms)
+            # 计算范数与均值的差的平方，然后求和以得到方差
+            variance = torch.mean((norms - mean_norm) ** 2)
+            # 返回范数的方差
+            return variance
+
+        def get_mma_loss(features, labels):
+            # computing cosine similarity: dot product of normalized weight vectors
+            weight_ = F.normalize(features, p=2, dim=1)
+            cosine = torch.matmul(weight_, weight_.t())  
+            same_mask = labels.unsqueeze(1) == labels.unsqueeze(0)   
+
+            # make sure that the diagnonal elements cannot be selected
+            cosine = cosine - 2. * torch.diag(torch.diag(cosine))  
+            cosine[same_mask] = -1
+
+            # maxmize the minimum angle
+            loss = -torch.acos(cosine.max(dim=1)[0].clamp(-0.99999, 0.99999)).mean()
+
+            return loss
+
+        
+        def balanced_softmax_loss(labels, logits, sample_per_class=None):
+            """Compute the Balanced Softmax Loss between `logits` and the ground truth `labels`.
+            Args:
+            labels: A int tensor of size [batch].
+            logits: A float tensor of size [batch, no_of_classes].
+            sample_per_class: A int tensor of size [no of classes].
+            reduction: string. One of "none", "mean", "sum"
+            Returns:
+            loss: A float tensor. Balanced Softmax Loss.
+            """
+            if sample_per_class is None:
+                sample_per_class = [500, 477, 455, 434, 415, 396, 378, 361, 344, 328, 314, 299, 286, 273, 260, 248, 237, 226, 216, 206, 197, 188, 179, 171, 163, 156, 149, 142, 135, 129, 123, 118, 112, 107, 102, 98, 93, 89, 85, 81, 77, 74, 70, 67, 64, 61, 58, 56, 53, 51, 48, 46, 44, 42, 40, 38, 36, 35, 33, 32, 30, 29, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 15, 14, 13, 13, 12, 12, 11, 11, 10, 10, 9, 9, 8, 8, 7, 7, 7, 6, 6, 6, 6, 5, 5, 5, 5]
+            sample_per_class = torch.tensor(sample_per_class)
+            spc = sample_per_class.type_as(logits)
+            spc = spc.unsqueeze(0).expand(logits.shape[0], -1)
+            logits = logits + spc.log()
+            loss = F.cross_entropy(input=logits, target=labels, reduction='mean')
+            return loss
+
+        
         if loss_switch == "focus_loss":
             criterion_l = focus_loss(num_classes=100)
 
@@ -276,8 +331,17 @@ class LocalUpdate(object):
 
                 # backbone
                 features = net(images, latent_output=True)
+
+                # mma_loss = get_mma_loss(features, labels)
+
+
                 output_g_backbone = g_head(features)
+            
+
+                
                 loss_g_backbone = criterion_g(output_g_backbone, labels)
+                # dist_est = torch.pow(torch.norm(g_aux.weight, p=2, dim=1), 3)
+                # loss_g_backbone = balanced_softmax_loss(labels, output_g_backbone, sample_per_class = dist_est)
                 loss_g_backbone.backward()
                 # max_grad = max(p.grad.data.abs().max() for p in net.parameters() if p.grad is not None)
                 # print('Max gradient:', max_grad)
@@ -302,6 +366,223 @@ class LocalUpdate(object):
         return net.state_dict(), g_aux, l_head, sum(epoch_loss) / len(epoch_loss)
 
 
+
+
+
+    def update_weights_class_mean(self, net, g_head, g_aux, l_head, epoch, class_means, mu=1, lr=None, loss_switch=None):
+        net.train()
+        # train and update
+        optimizer_g_backbone = torch.optim.SGD(list(net.parameters()), lr=self.args.lr, momentum=self.args.momentum)
+        optimizer_g_aux = torch.optim.SGD(g_aux.parameters(), lr=self.args.lr, momentum=self.args.momentum)
+        # optimizer_g_aux = torch.optim.SGD([
+        #                     {'params': g_aux.weight, 'weight_decay': 1e-1},  # 对权重使用weight_decay
+        #                     {'params': g_aux.bias, 'weight_decay': 0}  # 对偏置不使用weight_decay
+        #                 ], lr=self.args.lr, momentum=self.args.momentum)
+        optimizer_l_head = torch.optim.SGD(l_head.parameters(), lr=self.args.lr, momentum=self.args.momentum)
+        # 定义优化器
+        # optimizer_l_head = torch.optim.SGD([
+        #                     {'params': l_head.weight, 'weight_decay': 1e-1},  # 对权重使用weight_decay
+        #                     {'params': l_head.bias, 'weight_decay': 0}  # 对偏置不使用weight_decay
+        #                 ], lr=self.args.lr, momentum=self.args.momentum)
+
+        criterion_l = nn.CrossEntropyLoss()
+        criterion_g = nn.CrossEntropyLoss()
+
+        def inner_min(features, labels, class_means):
+            valid_class_means = [class_mean for class_mean in class_means.values() if class_mean is not None]
+            if valid_class_means:
+                global_mean = torch.stack(valid_class_means).mean(dim=0)
+            del valid_class_means
+            # output: global_mean
+            # 归一化之后的
+            class_means = {class_idx: (class_mean - global_mean) if class_mean is not None else None for class_idx, class_mean in class_means.items()}
+            features = features - global_mean
+
+            loss = 0
+            for i in range(len(features)):
+                loss += F.cosine_similarity(features[i].unsqueeze(0), class_means[labels[i].item()].unsqueeze(0))
+            return loss
+
+
+        def inter_max(features, labels, class_means):
+            valid_class_means = [class_mean for class_mean in class_means.values() if class_mean is not None]
+            if valid_class_means:
+                global_mean = torch.stack(valid_class_means).mean(dim=0)
+            del valid_class_means
+            class_means = {class_idx: (class_mean - global_mean) if class_mean is not None else None for class_idx, class_mean in class_means.items()}
+            features = features - global_mean
+
+            # 1.统计有哪些label 2.看这些label的class mean距离哪个class mean比较大 3.计算features与这个class mean的相似度，最小化这个相似度
+            # 仅选择不为None的class_means
+            filtered_class_means = {k: v for k, v in class_means.items() if v is not None}
+            all_class_means = torch.stack(list(filtered_class_means.values()))
+            # 初始化用于存储每个feature与其"最相似的class mean"相似度的张量
+            max_similarities = torch.zeros(len(features), device=features.device)
+
+
+            for i in range(len(features)):
+                current_label = labels[i].item()
+                current_class_mean = class_means[current_label]
+
+                # 找出除当前class_mean外的所有其他class_mean的索引
+                other_class_mean_indices = [idx for idx, k in enumerate(filtered_class_means.keys()) if k != current_label]
+
+                # 计算当前class_mean与所有其他class_means的相似度
+                similarities = F.cosine_similarity(current_class_mean.unsqueeze(0), all_class_means[other_class_mean_indices], dim=1)
+
+                # 找到最相似的class_mean的相似度和索引
+                max_similarity, max_id = similarities.max(dim=0)
+
+                # 使用原始索引来找出最相似的class_mean
+                most_similar_class_mean = all_class_means[other_class_mean_indices[max_id]]
+                
+                # 计算该feature与这个最相似的class_mean的相似度
+                feature_similarity = F.cosine_similarity(features[i].unsqueeze(0), most_similar_class_mean.unsqueeze(0), dim=1)
+
+                # 存储相似度
+                max_similarities[i] = feature_similarity
+
+            # 最终的损失是所有max_similarities的和
+            total_loss = max_similarities.sum()
+            return total_loss
+
+
+
+        def inter_max_feat_classmean(features, labels, class_means):
+            # 初始化用于存储每个feature与其"最相似的class mean"相似度的张量
+            max_similarities = torch.zeros(len(features), device=features.device)
+
+            # 预处理：去除None值，计算global_mean
+            valid_class_means = [class_mean for class_mean in class_means.values() if class_mean is not None]
+            if valid_class_means:
+                global_mean = torch.stack(valid_class_means).mean(dim=0)
+            del valid_class_means
+
+            # 去全局均值化
+            features = features - global_mean
+            class_means = {class_idx: (class_mean - global_mean) if class_mean is not None else None for class_idx, class_mean in class_means.items()}
+
+            # 仅选择不为None的class_means
+            filtered_class_means = {k: v for k, v in class_means.items() if v is not None}
+            all_class_means = torch.stack(list(filtered_class_means.values()))
+
+            for i in range(len(features)):
+                current_label = labels[i].item()
+
+                # 找出除当前class_mean外的所有其他class_mean的索引
+                other_class_mean_indices = [idx for idx, k in enumerate(filtered_class_means.keys()) if k != current_label]
+
+                # 直接使用features与所有其他的class_means来计算相似度
+                similarities = F.cosine_similarity(features[i].unsqueeze(0), all_class_means[other_class_mean_indices], dim=1)
+
+                # 找到最相似的class_mean的相似度和索引
+                max_similarity, max_id = similarities.max(dim=0)
+
+                # 使用原始索引来找出最相似的class_mean
+                most_similar_class_mean = all_class_means[other_class_mean_indices[max_id]]
+
+                # 计算该feature与这个最相似的class_mean的相似度
+                feature_similarity = F.cosine_similarity(features[i].unsqueeze(0), most_similar_class_mean.unsqueeze(0), dim=1)
+
+                # 存储相似度
+                max_similarities[i] = feature_similarity
+
+            # 最终的损失是所有max_similarities的和
+            total_loss = max_similarities.sum()
+            return total_loss
+
+
+        def balanced_softmax_loss(labels, logits, sample_per_class=None):
+            """Compute the Balanced Softmax Loss between `logits` and the ground truth `labels`.
+            Args:
+            labels: A int tensor of size [batch].
+            logits: A float tensor of size [batch, no_of_classes].
+            sample_per_class: A int tensor of size [no of classes].
+            reduction: string. One of "none", "mean", "sum"
+            Returns:
+            loss: A float tensor. Balanced Softmax Loss.
+            """
+            if sample_per_class is None:
+                sample_per_class = [500, 477, 455, 434, 415, 396, 378, 361, 344, 328, 314, 299, 286, 273, 260, 248, 237, 226, 216, 206, 197, 188, 179, 171, 163, 156, 149, 142, 135, 129, 123, 118, 112, 107, 102, 98, 93, 89, 85, 81, 77, 74, 70, 67, 64, 61, 58, 56, 53, 51, 48, 46, 44, 42, 40, 38, 36, 35, 33, 32, 30, 29, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 15, 14, 13, 13, 12, 12, 11, 11, 10, 10, 9, 9, 8, 8, 7, 7, 7, 6, 6, 6, 6, 5, 5, 5, 5]
+            sample_per_class = torch.tensor(sample_per_class)
+            spc = sample_per_class.type_as(logits)
+            spc = spc.unsqueeze(0).expand(logits.shape[0], -1)
+            logits = logits + spc.log()
+            loss = F.cross_entropy(input=logits, target=labels, reduction='mean')
+            return loss
+
+        
+        if loss_switch == "focus_loss":
+            criterion_l = focus_loss(num_classes=100)
+
+        epoch_loss = []
+        momentum = 0.9  # 可以根据实际情况调整
+        for iter in range(epoch):
+            batch_loss = []
+            # use/load data from split training set "ldr_train"
+            for batch_idx, (images, labels) in enumerate(self.ldr_train):
+                images, labels = images.to(
+                    self.args.device), labels.to(self.args.device)
+
+                labels = labels.long()
+                optimizer_g_backbone.zero_grad()
+                optimizer_g_aux.zero_grad()
+                optimizer_l_head.zero_grad()
+                # net.zero_grad()
+
+                # backbone
+                features = net(images, latent_output=True)
+                
+                # 更新 class means 使用指数移动平均
+                for i in range(len(features)):
+                    class_idx = labels[i].item()
+
+                    if class_means[class_idx] is None:
+                        class_means[class_idx] = features[i]
+                    else:
+                        class_means[class_idx] = momentum * class_means[class_idx] + (1 - momentum) * features[i]
+                for key in class_means:
+                    if class_means[key] != None:
+                        class_means[key] = class_means[key].detach()
+
+                inner_loss = inner_min(features, labels, copy.deepcopy(class_means))
+                inter_loss = inter_max_feat_classmean(features, labels, copy.deepcopy(class_means))
+
+                # mma_loss = get_mma_loss(class_means, features)
+
+                output_g_backbone = g_head(features)
+            
+                # mma_loss = get_mma_loss(output_g_backbone, labels)
+                # dist_est = torch.pow(torch.norm(g_aux.weight, p=2, dim=1), 3)
+
+                # loss_g_backbone = balanced_softmax_loss(labels, output_g_backbone, sample_per_class=torch.pow(torch.norm(g_aux.weight, p=2, dim=1), 3)) + 0.1 * inter_loss
+
+                loss_g_backbone = balanced_softmax_loss(labels, output_g_backbone) + 0.1 * inner_loss + 0.5 * inter_loss
+                loss_g_backbone.backward()
+
+
+                # max_grad = max(p.grad.data.abs().max() for p in net.parameters() if p.grad is not None)
+                # print('Max gradient:', max_grad)
+                optimizer_g_backbone.step()
+                
+                # g_aux
+                output_g_aux = g_aux(features.detach())
+                loss_g_aux = criterion_l(output_g_aux, labels)
+                loss_g_aux.backward()
+                optimizer_g_aux.step()
+
+                # p_head
+                output_l_head = l_head(features.detach())
+                loss_l_head = criterion_l(output_l_head, labels)
+                loss_l_head.backward()
+                optimizer_l_head.step()
+
+                loss = loss_g_backbone + loss_g_aux + loss_l_head
+                batch_loss.append(loss.item())
+
+            epoch_loss.append(sum(batch_loss)/len(batch_loss))
+        return net.state_dict(), g_aux, l_head, sum(epoch_loss) / len(epoch_loss), class_means
+    
 
     def update_weights_etf(self, net, g_head, g_aux, l_head, epoch, mu=1, lr=None, loss_switch=None):
         net.train()
@@ -1071,6 +1352,91 @@ def globaltest(net, g_head, test_dataset, args, dataset_class=None, head_switch=
     return acc, acc_3shot_global
 
 
+def globaltest_calibra(net, g_head, g_aux, test_dataset, args, dataset_class=None, head_switch=True):
+    global_test_distribution = dataset_class.global_test_distribution
+    three_shot_dict, _ = shot_split(global_test_distribution, threshold_3shot=[75, 95])
+    correct_3shot = {"head": 0, "middle": 0, "tail": 0}
+    total_3shot = {"head": 0, "middle": 0, "tail": 0}
+    acc_3shot_global = {"head": None, "middle": None, "tail": None}
+    net.eval()
+    test_loader = torch.utils.data.DataLoader(
+        dataset=test_dataset, batch_size=100, shuffle=False)
+    # 监视真实情况下所有样本的类别分布
+    total_class_label = [0 for i in range(args.num_classes)]
+    predict_true_class = [0 for i in range(args.num_classes)]
+    cali_alpha = torch.norm(g_aux.weight, dim=1)
+    
+
+    # 矫正feats
+    # 计算 cali_alpha 的倒数
+    cali_alpha = torch.pow(cali_alpha, 2)
+    inverse_cali_alpha = 1.0 / cali_alpha
+    # 将 inverse_cali_alpha 扩展为 (100, 1) 的形状
+    inverse_cali_alpha = inverse_cali_alpha.view(-1, 1)
+    
+
+    # 矫正cls
+    g_head.weight = torch.nn.Parameter(g_head.weight * inverse_cali_alpha)
+    with torch.no_grad():
+        correct = 0
+        total = 0
+        for images, labels in test_loader:
+            images = images.to(args.device)
+            labels = labels.to(args.device)
+            features = net(images, latent_output=True)
+            # 利用广播机制，将 features 的每个元素乘以 inverse_cali_alpha
+            # features = features * inverse_cali_alpha
+            if head_switch == True:
+                outputs = g_head(features)
+                # outputs = features.matmul(g_head.weight.t()) + g_head.bias
+                # 计算 features 的 Frobenius 范数
+                # features_norm = torch.norm(features, dim=1, keepdim=True)
+
+                # # 计算 g_head.weight 的 Frobenius 范数
+                # weight_norm = torch.norm(g_head.weight, dim=1, keepdim=True)
+
+                # # 计算两个范数的乘积，并转置得到 [100, 100] 的输出
+                # outputs = (features_norm * weight_norm.t()).squeeze()
+            else:
+                outputs = features
+            _, predicted = torch.max(outputs.data, 1)
+            total += labels.size(0)
+            correct += (predicted == labels).sum().item()
+
+            # class-wise acc calc
+            for i in range(len(labels)):
+                total_class_label[int(labels[i])] += 1      # total
+                if predicted[i] == labels[i]:
+                    predict_true_class[int(labels[i])] += 1
+
+            # start: cal 3shot metrics
+            for label in labels:
+                if label in three_shot_dict["head"]:
+                    total_3shot["head"] += 1
+                elif label in three_shot_dict["middle"]:
+                    total_3shot["middle"] += 1
+                else:
+                    total_3shot["tail"] += 1
+            for i in range(len(predicted)):
+                if predicted[i] == labels[i] and labels[i] in three_shot_dict["head"]:   # 预测正确且在head中
+                    correct_3shot["head"] += 1
+                # 预测正确且在middle中
+                elif predicted[i] == labels[i] and labels[i] in three_shot_dict["middle"]:
+                    correct_3shot["middle"] += 1
+                # 预测正确且在tail中
+                elif predicted[i] == labels[i] and labels[i] in three_shot_dict["tail"]:
+                    correct_3shot["tail"] += 1      # 在tail中
+            # end
+    acc_class_wise = [predict_true_class[i] / total_class_label[i] for i in range(args.num_classes)]
+    acc = correct / total
+    acc_3shot_global["head"] = correct_3shot["head"] / \
+        (total_3shot["head"] + 1e-10)
+    acc_3shot_global["middle"] = correct_3shot["middle"] / \
+        (total_3shot["middle"] + 1e-10)
+    acc_3shot_global["tail"] = correct_3shot["tail"] / \
+        (total_3shot["tail"] + 1e-10)
+    return acc, acc_3shot_global
+
 def globaltest_classmean(net, g_head, test_dataset, args, dataset_class=None, head_switch=True):
     global_test_distribution = dataset_class.global_test_distribution
     three_shot_dict, _ = shot_split(global_test_distribution, threshold_3shot=[75, 95])
@@ -1247,6 +1613,288 @@ def globaltest_classmean(net, g_head, test_dataset, args, dataset_class=None, he
     acc_3shot_global["tail"] = correct_3shot["tail"] / \
         (total_3shot["tail"] + 1e-10)
     return acc, acc_3shot_global
+
+
+
+
+def globaltest_feat_collapse(net, g_head, test_dataset, args, dataset_class=None, head_switch=True):
+    global_test_distribution = dataset_class.global_test_distribution
+    three_shot_dict, _ = shot_split(global_test_distribution, threshold_3shot=[75, 95])
+    correct_3shot = {"head": 0, "middle": 0, "tail": 0}
+    total_3shot = {"head": 0, "middle": 0, "tail": 0}
+    acc_3shot_global = {"head": None, "middle": None, "tail": None}
+    net.eval()
+    test_loader = torch.utils.data.DataLoader(
+        dataset=test_dataset, batch_size=100, shuffle=False)
+    # 监视真实情况下所有样本的类别分布
+    total_class_label = [0 for i in range(args.num_classes)]
+    predict_true_class = [0 for i in range(args.num_classes)]
+
+    # 初始化一个字典来存储每个类别的总和和计数
+    class_sums = {}
+    class_counts = {}
+    # features_list = []
+    with torch.no_grad():
+        correct = 0
+        total = 0
+        for images, labels in test_loader:
+            images = images.to(args.device)
+            labels = labels.to(args.device)
+            features = net(images, latent_output=True)
+            # features_list.append(features)
+            if head_switch == True:
+                outputs = g_head(features)
+            else:
+                outputs = features
+            _, predicted = torch.max(outputs.data, 1)
+            total += labels.size(0)
+            correct += (predicted == labels).sum().item()
+
+            #####################
+            # 计算class mean
+                # 遍历每个样本
+            for i in range(images.size(0)):
+                # 获取样本的类别和特征值
+                label = labels[i].item()
+                feature = features[i]
+
+                # 更新类别的总和和计数
+                if label not in class_sums:
+                    class_sums[label] = feature
+                    class_counts[label] = 1
+                else:
+                    class_sums[label] += feature
+                    class_counts[label] += 1
+        ##############
+
+            # class-wise acc calc
+            for i in range(len(labels)):
+                total_class_label[int(labels[i])] += 1      # total
+                if predicted[i] == labels[i]:
+                    predict_true_class[int(labels[i])] += 1
+
+            # start: cal 3shot metrics
+            for label in labels:
+                if label in three_shot_dict["head"]:
+                    total_3shot["head"] += 1
+                elif label in three_shot_dict["middle"]:
+                    total_3shot["middle"] += 1
+                else:
+                    total_3shot["tail"] += 1
+            for i in range(len(predicted)):
+                if predicted[i] == labels[i] and labels[i] in three_shot_dict["head"]:   # 预测正确且在head中
+                    correct_3shot["head"] += 1
+                # 预测正确且在middle中
+                elif predicted[i] == labels[i] and labels[i] in three_shot_dict["middle"]:
+                    correct_3shot["middle"] += 1
+                # 预测正确且在tail中
+                elif predicted[i] == labels[i] and labels[i] in three_shot_dict["tail"]:
+                    correct_3shot["tail"] += 1      # 在tail中
+            # end
+    acc = correct / total
+    acc_3shot_global["head"] = correct_3shot["head"] / \
+        (total_3shot["head"] + 1e-10)
+    acc_3shot_global["middle"] = correct_3shot["middle"] / \
+        (total_3shot["middle"] + 1e-10)
+    acc_3shot_global["tail"] = correct_3shot["tail"] / \
+        (total_3shot["tail"] + 1e-10)
+    print("默认inference性能:")
+    print(acc, acc_3shot_global)
+    
+    # 计算每个类别的平均值
+    class_means = {label: class_sum / class_counts[label] for label, class_sum in class_sums.items()}
+
+
+    # 用class mean作为feature去做global test
+    # 可以看出class mean经过cls能很好被预测，再分析这些class mean的特点吧，如果我裁剪掉class mean中不重要的feat，那sample还能很好地预测嘛
+    count = 0
+    for i in range(100):
+        value, indice = torch.max(g_head(class_means[i]), 0)
+        if indice.item() == i:
+            # print(indice)
+            count += 1
+    print("class means作为features的预测准确率")
+    print(count/100)
+
+    # 能看出来大多数的数值都是在0附近
+    plt.hist(class_means[0].cpu().numpy(), bins=50, range=(-2, 2), color='blue', edgecolor='black')
+    plt.xlabel('Value')
+    plt.ylabel('Frequency')
+    plt.title('Histogram of class_means[0]')
+    plt.yscale('log')  # 对y轴进行对数缩放，如果需要的话
+    # 保存直方图为PNG文件
+    plt.savefig('class_means_0_histogram.png')
+
+    # 初始化一个字典来存储被设置为0的位置
+    zero_positions = {}
+    beta = 0.4
+    # 遍历 class_means 字典中的每一项
+    for class_label, tensor in class_means.items():
+        # 对数据进行排序
+        sorted_values, _ = torch.sort(tensor)
+        # 找到对应于阈值 beta 的值
+        threshold_index = int(len(sorted_values) * beta)
+        threshold_value = sorted_values[threshold_index]
+        # 记录所有小于阈值的元素的位置
+        zero_positions[class_label] = (tensor < threshold_value)
+        # 将所有小于阈值的元素设置为 0
+        tensor[tensor < threshold_value] = 0
+
+    # 裁剪过之后再inference
+    count_after = 0
+    for i in range(100):
+        value, indice = torch.max(g_head(class_means[i]), 0)
+        if indice.item() == i:
+            # print(indice)
+            count_after += 1
+    print("裁剪后的class means作为features的预测准确率")
+    print(count_after/100)
+
+
+    # 裁剪之后的inference
+    with torch.no_grad():
+        correct = 0
+        total = 0
+        for images, labels in test_loader:
+            images = images.to(args.device)
+            labels = labels.to(args.device)
+            features = net(images, latent_output=True)
+
+                # 根据之前记录的位置信息，将特征置零
+            for i, label in enumerate(labels):
+                zero_pos = zero_positions[label.item()]
+                features[i][zero_pos] = 0
+
+
+            # features_list.append(features)
+            if head_switch == True:
+                outputs = g_head(features)
+            else:
+                outputs = features
+            _, predicted = torch.max(outputs.data, 1)
+            total += labels.size(0)
+            correct += (predicted == labels).sum().item()
+
+            #####################
+            # 计算class mean
+                # 遍历每个样本
+            for i in range(images.size(0)):
+                # 获取样本的类别和特征值
+                label = labels[i].item()
+                feature = features[i]
+
+                # 更新类别的总和和计数
+                if label not in class_sums:
+                    class_sums[label] = feature
+                    class_counts[label] = 1
+                else:
+                    class_sums[label] += feature
+                    class_counts[label] += 1
+        ##############
+
+            # class-wise acc calc
+            for i in range(len(labels)):
+                total_class_label[int(labels[i])] += 1      # total
+                if predicted[i] == labels[i]:
+                    predict_true_class[int(labels[i])] += 1
+
+            # start: cal 3shot metrics
+            for label in labels:
+                if label in three_shot_dict["head"]:
+                    total_3shot["head"] += 1
+                elif label in three_shot_dict["middle"]:
+                    total_3shot["middle"] += 1
+                else:
+                    total_3shot["tail"] += 1
+            for i in range(len(predicted)):
+                if predicted[i] == labels[i] and labels[i] in three_shot_dict["head"]:   # 预测正确且在head中
+                    correct_3shot["head"] += 1
+                # 预测正确且在middle中
+                elif predicted[i] == labels[i] and labels[i] in three_shot_dict["middle"]:
+                    correct_3shot["middle"] += 1
+                # 预测正确且在tail中
+                elif predicted[i] == labels[i] and labels[i] in three_shot_dict["tail"]:
+                    correct_3shot["tail"] += 1      # 在tail中
+
+    acc = correct / total
+    acc_3shot_global["head"] = correct_3shot["head"] / \
+        (total_3shot["head"] + 1e-10)
+    acc_3shot_global["middle"] = correct_3shot["middle"] / \
+        (total_3shot["middle"] + 1e-10)
+    acc_3shot_global["tail"] = correct_3shot["tail"] / \
+        (total_3shot["tail"] + 1e-10)
+    print("裁剪后inference性能:")
+    print(acc, acc_3shot_global)
+
+
+    # 初始化用于存储方差和均值的变量
+    variance_zero_pos = 0.0
+    variance_non_zero_pos = 0.0
+    mean_zero_pos = 0.0
+    mean_non_zero_pos = 0.0
+    count_zero_pos = 0
+    count_non_zero_pos = 0
+
+    # 遍历 test_loader 以获取所有的特征和标签
+    for images, labels in test_loader:
+        images = images.to(args.device)
+        labels = labels.to(args.device)
+        features = net(images, latent_output=True)
+        
+        # 遍历每一个样本和它的标签
+        for i, label in enumerate(labels):
+            label_item = label.item()
+            
+            # 获取对应标签的 class_means 和 zero_positions
+            class_mean = class_means[label_item]
+            zero_pos = zero_positions[label_item]
+            
+            # 计算方差和均值
+            diff = features[i] - class_mean
+            diff_zero_pos = diff[zero_pos]
+            diff_non_zero_pos = diff[~zero_pos]
+            
+            variance_zero_pos += torch.sum(diff_zero_pos ** 2).item()
+            variance_non_zero_pos += torch.sum(diff_non_zero_pos ** 2).item()
+            
+            mean_zero_pos += torch.sum(diff_zero_pos).item()
+            mean_non_zero_pos += torch.sum(diff_non_zero_pos).item()
+            
+            count_zero_pos += len(diff_zero_pos)
+            count_non_zero_pos += len(diff_non_zero_pos)
+
+    # 计算平均方差和平均均值
+    avg_variance_zero_pos = variance_zero_pos / count_zero_pos if count_zero_pos > 0 else 0.0
+    avg_variance_non_zero_pos = variance_non_zero_pos / count_non_zero_pos if count_non_zero_pos > 0 else 0.0
+
+    avg_mean_zero_pos = mean_zero_pos / count_zero_pos if count_zero_pos > 0 else 0.0
+    avg_mean_non_zero_pos = mean_non_zero_pos / count_non_zero_pos if count_non_zero_pos > 0 else 0.0
+
+    # 计算相对方差
+    relative_variance_zero_pos = avg_variance_zero_pos / (avg_mean_zero_pos ** 2) if avg_mean_zero_pos != 0 else 0.0
+    relative_variance_non_zero_pos = avg_variance_non_zero_pos / (avg_mean_non_zero_pos ** 2) if avg_mean_non_zero_pos != 0 else 0.0
+
+    print(f"Relative variance at zero_positions: {relative_variance_zero_pos}")
+    print(f"Relative variance at non-zero_positions: {relative_variance_non_zero_pos}")
+
+
+    # 新建一个新的g_head，已经被稀疏化了
+    # 1. 复制原始 g_head 的 weight 和 bias
+    original_weight = g_head.weight.detach().clone()
+    original_bias = g_head.bias.detach().clone()
+
+    # 2. 根据 zero_positions 修改 weight
+    for i, zero in enumerate(zero_positions):
+        if zero:
+            original_weight[:, i] = 0
+
+    # 3. 创建一个新的 Linear 层，并使用修改后的 weight 和 bias 初始化它
+    new_g_head = nn.Linear(in_features=512, out_features=100, bias=True)
+    new_g_head.weight.data = original_weight
+    new_g_head.bias.data = original_bias
+
+    return acc, acc_3shot_global, new_g_head
+
 
 def globaltest_etf(net, g_head, test_dataset, args, dataset_class=None, head_switch=True):
     global_test_distribution = dataset_class.global_test_distribution

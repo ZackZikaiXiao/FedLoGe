@@ -123,6 +123,83 @@ nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 6 > w_drop
 dropout这些统统效果不好。
 我先spar预训练，再用pick up吧：
 nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 3 > spar_pick_up_1round.log 2>&1 &
-2688009
+效果不好
 
-节点越少，positve/negtive越大?
+我要让不同类别feature相似度变大了。在pretrain model基础上，进一步train the backbone
+nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 3 > cos_ETF.log 2>&1 &
+2762603
+
+nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 4 > cos_push_pull_ETF.log 2>&1 &
+2762678
+
+约束feature的norm相等
+nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 4 > feats_eqe_norm_ETF.log 2>&1 &
+2764228
+
+约束feature的norm相等+相似度
+nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 4 > cos_norm_ETF.log 2>&1 &
+2764088
+
+
+spar etf + etf_projec_layer
+nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 0 > spar_etf_proj.log 2>&1 &
+2898218
+
+spar etf + PR dropout
+nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 3 > spar_etf_PRdot.log 2>&1 &
+2906197
+
+etf + PR dropout
+nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 3 > etf_PRdot.log 2>&1 &
+2909571
+
+
+用MMA regulation?
+
+用balanced softmax
+nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 2 > spar_etf_bsm.log 2>&1 &
+3041272
+
+用norm估计的balanced softmax
+nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 0 > spar_etf_bsm_norm_est.log 2>&1 &
+3053433
+
+
+
+cifar 10的spar
+以下是用norm的balanced softmax搞出来的
+nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 7 > cifar10_nospar.log 2>&1 &
+3112359
+nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 2 > cifar10_nospar_2.log 2>&1 &
+3132781
+nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 7 > cifar10_spar10.log 2>&1 &
+3112670
+nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 7 > cifar10_spar20.log 2>&1 &
+3112783
+nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 6 > cifar10_spar30.log 2>&1 &
+3112924
+nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 6 > cifar10_spar40.log 2>&1 &
+3113064
+nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 6 > cifar10_spar50.log 2>&1 &
+3113395
+nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 5 > cifar10_spar60.log 2>&1 &
+3113511
+nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 5 > cifar10_spar70.log 2>&1 &
+3113647
+nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 5 > cifar10_spar80.log 2>&1 &
+3113773
+nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 4 > cifar10_spar90.log 2>&1 &
+3113894
+
+
+
+
+
+保存nospar的etf的性能，为了后面做分析用
+nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 1 > cifar100_nospar_save.log 2>&1 &
+[1] 3129972
+
+
+用self search得到的稀疏化继续finetune训练
+nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 2 > self_search_spar.log 2>&1 &
+3222370

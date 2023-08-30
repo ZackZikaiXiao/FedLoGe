@@ -59,7 +59,7 @@ def args_parser_cifar10():
     parser.add_argument('--iid', action='store_true', help="i.i.d. or non-i.i.d.")
     parser.add_argument('--non_iid_prob_class', type=float, default=1, help="non iid sampling prob for class")
     parser.add_argument('--alpha_dirichlet', type=float, default=0.5)  
-    parser.add_argument('--num_classes', type=int, default=100, help="number of classes")   # 10
+    parser.add_argument('--num_classes', type=int, default=10, help="number of classes")   # 10
     parser.add_argument('--num_channels', type=int, default=1, help="number of channels of images")
     parser.add_argument('--seed', type=int, default=3407, help="random seed, default: 1")
 
@@ -67,5 +67,5 @@ def args_parser_cifar10():
 
     parser.add_argument('--balanced_global', default=False, action='store_true', help="balanced global distribution or long tailed global distribution, clients are heterogeneous.")
     parser.add_argument('--IF', type=float, default=0.01, help="imbalance factor: Min/Max") # 0.1
-    parser.add_argument('--gpu', type=int, default=7, help="gpu")
+    parser.add_argument('--gpu', type=int, default=3, help="gpu")
     return parser.parse_args()
