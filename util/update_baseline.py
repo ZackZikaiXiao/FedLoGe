@@ -1834,7 +1834,7 @@ def globaltest_feat_collapse(net, g_head, test_dataset, args, dataset_class=None
     mean_non_zero_pos = 0.0
     count_zero_pos = 0
     count_non_zero_pos = 0
-
+    class_means = {label: class_sum / class_counts[label] for label, class_sum in class_sums.items()}
     # 遍历 test_loader 以获取所有的特征和标签
     for images, labels in test_loader:
         images = images.to(args.device)

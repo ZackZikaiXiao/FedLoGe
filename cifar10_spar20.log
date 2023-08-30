@@ -28746,3 +28746,125 @@ l_head  99%|█████████▉| 494/500 [28:49:50<21:08, 211.48s/it
   sample_per_class = torch.tensor(sample_per_class)
  99%|█████████▉| 495/500 [28:53:28<17:48, 213.63s/it]/data/zikai/aapfl/pfed_lastest/util/update_baseline.py:307: UserWarning: To copy construct from a tensor, it is recommended to use sourceTensor.clone().detach() or sourceTensor.clone().detach().requires_grad_(True), rather than torch.tensor(sourceTensor).
   sample_per_class = torch.tensor(sample_per_class)
+ 99%|█████████▉| 496/500 [28:56:43<13:51, 207.83s/it]/data/zikai/aapfl/pfed_lastest/util/update_baseline.py:307: UserWarning: To copy construct from a tensor, it is recommended to use sourceTensor.clone().detach() or sourceTensor.clone().detach().requires_grad_(True), rather than torch.tensor(sourceTensor).
+  sample_per_class = torch.tensor(sample_per_class)
+tensor([8.1407, 5.6061, 5.7872, 3.4536, 9.3854, 5.9054, 5.2010, 0.6267, 0.6136,
+        0.6398], device='cuda:7', grad_fn=<NormBackward1>)
+g_aux tensor([6.7148, 4.8583, 6.1797, 6.1388, 5.6379, 5.0680, 4.0401, 3.4003, 2.9464,
+        2.6835], device='cuda:7', grad_fn=<NormBackward1>)
+3shot of client 0:head:0.9358974358974359, middle:0.5714285714285714, tail0.875
+3shot of client 1:head:0.9894736842105263, middle:0.7692307692307693, tail0.6666666666666666
+3shot of client 2:head:0.8473282442748091, middle:0.8076923076923077, tail0.8571428571428571
+3shot of client 3:head:0.9910714285714286, middle:0.7368421052631579, tail0.75
+3shot of client 4:head:0.9937888198757764, middle:0.7916666666666666, tail1.0
+3shot of client 5:head:0.8314606741573034, middle:1.0, tail0.8
+3shot of client 6:head:0.918918918918919, middle:0.7727272727272727, tail0.6666666666666666
+3shot of client 7:head:0.9767932489451476, middle:0.7647058823529411, tail0.76
+3shot of client 8:head:0.9803921568627451, middle:0.9473684210526315, tail0.875
+3shot of client 9:head:0.963963963963964, middle:1.0, tail0
+3shot of client 10:head:0.9721577726218097, middle:0.696969696969697, tail0.7058823529411765
+3shot of client 11:head:0.9547872340425532, middle:0.8771929824561403, tail0.6428571428571429
+3shot of client 12:head:0.9597069597069597, middle:0.9397590361445783, tail0.8518518518518519
+3shot of client 13:head:0.8404907975460123, middle:0.9166666666666666, tail0.6
+3shot of client 14:head:0.9577464788732394, middle:0.8214285714285714, tail1.0
+3shot of client 15:head:0.90625, middle:0.65, tail0.8
+3shot of client 16:head:0.925, middle:0.8666666666666667, tail0.6666666666666666
+3shot of client 17:head:0.9735099337748344, middle:0.8484848484848485, tail0.9285714285714286
+3shot of client 18:head:0.9900497512437811, middle:0.6666666666666666, tail0.5555555555555556
+3shot of client 19:head:0.9240506329113924, middle:0.9, tail0.7142857142857143
+3shot of client 20:head:0.8512396694214877, middle:0.7142857142857143, tail0.6
+3shot of client 21:head:0.9529411764705882, middle:1.0, tail0.25
+3shot of client 22:head:0.8813559322033898, middle:0.8571428571428571, tail0.6666666666666666
+3shot of client 23:head:0.9781021897810219, middle:1.0, tail0.2857142857142857
+3shot of client 24:head:0.9720670391061452, middle:0.42857142857142855, tail0.8
+3shot of client 25:head:0.8545454545454545, middle:0.8181818181818182, tail1.0
+3shot of client 26:head:0.9865470852017937, middle:0.8301886792452831, tail0.72
+3shot of client 27:head:0.725, middle:0.7333333333333333, tail1.0
+3shot of client 28:head:0.9191176470588235, middle:0.9, tail0.6
+3shot of client 29:head:0.9796511627906976, middle:0.8846153846153846, tail0.6153846153846154
+3shot of client 30:head:0.9269340974212035, middle:0.9934640522875817, tail0.75
+3shot of client 31:head:0.9690140845070423, middle:0.6923076923076923, tail0.7142857142857143
+3shot of client 32:head:0.96875, middle:0.68, tail0.7142857142857143
+3shot of client 33:head:0.8305084745762712, middle:0.9285714285714286, tail1.0
+3shot of client 34:head:0.9097222222222222, middle:0.75, tail1.0
+3shot of client 35:head:0.7865168539325843, middle:0.75, tail0.8888888888888888
+3shot of client 36:head:0.8471615720524017, middle:0.8, tail0.8571428571428571
+3shot of client 37:head:0.865979381443299, middle:0.8571428571428571, tail0.6666666666666666
+3shot of client 38:head:0.8363636363636363, middle:0.9444444444444444, tail0.5
+3shot of client 39:head:0.8181818181818182, middle:0.6, tail0.5
+round 494, local average test acc  0.9005 
+
+round 494, local macro average F1 score  0.7517 
+
+round 494, local weighted average F1 score  0.8985 
+
+round 494, global test acc  0.7567 
+
+round 494, average 3shot acc: [head: 0.9173, middle: 0.8127, tail: 0.7396] 
+
+round 494, global 3shot acc: [head: 0.9217, middle: 0.7373, tail: 0.6475] 
+
+l_head tensor([8.1407, 5.6061, 5.7872, 3.4536, 9.3854, 5.9054, 5.2010, 0.6267, 0.6136,
+        0.6398], device='cuda:7', grad_fn=<NormBackward1>)
+g_aux tensor([6.7170, 4.8540, 6.1772, 6.1378, 5.6351, 5.0691, 4.0408, 3.4006, 2.9471,
+        2.6808], device='cuda:7', grad_fn=<NormBackward1>)
+3shot of client 0:head:0.9358974358974359, middle:0.5714285714285714, tail0.875
+3shot of client 1:head:1.0, middle:0.8461538461538461, tail0.6666666666666666
+3shot of client 2:head:0.8625954198473282, middle:0.8076923076923077, tail0.8571428571428571
+3shot of client 3:head:0.9910714285714286, middle:0.7368421052631579, tail0.75
+3shot of client 4:head:0.9937888198757764, middle:0.7916666666666666, tail1.0
+3shot of client 5:head:0.8314606741573034, middle:1.0, tail0.8
+3shot of client 6:head:0.9009009009009009, middle:0.7727272727272727, tail0.6666666666666666
+3shot of client 7:head:0.9767932489451476, middle:0.7843137254901961, tail0.56
+3shot of client 8:head:0.9782135076252724, middle:0.8947368421052632, tail0.875
+3shot of client 9:head:0.963963963963964, middle:1.0, tail0
+3shot of client 10:head:0.974477958236659, middle:0.7272727272727273, tail0.7647058823529411
+3shot of client 11:head:0.949468085106383, middle:0.8596491228070176, tail0.7142857142857143
+3shot of client 12:head:0.9597069597069597, middle:0.9397590361445783, tail0.8518518518518519
+3shot of client 13:head:0.8343558282208589, middle:0.9583333333333334, tail0.6
+3shot of client 14:head:0.9577464788732394, middle:0.8214285714285714, tail1.0
+3shot of client 15:head:0.8854166666666666, middle:0.65, tail1.0
+3shot of client 16:head:0.9375, middle:0.8666666666666667, tail0.6666666666666666
+3shot of client 17:head:0.9668874172185431, middle:0.8484848484848485, tail0.9285714285714286
+3shot of client 18:head:0.9900497512437811, middle:0.6666666666666666, tail0.5555555555555556
+3shot of client 19:head:0.9177215189873418, middle:0.9, tail0.7142857142857143
+3shot of client 20:head:0.859504132231405, middle:0.7142857142857143, tail0.6
+3shot of client 21:head:0.9529411764705882, middle:1.0, tail0.25
+3shot of client 22:head:0.8983050847457628, middle:0.8571428571428571, tail0.6666666666666666
+3shot of client 23:head:0.9708029197080292, middle:1.0, tail0.2857142857142857
+3shot of client 24:head:0.9720670391061452, middle:0.35714285714285715, tail0.8
+3shot of client 25:head:0.8727272727272727, middle:0.8181818181818182, tail1.0
+3shot of client 26:head:0.9775784753363229, middle:0.8113207547169812, tail0.72
+3shot of client 27:head:0.7375, middle:0.7333333333333333, tail1.0
+3shot of client 28:head:0.9191176470588235, middle:0.9, tail0.6
+3shot of client 29:head:0.9709302325581395, middle:0.9230769230769231, tail0.6153846153846154
+3shot of client 30:head:0.9369627507163324, middle:0.9803921568627451, tail0.8055555555555556
+3shot of client 31:head:0.971830985915493, middle:0.75, tail0.6428571428571429
+3shot of client 32:head:0.95625, middle:0.68, tail0.7142857142857143
+3shot of client 33:head:0.847457627118644, middle:0.9285714285714286, tail1.0
+3shot of client 34:head:0.9097222222222222, middle:0.7, tail1.0
+3shot of client 35:head:0.797752808988764, middle:0.7916666666666666, tail0.8888888888888888
+3shot of client 36:head:0.8471615720524017, middle:0.825, tail0.8571428571428571
+3shot of client 37:head:0.845360824742268, middle:0.8095238095238095, tail0.6666666666666666
+3shot of client 38:head:0.8454545454545455, middle:0.9444444444444444, tail0.5
+3shot of client 39:head:0.8264462809917356, middle:0.5333333333333333, tail0.5
+round 495, local average test acc  0.9013 
+
+round 495, local macro average F1 score  0.7540 
+
+round 495, local weighted average F1 score  0.9031 
+
+round 495, global test acc  0.7563 
+
+round 495, average 3shot acc: [head: 0.9181, middle: 0.8125, tail: 0.7426] 
+
+round 495, global 3shot acc: [head: 0.9253, middle: 0.7537, tail: 0.6315] 
+
+l_head tensor([8.1333, 5.6062, 5.7865, 3.4536, 9.3936, 5.9052, 5.2010, 0.6267, 0.6136,
+        0.6398], device='cuda:7', grad_fn=<NormBackward1>)
+g_aux tensor([6.7173, 4.8580, 6.1842, 6.1495, 5.6348, 5.0692, 4.0383, 3.4035, 2.9494,
+        2.6823], device='cuda:7', grad_fn=<NormBackward1>)
+3shot of client 0:head:0.9358974358974359, middle:0.7142857142857143, tail0.875
+3shot of client 1:head:1.0, middle:0.8461538461538461, tail0.6666666666666666
+ 99%|█████████▉| 497/500 [28:59:55<10:09, 203.22s/it]/data/zikai/aapfl/pfed_lastest/util/update_baseline.py:307: UserWarning: To copy construct from a tensor, it is recommended to use sourceTensor.clone().detach() or sourceTensor.clone().detach().requires_grad_(True), rather than torch.tensor(sourceTensor).
+  sample_per_class = torch.tensor(sample_per_class)
