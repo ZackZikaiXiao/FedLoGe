@@ -11,7 +11,7 @@ import pdb
 import torch.nn as nn
 from tqdm import tqdm
 from options import args_parser, args_parser_cifar10
-from util.update_baseline import LocalUpdate, globaltest, localtest, globaltest_classmean, globaltest_calibra
+from util.update_baseline import LocalUpdate, globaltest, localtest, globaltest_classmean, globaltest_calibra, globaltest_class_mean_filter
 from util.fedavg import *
 # from util.util import add_noise
 from util.dataset import *
@@ -299,8 +299,8 @@ if __name__ == '__main__':
 
 
     if load_switch == True:
-            rnd = 499
-            load_dir = "./output1/"
+            rnd = 400
+            load_dir = "./output_nospar/"
             model = torch.load(load_dir + "model_" + str(rnd) + ".pth").to(args.device)
             g_head = torch.load(load_dir + "g_head_" + str(rnd) + ".pth").to(args.device)
             # g_head_t = torch.load(load_dir + "g_head_" + str(rnd) + ".pth").to(args.device)
@@ -351,7 +351,8 @@ if __name__ == '__main__':
         model.load_state_dict(copy.deepcopy(w_glob))
 
         if global_test_head == 'g_head':
-            acc_s2, global_3shot_acc = globaltest(copy.deepcopy(model).to(args.device), copy.deepcopy(g_head).to(args.device), dataset_test, args, dataset_class = datasetObj)
+            # acc_s2, global_3shot_acc = globaltest(copy.deepcopy(model).to(args.device), copy.deepcopy(g_head).to(args.device), dataset_test, args, dataset_class = datasetObj)
+            acc_s2, global_3shot_acc = globaltest_class_mean_filter(copy.deepcopy(model).to(args.device), copy.deepcopy(g_head).to(args.device), dataset_test, class_means, args, dataset_class = datasetObj)
         elif global_test_head == 'g_aux':
             acc_s2, global_3shot_acc = globaltest(copy.deepcopy(model).to(args.device), copy.deepcopy(g_aux).to(args.device), dataset_test, args, dataset_class = datasetObj)
 

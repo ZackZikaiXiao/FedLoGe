@@ -545,8 +545,8 @@ class LocalUpdate(object):
                     if class_means[key] != None:
                         class_means[key] = class_means[key].detach()
 
-                inner_loss = inner_min(features, labels, copy.deepcopy(class_means))
-                inter_loss = inter_max_feat_classmean(features, labels, copy.deepcopy(class_means))
+                # inner_loss = inner_min(features, labels, copy.deepcopy(class_means))
+                # inter_loss = inter_max_feat_classmean(features, labels, copy.deepcopy(class_means))
 
                 # mma_loss = get_mma_loss(class_means, features)
 
@@ -557,7 +557,7 @@ class LocalUpdate(object):
 
                 # loss_g_backbone = balanced_softmax_loss(labels, output_g_backbone, sample_per_class=torch.pow(torch.norm(g_aux.weight, p=2, dim=1), 3)) + 0.1 * inter_loss
 
-                loss_g_backbone = balanced_softmax_loss(labels, output_g_backbone) + 0.1 * inner_loss + 0.5 * inter_loss
+                loss_g_backbone = balanced_softmax_loss(labels, output_g_backbone) 
                 loss_g_backbone.backward()
 
 
@@ -1365,18 +1365,18 @@ def globaltest_calibra(net, g_head, g_aux, test_dataset, args, dataset_class=Non
     total_class_label = [0 for i in range(args.num_classes)]
     predict_true_class = [0 for i in range(args.num_classes)]
     cali_alpha = torch.norm(g_aux.weight, dim=1)
-    
+
 
     # 矫正feats
     # 计算 cali_alpha 的倒数
-    cali_alpha = torch.pow(cali_alpha, 2)
-    inverse_cali_alpha = 1.0 / cali_alpha
+    cali_alpha = torch.pow(cali_alpha, 1)
+    inverse_cali_alpha = 1.7 / cali_alpha
     # 将 inverse_cali_alpha 扩展为 (100, 1) 的形状
     inverse_cali_alpha = inverse_cali_alpha.view(-1, 1)
     
 
     # 矫正cls
-    g_head.weight = torch.nn.Parameter(g_head.weight * inverse_cali_alpha)
+    g_aux.weight = torch.nn.Parameter(g_aux.weight * inverse_cali_alpha)
     with torch.no_grad():
         correct = 0
         total = 0
@@ -1387,7 +1387,7 @@ def globaltest_calibra(net, g_head, g_aux, test_dataset, args, dataset_class=Non
             # 利用广播机制，将 features 的每个元素乘以 inverse_cali_alpha
             # features = features * inverse_cali_alpha
             if head_switch == True:
-                outputs = g_head(features)
+                outputs = g_aux(features)
                 # outputs = features.matmul(g_head.weight.t()) + g_head.bias
                 # 计算 features 的 Frobenius 范数
                 # features_norm = torch.norm(features, dim=1, keepdim=True)
@@ -1704,54 +1704,45 @@ def globaltest_feat_collapse(net, g_head, test_dataset, args, dataset_class=None
     # 计算每个类别的平均值
     class_means = {label: class_sum / class_counts[label] for label, class_sum in class_sums.items()}
 
+    # T-SNE
 
-    # 用class mean作为feature去做global test
-    # 可以看出class mean经过cls能很好被预测，再分析这些class mean的特点吧，如果我裁剪掉class mean中不重要的feat，那sample还能很好地预测嘛
-    count = 0
-    for i in range(100):
-        value, indice = torch.max(g_head(class_means[i]), 0)
-        if indice.item() == i:
-            # print(indice)
-            count += 1
-    print("class means作为features的预测准确率")
-    print(count/100)
 
-    # 能看出来大多数的数值都是在0附近
-    plt.hist(class_means[0].cpu().numpy(), bins=50, range=(-2, 2), color='blue', edgecolor='black')
-    plt.xlabel('Value')
-    plt.ylabel('Frequency')
-    plt.title('Histogram of class_means[0]')
-    plt.yscale('log')  # 对y轴进行对数缩放，如果需要的话
-    # 保存直方图为PNG文件
-    plt.savefig('class_means_0_histogram.png')
-
+    # 对cls进行裁剪
     # 初始化一个字典来存储被设置为0的位置
     zero_positions = {}
-    beta = 0.4
+    beta = 0.99
     # 遍历 class_means 字典中的每一项
     for class_label, tensor in class_means.items():
         # 对数据进行排序
         sorted_values, _ = torch.sort(tensor)
         # 找到对应于阈值 beta 的值
-        threshold_index = int(len(sorted_values) * beta)
+        # threshold_index = int(len(sorted_values) * beta)
+        threshold_index = int(len(sorted_values) * (1-beta))
         threshold_value = sorted_values[threshold_index]
         # 记录所有小于阈值的元素的位置
-        zero_positions[class_label] = (tensor < threshold_value)
+        # zero_positions[class_label] = (tensor < threshold_value)
+        zero_positions[class_label] = (tensor > threshold_value)
+
         # 将所有小于阈值的元素设置为 0
-        tensor[tensor < threshold_value] = 0
-
-    # 裁剪过之后再inference
-    count_after = 0
-    for i in range(100):
-        value, indice = torch.max(g_head(class_means[i]), 0)
-        if indice.item() == i:
-            # print(indice)
-            count_after += 1
-    print("裁剪后的class means作为features的预测准确率")
-    print(count_after/100)
+        # tensor[tensor < threshold_value] = 0
+        tensor[tensor > threshold_value] = 0
 
 
-    # 裁剪之后的inference
+
+    # 1. 复制原始 g_head 的 weight 和 bias
+    original_weight = g_head.weight.detach().clone()
+    original_bias = g_head.bias.detach().clone()
+    for key, value in zero_positions.items():
+            original_weight[key, :] *= (~value).float()  # 确保数据类型匹配
+
+    # 3. 创建一个新的 Linear 层，并使用修改后的 weight 和 bias 初始化它
+    new_g_head = nn.Linear(in_features=512, out_features=100, bias=True)
+    new_g_head.weight.data = original_weight
+    new_g_head.bias.data = original_bias
+    new_g_head = new_g_head.to(args.device)
+
+    # return acc, acc_3shot_global, new_g_head
+        # 裁剪之后的inference
     with torch.no_grad():
         correct = 0
         total = 0
@@ -1759,16 +1750,9 @@ def globaltest_feat_collapse(net, g_head, test_dataset, args, dataset_class=None
             images = images.to(args.device)
             labels = labels.to(args.device)
             features = net(images, latent_output=True)
-
-                # 根据之前记录的位置信息，将特征置零
-            for i, label in enumerate(labels):
-                zero_pos = zero_positions[label.item()]
-                features[i][zero_pos] = 0
-
-
             # features_list.append(features)
             if head_switch == True:
-                outputs = g_head(features)
+                outputs = new_g_head(features)
             else:
                 outputs = features
             _, predicted = torch.max(outputs.data, 1)
@@ -1825,6 +1809,128 @@ def globaltest_feat_collapse(net, g_head, test_dataset, args, dataset_class=None
         (total_3shot["tail"] + 1e-10)
     print("裁剪后inference性能:")
     print(acc, acc_3shot_global)
+    a = 1
+
+    # # 用class mean作为feature去做global test
+    # # 可以看出class mean经过cls能很好被预测，再分析这些class mean的特点吧，如果我裁剪掉class mean中不重要的feat，那sample还能很好地预测嘛
+    # count = 0
+    # for i in range(100):
+    #     value, indice = torch.max(g_head(class_means[i]), 0)
+    #     if indice.item() == i:
+    #         # print(indice)
+    #         count += 1
+    # print("class means作为features的预测准确率")
+    # print(count/100)
+
+    # # 能看出来大多数的数值都是在0附近
+    # plt.hist(class_means[0].cpu().numpy(), bins=50, range=(-2, 2), color='blue', edgecolor='black')
+    # plt.xlabel('Value')
+    # plt.ylabel('Frequency')
+    # plt.title('Histogram of class_means[0]')
+    # plt.yscale('log')  # 对y轴进行对数缩放，如果需要的话
+    # # 保存直方图为PNG文件
+    # plt.savefig('class_means_0_histogram.png')
+
+    # 初始化一个字典来存储被设置为0的位置
+    zero_positions = {}
+    beta = 0.4
+    # 遍历 class_means 字典中的每一项
+    for class_label, tensor in class_means.items():
+        # 对数据进行排序
+        sorted_values, _ = torch.sort(tensor)
+        # 找到对应于阈值 beta 的值
+        threshold_index = int(len(sorted_values) * beta)
+        threshold_value = sorted_values[threshold_index]
+        # 记录所有小于阈值的元素的位置
+        zero_positions[class_label] = (tensor < threshold_value)
+        # 将所有小于阈值的元素设置为 0
+        tensor[tensor < threshold_value] = 0
+
+    # # 裁剪过之后再inference
+    # count_after = 0
+    # for i in range(100):
+    #     value, indice = torch.max(g_head(class_means[i]), 0)
+    #     if indice.item() == i:
+    #         # print(indice)
+    #         count_after += 1
+    # print("裁剪后的class means作为features的预测准确率")
+    # print(count_after/100)
+
+
+    # 裁剪之后的inference
+    # with torch.no_grad():
+    #     correct = 0
+    #     total = 0
+    #     for images, labels in test_loader:
+    #         images = images.to(args.device)
+    #         labels = labels.to(args.device)
+    #         features = net(images, latent_output=True)
+
+    #         # 根据之前记录的位置信息，将特征置零
+    #         for i, label in enumerate(labels):
+    #             zero_pos = zero_positions[label.item()]
+    #             features[i][zero_pos] = 0
+
+
+    #         # features_list.append(features)
+    #         if head_switch == True:
+    #             outputs = g_head(features)
+    #         else:
+    #             outputs = features
+    #         _, predicted = torch.max(outputs.data, 1)
+    #         total += labels.size(0)
+    #         correct += (predicted == labels).sum().item()
+
+    #         #####################
+    #         # 计算class mean
+    #             # 遍历每个样本
+    #         for i in range(images.size(0)):
+    #             # 获取样本的类别和特征值
+    #             label = labels[i].item()
+    #             feature = features[i]
+
+    #             # 更新类别的总和和计数
+    #             if label not in class_sums:
+    #                 class_sums[label] = feature
+    #                 class_counts[label] = 1
+    #             else:
+    #                 class_sums[label] += feature
+    #                 class_counts[label] += 1
+    #     ##############
+
+    #         # class-wise acc calc
+    #         for i in range(len(labels)):
+    #             total_class_label[int(labels[i])] += 1      # total
+    #             if predicted[i] == labels[i]:
+    #                 predict_true_class[int(labels[i])] += 1
+
+    #         # start: cal 3shot metrics
+    #         for label in labels:
+    #             if label in three_shot_dict["head"]:
+    #                 total_3shot["head"] += 1
+    #             elif label in three_shot_dict["middle"]:
+    #                 total_3shot["middle"] += 1
+    #             else:
+    #                 total_3shot["tail"] += 1
+    #         for i in range(len(predicted)):
+    #             if predicted[i] == labels[i] and labels[i] in three_shot_dict["head"]:   # 预测正确且在head中
+    #                 correct_3shot["head"] += 1
+    #             # 预测正确且在middle中
+    #             elif predicted[i] == labels[i] and labels[i] in three_shot_dict["middle"]:
+    #                 correct_3shot["middle"] += 1
+    #             # 预测正确且在tail中
+    #             elif predicted[i] == labels[i] and labels[i] in three_shot_dict["tail"]:
+    #                 correct_3shot["tail"] += 1      # 在tail中
+
+    # acc = correct / total
+    # acc_3shot_global["head"] = correct_3shot["head"] / \
+    #     (total_3shot["head"] + 1e-10)
+    # acc_3shot_global["middle"] = correct_3shot["middle"] / \
+    #     (total_3shot["middle"] + 1e-10)
+    # acc_3shot_global["tail"] = correct_3shot["tail"] / \
+    #     (total_3shot["tail"] + 1e-10)
+    # print("裁剪后inference性能:")
+    # print(acc, acc_3shot_global)
 
 
     # 初始化用于存储方差和均值的变量
@@ -1878,22 +1984,300 @@ def globaltest_feat_collapse(net, g_head, test_dataset, args, dataset_class=None
     print(f"Relative variance at non-zero_positions: {relative_variance_non_zero_pos}")
 
 
-    # 新建一个新的g_head，已经被稀疏化了
+
+
+    import matplotlib.pyplot as plt
+    import numpy as np
+
+    # 初始化用于存储第一个类的所有特征的列表
+    features_list = []
+
+    # 假设第一个类的标签是 0
+    first_class_label = 50
+
+    # 遍历 test_loader 以获取所有的特征和标签
+    for images, labels in test_loader:
+        images = images.to(args.device)
+        labels = labels.to(args.device)
+        features = net(images, latent_output=True)
+        
+        # 找到属于第一个类的特征
+        indices = (labels == first_class_label).nonzero(as_tuple=True)[0]
+        first_class_features = features[indices]
+        
+        features_list.append(first_class_features.cpu().detach().numpy())
+
+    # 将所有批次的数据合并成一个数组
+    all_features = np.concatenate(features_list, axis=0)
+
+    # 计算均值和方差
+    mean_features = np.mean(all_features, axis=0)
+    variance_features = np.var(all_features, axis=0)
+
+    # 计算相对方差
+    relative_variance = variance_features / (mean_features ** 2)
+    relative_variance[np.isnan(relative_variance)] = 0  # 处理除以零的情况
+
+    # 对 mean_features 和 relative_variance 进行排序
+    sorted_indices = np.argsort(mean_features)[::-1]
+    sorted_mean_features = mean_features[sorted_indices]
+    sorted_relative_variance = relative_variance[sorted_indices]
+
+
+    cls_zero_positions = g_head.weight.cpu().detach().numpy()[first_class_label] == 0
+    cls_zero_positions = cls_zero_positions[sorted_indices]
+
+    # 绘制图形
+    fig, ax1 = plt.subplots()
+
+    ax1.set_xlabel('Sorted Feature Index')
+    ax1.set_ylabel('Sorted Mean Features', color='tab:blue')
+    ax1.plot(sorted_mean_features, color='tab:blue')
+    ax1.tick_params(axis='y', labelcolor='tab:blue')
+
+    # 添加权重为0的位置的灰色阴影
+    count = 0
+    for i in range(len(cls_zero_positions)):
+        if cls_zero_positions[i] == True:
+            if i < 256:
+                count += 1
+            ax1.axvspan(i-0.5, i+0.5, facecolor='gray', alpha=0.5)
+
+    ax2 = ax1.twinx()
+    ax2.set_ylabel('Sorted Relative Variance', color='tab:red')
+    ax2.plot(sorted_relative_variance, color='tab:red')
+    ax2.tick_params(axis='y', labelcolor='tab:red')
+
+    fig.tight_layout()
+    plt.title('Sorted Mean Features and Relative Variance for Class 0')
+
+    # 保存图像
+    fig.savefig('sorted_mean_and_relative_variance.png')
+
+
+    # 画的是featrues的均值和方差
+    # import matplotlib.pyplot as plt
+    # import numpy as np
+
+    # # 初始化用于存储第一个类的所有特征和误差的列表
+    # features_list = []
+    # error_list = []
+
+    # # 假设第一个类的标签是 0
+    # first_class_label = 0
+
+    # # 遍历 test_loader 以获取所有的特征和标签
+    # for images, labels in test_loader:
+    #     images = images.to(args.device)
+    #     labels = labels.to(args.device)
+    #     features = net(images, latent_output=True)
+        
+    #     # 找到属于第一个类的特征
+    #     indices = (labels == first_class_label).nonzero(as_tuple=True)[0]
+    #     first_class_features = features[indices]
+        
+    #     # 计算与第一个类的 class_means 的误差
+    #     class_mean = class_means[first_class_label]
+    #     errors = torch.abs(first_class_features - class_mean)
+        
+    #     features_list.append(first_class_features.cpu().detach().numpy())
+    #     error_list.append(errors.cpu().detach().numpy())
+
+    # # 将所有批次的数据合并成一个数组
+    # all_features = np.concatenate(features_list, axis=0)
+    # all_errors = np.concatenate(error_list, axis=0)
+
+    # # 计算均值和误差的均值
+    # mean_features = np.mean(all_features, axis=0)
+    # mean_errors = np.mean(all_errors, axis=0)
+
+    # # 对 mean_features 进行排序，并相应地重新排列 mean_errors
+    # sorted_indices = np.argsort(mean_features)[::-1]
+    # mean_features = mean_features[sorted_indices]
+    # mean_errors = mean_errors[sorted_indices]
+
+    # # 绘制图形
+    # fig, ax1 = plt.subplots()
+
+    # ax1.set_xlabel('Sorted Feature Index')
+    # ax1.set_ylabel('Sorted Mean Features', color='tab:blue')
+    # ax1.plot(mean_features, color='tab:blue')
+    # ax1.tick_params(axis='y', labelcolor='tab:blue')
+
+    # ax2 = ax1.twinx()
+    # ax2.set_ylabel('Sorted Mean Errors', color='tab:red')
+    # ax2.plot(mean_errors, color='tab:red')
+    # ax2.tick_params(axis='y', labelcolor='tab:red')
+
+    # fig.tight_layout()
+    # plt.title('Sorted Mean Features and Errors for Class 0')
+
+    # # 保存图像
+    # fig.savefig('sorted_mean_and_errors.png')
+
+
+
+    # 画出output的方差均值
+    # import matplotlib.pyplot as plt
+    # import numpy as np
+
+    # # 初始化用于存储第一个类的所有输出的列表
+    # outputs_list = []
+
+    # # 假设第一个类的标签是 0
+    # first_class_label = 0
+
+    # # 遍历 test_loader 以获取所有的输出和标签
+    # with torch.no_grad():
+    #     for images, labels in test_loader:
+    #         images = images.to(args.device)
+    #         labels = labels.to(args.device)
+    #         features = net(images, latent_output=True)
+            
+    #         if head_switch == True:
+    #             outputs = g_head(features)
+    #         else:
+    #             outputs = features
+            
+    #         # 找到属于第一个类的输出
+    #         indices = (labels == first_class_label).nonzero(as_tuple=True)[0]
+    #         first_class_outputs = outputs[indices]
+            
+    #         outputs_list.append(first_class_outputs.cpu().detach().numpy())
+
+    # # 将所有批次的数据合并成一个数组
+    # all_outputs = np.concatenate(outputs_list, axis=0)
+
+    # # 计算均值和方差
+    # outputs_mean = np.mean(all_outputs, axis=0)
+    # outputs_variance = np.var(all_outputs, axis=0)
+
+    # # 对 outputs_mean 进行排序，并获取排序后的索引
+    # sorted_indices = np.argsort(outputs_mean)[::-1]  # 从大到小排序
+
+    # # 使用排序后的索引重新排列 outputs_mean 和 outputs_variance
+    # sorted_outputs_mean = outputs_mean[sorted_indices]
+    # sorted_outputs_variance = outputs_variance[sorted_indices]
+
+    # # 绘制图形
+    # fig, ax = plt.subplots()
+
+    # ax.set_xlabel('Sorted Output Index')
+    # ax.set_ylabel('Sorted Mean Outputs')
+    # ax.plot(sorted_outputs_mean, label='Sorted Mean Outputs')
+    # ax.fill_between(range(len(sorted_outputs_mean)), sorted_outputs_mean - np.sqrt(sorted_outputs_variance), sorted_outputs_mean + np.sqrt(sorted_outputs_variance), color='gray', alpha=0.5, label='Std Deviation')
+
+    # ax.legend()
+    # fig.tight_layout()
+    # plt.title('Sorted Mean Outputs and Std Deviation for Class 0')
+
+    # # 保存图像
+    # fig.savefig('sorted_mean_outputs_and_std_deviation.png')
+
+
+    return acc, acc_3shot_global
+
+
+
+# 过滤掉一定百分比的features
+def globaltest_class_mean_filter(net, g_head, test_dataset, class_means, args, dataset_class=None, head_switch=True):
+    global_test_distribution = dataset_class.global_test_distribution
+    three_shot_dict, _ = shot_split(global_test_distribution, threshold_3shot=[75, 95])
+    correct_3shot = {"head": 0, "middle": 0, "tail": 0}
+    total_3shot = {"head": 0, "middle": 0, "tail": 0}
+    acc_3shot_global = {"head": None, "middle": None, "tail": None}
+    net.eval()
+    test_loader = torch.utils.data.DataLoader(
+        dataset=test_dataset, batch_size=100, shuffle=False)
+    # 监视真实情况下所有样本的类别分布
+    total_class_label = [0 for i in range(args.num_classes)]
+    predict_true_class = [0 for i in range(args.num_classes)]
+
+
+    # 初始化一个字典来存储被设置为0的位置
+    zero_positions = {}
+    beta = 0.001
+    # 遍历 class_means 字典中的每一项
+    for class_label, tensor in class_means.items():
+        # 对数据进行排序
+        sorted_values, _ = torch.sort(tensor)
+        # 找到对应于阈值 beta 的值
+        threshold_index = int(len(sorted_values) * beta)
+        threshold_value = sorted_values[threshold_index]
+        # 记录所有小于阈值的元素的位置
+        zero_positions[class_label] = (tensor < threshold_value)
+        # 将所有小于阈值的元素设置为 0
+        tensor[tensor < threshold_value] = 0
+
+
     # 1. 复制原始 g_head 的 weight 和 bias
     original_weight = g_head.weight.detach().clone()
     original_bias = g_head.bias.detach().clone()
-
-    # 2. 根据 zero_positions 修改 weight
-    for i, zero in enumerate(zero_positions):
-        if zero:
-            original_weight[:, i] = 0
+    for key, value in zero_positions.items():
+            original_weight[key, :] *= value.float()  # 确保数据类型匹配
 
     # 3. 创建一个新的 Linear 层，并使用修改后的 weight 和 bias 初始化它
     new_g_head = nn.Linear(in_features=512, out_features=100, bias=True)
     new_g_head.weight.data = original_weight
     new_g_head.bias.data = original_bias
+    new_g_head = new_g_head.to(args.device)
 
-    return acc, acc_3shot_global, new_g_head
+    # 裁剪之后的inference
+    with torch.no_grad():
+        correct = 0
+        total = 0
+        for images, labels in test_loader:
+            images = images.to(args.device)
+            labels = labels.to(args.device)
+            features = net(images, latent_output=True)
+            # # 根据之前记录的位置信息，将特征置零
+            # for i, label in enumerate(labels):
+            #     zero_pos = zero_positions[label.item()]
+            #     features[i][zero_pos] = 0
+            if head_switch == True:
+                # outputs = g_head(features)
+                outputs = new_g_head(features)
+            else:
+                outputs = features
+            _, predicted = torch.max(outputs.data, 1)
+            total += labels.size(0)
+            correct += (predicted == labels).sum().item()
+
+
+
+            # class-wise acc calc
+            for i in range(len(labels)):
+                total_class_label[int(labels[i])] += 1      # total
+                if predicted[i] == labels[i]:
+                    predict_true_class[int(labels[i])] += 1
+
+            # start: cal 3shot metrics
+            for label in labels:
+                if label in three_shot_dict["head"]:
+                    total_3shot["head"] += 1
+                elif label in three_shot_dict["middle"]:
+                    total_3shot["middle"] += 1
+                else:
+                    total_3shot["tail"] += 1
+            for i in range(len(predicted)):
+                if predicted[i] == labels[i] and labels[i] in three_shot_dict["head"]:   # 预测正确且在head中
+                    correct_3shot["head"] += 1
+                # 预测正确且在middle中
+                elif predicted[i] == labels[i] and labels[i] in three_shot_dict["middle"]:
+                    correct_3shot["middle"] += 1
+                # 预测正确且在tail中
+                elif predicted[i] == labels[i] and labels[i] in three_shot_dict["tail"]:
+                    correct_3shot["tail"] += 1      # 在tail中
+
+    acc = correct / total
+    acc_3shot_global["head"] = correct_3shot["head"] / \
+        (total_3shot["head"] + 1e-10)
+    acc_3shot_global["middle"] = correct_3shot["middle"] / \
+        (total_3shot["middle"] + 1e-10)
+    acc_3shot_global["tail"] = correct_3shot["tail"] / \
+        (total_3shot["tail"] + 1e-10)
+
+    return acc, acc_3shot_global
 
 
 def globaltest_etf(net, g_head, test_dataset, args, dataset_class=None, head_switch=True):

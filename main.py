@@ -10,15 +10,17 @@ import torch
 import pdb
 
 from tqdm import tqdm
-from options import args_parser
-from util.update_baseline import LocalUpdate, globaltest, localtest
+from options import args_parser, args_parser_cifar10
+from util.update_baseline import LocalUpdate, globaltest_villina, localtest_villina
 from util.fedavg import *
 # from util.util import add_noise
 from util.dataset import *
 from model.build_model import build_model
 
 np.set_printoptions(threshold=np.inf)
-
+save_switch = True
+dataset_switch = 'cifar100' # cifar10 / cifar100
+save_dir = "./output/h/"
 
 
 def get_acc_file_path(args):
@@ -39,7 +41,12 @@ def get_acc_file_path(args):
    
 if __name__ == '__main__':
     # parse args
-    args = args_parser()
+    # args = args_parser()
+    # parse args
+    if dataset_switch == 'cifar100':
+        args = args_parser()
+    elif dataset_switch == 'cifar10':
+        args = args_parser_cifar10()
     # print("STOP")
     # return
     # torch.manual_seed(args.seed)
@@ -111,15 +118,16 @@ if __name__ == '__main__':
         f1_macro_list = []
         f1_weighted_list = []
         acc_3shot_local_list = []       #####################
-        # for i in range(args.num_users):
-        #     netglob.load_state_dict(copy.deepcopy(w_locals[i]))
-        #     # print('copy sucess')
-        #     acc_local, f1_macro, f1_weighted, acc_3shot_local = localtest(copy.deepcopy(netglob).to(args.device), dataset_test, dataset_class = datasetObj, idxs=dict_localtest[i], user_id = i)
-        #     # print('local test success')
-        #     acc_list.append(acc_local)
-        #     f1_macro_list.append(f1_macro)
-        #     f1_weighted_list.append(f1_weighted)
-        #     acc_3shot_local_list.append(acc_3shot_local) ###################
+        for i in range(args.num_users):
+            # netglob.load_state_dict(copy.deepcopy(w_locals[i]))   # 本地adaption
+            netglob.load_state_dict(copy.deepcopy(w_glob))          # 直接用全局的
+            # print('copy sucess')
+            acc_local, f1_macro, f1_weighted, acc_3shot_local = localtest_villina(copy.deepcopy(netglob).to(args.device), dataset_test, dataset_class = datasetObj, idxs=dict_localtest[i], user_id = i)
+            # print('local test success')
+            acc_list.append(acc_local)
+            f1_macro_list.append(f1_macro)
+            f1_weighted_list.append(f1_weighted)
+            acc_3shot_local_list.append(acc_3shot_local) ###################
 
         # save model and para to "./output"
         # torch.save(netglob, "./output/netglob.pth")
@@ -128,52 +136,50 @@ if __name__ == '__main__':
         #     # netglob.load_state_dict(copy.deepcopy(w_locals[i]))
 
         # start:calculate acc_3shot_local
-        # avg3shot_acc={"head":0, "middle":0, "tail":0}
-        # divisor = {"head":0, "middle":0, "tail":0}
-        # for i in range(len(acc_3shot_local_list)):
-        #     avg3shot_acc["head"] += acc_3shot_local_list[i]["head"][0]
-        #     avg3shot_acc["middle"] += acc_3shot_local_list[i]["middle"][0]
-        #     avg3shot_acc["tail"] += acc_3shot_local_list[i]["tail"][0]
-        #     divisor["head"] += acc_3shot_local_list[i]["head"][1]
-        #     divisor["middle"] += acc_3shot_local_list[i]["middle"][1]
-        #     divisor["tail"] += acc_3shot_local_list[i]["tail"][1]
-        # avg3shot_acc["head"] /= divisor["head"]
-        # avg3shot_acc["middle"] /= divisor["middle"]
-        # avg3shot_acc["tail"] /= divisor["tail"]
+        avg3shot_acc={"head":0, "middle":0, "tail":0}
+        divisor = {"head":0, "middle":0, "tail":0}
+        for i in range(len(acc_3shot_local_list)):
+            avg3shot_acc["head"] += acc_3shot_local_list[i]["head"][0]
+            avg3shot_acc["middle"] += acc_3shot_local_list[i]["middle"][0]
+            avg3shot_acc["tail"] += acc_3shot_local_list[i]["tail"][0]
+            divisor["head"] += acc_3shot_local_list[i]["head"][1]
+            divisor["middle"] += acc_3shot_local_list[i]["middle"][1]
+            divisor["tail"] += acc_3shot_local_list[i]["tail"][1]
+        avg3shot_acc["head"] /= divisor["head"]
+        avg3shot_acc["middle"] /= divisor["middle"]
+        avg3shot_acc["tail"] /= divisor["tail"]
         # end 
         
         # start: calculate 3shot of each client
         # # three_shot_client = [{"head":0, "middle":0, "tail":0} for i in range(len(acc_3shot_local_list))]
-        # for i in range(len(acc_3shot_local_list)):
-        #     acclist = []
-        #     if acc_3shot_local_list[i]["head"][1] == True:
-        #         acclist.append(acc_3shot_local_list[i]["head"][0])
-        #     else:
-        #         acclist.append(0)
+        for i in range(len(acc_3shot_local_list)):
+            acclist = []
+            if acc_3shot_local_list[i]["head"][1] == True:
+                acclist.append(acc_3shot_local_list[i]["head"][0])
+            else:
+                acclist.append(0)
 
-        #     if acc_3shot_local_list[i]["middle"][1] == True:
-        #         acclist.append(acc_3shot_local_list[i]["middle"][0])
-        #     else:
-        #         acclist.append(0)
+            if acc_3shot_local_list[i]["middle"][1] == True:
+                acclist.append(acc_3shot_local_list[i]["middle"][0])
+            else:
+                acclist.append(0)
                 
-        #     if acc_3shot_local_list[i]["tail"][1] == True:
-        #         acclist.append(acc_3shot_local_list[i]["tail"][0])
-        #     else:
-        #         acclist.append(0)
-        #     print("3shot of client {}:head:{}, middle:{}, tail{}".format(i, acclist[0], acclist[1], acclist[2]))
-        # # end
+            if acc_3shot_local_list[i]["tail"][1] == True:
+                acclist.append(acc_3shot_local_list[i]["tail"][0])
+            else:
+                acclist.append(0)
+            print("3shot of client {}:head:{}, middle:{}, tail{}".format(i, acclist[0], acclist[1], acclist[2]))
+        # end
 
-        # avg_local_acc = sum(acc_list)/len(acc_list)
+        avg_local_acc = sum(acc_list)/len(acc_list)
         # print('Calculate the local average acc')
         
-        # avg_f1_macro = Weighted_avg_f1(f1_macro_list,dict_len=dict_len)
-        # avg_f1_weighted = Weighted_avg_f1(f1_weighted_list,dict_len)
+        avg_f1_macro = Weighted_avg_f1(f1_macro_list,dict_len=dict_len)
+        avg_f1_weighted = Weighted_avg_f1(f1_weighted_list,dict_len)
         netglob.load_state_dict(copy.deepcopy(w_glob))
-        load_dir = "./output_main_cifar100/"
-        torch.save(netglob, load_dir + "model_" + str(rnd) + ".pth")
-        # acc_s2, global_3shot_acc = globaltest(copy.deepcopy(netglob).to(args.device), dataset_test, dataset_class = datasetObj)
-        print("norm", torch.norm(netglob.linear.weight, p=2, dim=1))
-
+        acc_s2, global_3shot_acc = globaltest_villina(copy.deepcopy(netglob).to(args.device), dataset_test, args, dataset_class = datasetObj)
+        if save_switch == True:
+            torch.save(netglob, save_dir + "model_" + str(rnd) + ".pth")
 
         # f_acc.write('round %d, local average test acc  %.4f \n'%(rnd, avg_local_acc))
         # f_acc.write('round %d, local macro average F1 score  %.4f \n'%(rnd, avg_f1_macro))
@@ -182,10 +188,10 @@ if __name__ == '__main__':
         # f_acc.write('round %d, global 3shot acc: [head: %.4f, middle: %.4f, tail: %.4f] \n'%(rnd, global_3shot_acc["head"], global_3shot_acc["middle"], global_3shot_acc["tail"]))
         # f_acc.write('round %d, average 3shot acc: [head: %.4f, middle: %.4f, tail: %.4f] \n'%(rnd, avg3shot_acc["head"], avg3shot_acc["middle"], avg3shot_acc["tail"]))
         # f_acc.flush()
-        # print('round %d, local average test acc  %.4f \n'%(rnd, avg_local_acc))
-        # print('round %d, local macro average F1 score  %.4f \n'%(rnd, avg_f1_macro))
-        # print('round %d, local weighted average F1 score  %.4f \n'%(rnd, avg_f1_weighted))
-        # print('round %d, global test acc  %.4f \n'%(rnd, acc_s2))
-        # print('round %d, average 3shot acc: [head: %.4f, middle: %.4f, tail: %.4f] \n'%(rnd, avg3shot_acc["head"], avg3shot_acc["middle"], avg3shot_acc["tail"]))
-        # print('round %d, global 3shot acc: [head: %.4f, middle: %.4f, tail: %.4f] \n'%(rnd, global_3shot_acc["head"], global_3shot_acc["middle"], global_3shot_acc["tail"]))
+        print('round %d, local average test acc  %.4f \n'%(rnd, avg_local_acc))
+        print('round %d, local macro average F1 score  %.4f \n'%(rnd, avg_f1_macro))
+        print('round %d, local weighted average F1 score  %.4f \n'%(rnd, avg_f1_weighted))
+        print('round %d, global test acc  %.4f \n'%(rnd, acc_s2))
+        print('round %d, average 3shot acc: [head: %.4f, middle: %.4f, tail: %.4f] \n'%(rnd, avg3shot_acc["head"], avg3shot_acc["middle"], avg3shot_acc["tail"]))
+        print('round %d, global 3shot acc: [head: %.4f, middle: %.4f, tail: %.4f] \n'%(rnd, global_3shot_acc["head"], global_3shot_acc["middle"], global_3shot_acc["tail"]))
     torch.cuda.empty_cache()

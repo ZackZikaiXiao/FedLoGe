@@ -1,0 +1,500 @@
+nohup: ignoring input
+./temp/fl_acc_cifar10_resnet18_cons_frac0.2_iidFalse_iter500_ep5_lr0.03_N40_10_seed3407_p1_dirichlet1.0_IF0.01_LossCE.txt
+Files already downloaded and verified
+[5000, 2997, 1796, 1077, 645, 387, 232, 139, 83, 50]
+12406
+Files already downloaded and verified
+Into non-iid sampling
+clients_sizes:[257, 284, 401, 688, 137, 360, 251, 282, 255, 443, 163, 390, 288, 184, 530, 169, 295, 376, 627, 386, 189, 195, 730, 261, 348, 298, 518, 126, 167, 240, 210, 195, 351, 229, 96, 224, 390, 483, 166, 224]
+training set distribution:
+[[127  47  21  36  13   3   0   9   1   0]
+ [ 75  21 102  15   5  36  26   3   1   0]
+ [150  95 109  11   0  16   6  14   0   0]
+ [336  82 146  42  45  18  11   3   5   0]
+ [ 57   4  53   7  12   0   1   2   1   0]
+ [ 86 182  12  25   5  43   0   5   2   0]
+ [119  56  48  14   1   1   5   1   3   3]
+ [ 86  38  56  60  25   0  11   6   0   0]
+ [111   1  39  64  28   5   5   1   1   0]
+ [112 248  14   3  53   6   0   2   4   1]
+ [ 29 100   0   8  11   1   3   9   1   1]
+ [125 133  12  82  22   0   8   3   0   5]
+ [172  78   3   3  11   7  13   0   0   1]
+ [  5 159   4   1   8   1   5   1   0   0]
+ [  7 275 188  29   5  15   1   5   1   4]
+ [ 16  43  45  29   8   1  14   3   8   2]
+ [160  63  38   0   7  14   6   5   2   0]
+ [ 37  27 263  39   2   1   2   0   2   3]
+ [401  90  28  56   8   8  32   0   1   3]
+ [287   4  23  51  10   7   0   1   1   2]
+ [  5  85  49  22   9  11   5   3   0   0]
+ [  8  83  21  15   6  36   9  11   5   1]
+ [347 225  56  40  47   4   1   7   3   0]
+ [ 87  54  99   2   8   1   5   2   3   0]
+ [242   1  14   6  45  18  12   2   8   0]
+ [217  16  15   0  40   6   1   3   0   0]
+ [413  41   5  22   2  25   3   3   4   0]
+ [ 62  24   6   8  13   1   3   1   8   0]
+ [ 61  12  14  37  19  15   0   5   0   4]
+ [ 87  37  51  40   8   0  14   0   0   3]
+ [ 43  37  36  22  53   7   6   2   4   0]
+ [ 73 107   0   0   5   1   1   5   3   0]
+ [ 80  74  39 132  18   2   2   0   4   0]
+ [ 48  33 105  30   9   0   0   3   0   1]
+ [ 14  22  13  16  12   2   0   5   5   7]
+ [148  11   0  32  13  12   2   2   0   4]
+ [305  17  16   9  22   5  12   2   1   1]
+ [224 151  15  35  24  24   3   3   0   4]
+ [ 26  82   1  17  11  21   1   6   1   0]
+ [ 12 139  37  17   2  13   3   1   0   0]]
+Total size of training set
+12406
+local test distribution:
+[[102  37  16  29  10   2   0   7   0   0]
+ [ 60  16  82  12   4  29  20   2   0   0]
+ [120  76  87   8   0  12   4  11   0   0]
+ [270  66 117  33  36  14   8   2   4   0]
+ [ 45   3  42   5   9   0   0   1   0   0]
+ [ 69 146   9  20   4  34   0   4   1   0]
+ [ 95  45  38  11   0   0   4   0   2   2]
+ [ 69  30  45  48  20   0   8   4   0   0]
+ [ 89   0  31  51  22   4   4   0   0   0]
+ [ 90 199  11   2  42   4   0   1   3   0]
+ [ 23  80   0   6   8   0   2   7   0   0]
+ [100 107   9  66  17   0   6   2   0   4]
+ [138  62   2   2   8   5  10   0   0   0]
+ [  4 128   3   0   6   0   4   0   0   0]
+ [  5 221 151  23   4  12   0   4   0   3]
+ [ 12  34  36  23   6   0  11   2   6   1]
+ [128  50  30   0   5  11   4   4   1   0]
+ [ 29  21 211  31   1   0   1   0   1   2]
+ [323  72  22  45   6   6  25   0   0   2]
+ [231   3  18  41   8   5   0   0   0   1]
+ [  4  68  39  17   7   8   4   2   0   0]
+ [  6  66  16  12   4  29   7   8   4   0]
+ [279 181  45  32  37   3   0   5   2   0]
+ [ 70  43  79   1   6   0   4   1   2   0]
+ [195   0  11   4  36  14   9   1   6   0]
+ [174  12  12   0  32   4   0   2   0   0]
+ [332  33   4  17   1  20   2   2   3   0]
+ [ 49  19   4   6  10   0   2   0   6   0]
+ [ 49   9  11  29  15  12   0   4   0   3]
+ [ 70  29  41  32   6   0  11   0   0   2]
+ [ 34  29  29  17  42   5   4   1   3   0]
+ [ 58  86   0   0   4   0   0   4   2   0]
+ [ 64  59  31 106  14   1   1   0   3   0]
+ [ 38  26  84  24   7   0   0   2   0   0]
+ [ 11  17  10  12   9   1   0   4   4   5]
+ [119   8   0  25  10   9   1   1   0   3]
+ [245  13  12   7  17   4   9   1   0   0]
+ [180 121  12  28  19  19   2   2   0   3]
+ [ 20  66   0  13   8  16   0   4   0   0]
+ [  9 112  29  13   1  10   2   0   0   0]]
+Total size of testing set
+9823
+[4008 2393 1429  851  501  293  169   95   53   31]
+40
+  0%|          | 0/500 [00:00<?, ?it/s]  0%|          | 1/500 [04:32<37:48:12, 272.73s/it]  0%|          | 2/500 [07:50<31:39:04, 228.80s/it]3shot of client 0:head:0.6071428571428571, middle:0.0, tail0.0
+3shot of client 1:head:0.3508771929824561, middle:0.0, tail0.0
+3shot of client 2:head:0.42402826855123676, middle:0.0, tail0.0
+3shot of client 3:head:0.5960264900662252, middle:0.0, tail0.0
+3shot of client 4:head:0.5172413793103449, middle:0.0, tail0.0
+3shot of client 5:head:0.27710843373493976, middle:0.0, tail0.0
+3shot of client 6:head:0.5337078651685393, middle:0.0, tail0.0
+3shot of client 7:head:0.359375, middle:0.0, tail0.0
+3shot of client 8:head:0.52046783625731, middle:0.0, tail0.0
+3shot of client 9:head:0.31141868512110726, middle:0.0, tail0.0
+3shot of client 10:head:0.22330097087378642, middle:0.0, tail0.0
+3shot of client 11:head:0.3663003663003663, middle:0.0, tail0.0
+3shot of client 12:head:0.69, middle:0.0, tail0.0
+3shot of client 13:head:0.0, middle:0.4, tail0.0
+3shot of client 14:head:0.0, middle:0.0, tail0.3125
+3shot of client 15:head:0.11428571428571428, middle:0.0, tail0.0
+3shot of client 16:head:0.7191011235955056, middle:0.0, tail0.0
+3shot of client 17:head:0.0, middle:0.58, tail0.0
+3shot of client 18:head:0.8177215189873418, middle:0.0, tail0.0
+3shot of client 19:head:1.0, middle:0.0, tail0.0
+3shot of client 20:head:0.0, middle:0.21052631578947367, tail0.0
+3shot of client 21:head:0.0, middle:0.24, tail0.0
+3shot of client 22:head:0.6065217391304348, middle:0.0, tail0.0
+3shot of client 23:head:0.3645833333333333, middle:0.0, tail0.0
+3shot of client 24:head:0.8441558441558441, middle:0.0, tail0.0
+3shot of client 25:head:0.8446601941747572, middle:0.0, tail0.0
+3shot of client 26:head:1.0, middle:0.0, tail0.0
+3shot of client 27:head:0.6282051282051282, middle:0.0, tail0.0
+3shot of client 28:head:0.4666666666666667, middle:0.0, tail0.0
+3shot of client 29:head:0.4069767441860465, middle:0.0, tail0.0
+3shot of client 30:head:0.2537313432835821, middle:0.0, tail0.0
+3shot of client 31:head:0.4027777777777778, middle:0.0, tail0.0
+3shot of client 32:head:0.2794759825327511, middle:0.0, tail0.0
+3shot of client 33:head:0.25675675675675674, middle:0.0, tail0.0
+3shot of client 34:head:0.1864406779661017, middle:0.0, tail0.0
+3shot of client 35:head:0.8263888888888888, middle:0.0, tail0.0
+3shot of client 36:head:1.0, middle:0.0, tail0.0
+3shot of client 37:head:0.5980066445182725, middle:0.0, tail0.0
+3shot of client 38:head:0.19607843137254902, middle:0.0, tail0.0
+3shot of client 39:head:0.0, middle:0.28125, tail0.0
+round 0, local average test acc  0.3695 
+
+round 0, local macro average F1 score  0.0690 
+
+round 0, local weighted average F1 score  0.2446 
+
+round 0, global test acc  0.1000 
+
+round 0, average 3shot acc: [head: 0.4397, middle: 0.0428, tail: 0.0078] 
+
+round 0, global 3shot acc: [head: 0.3333, middle: 0.0000, tail: 0.0000] 
+
+3shot of client 0:head:0.6071428571428571, middle:0.0, tail0.0
+3shot of client 1:head:0.3508771929824561, middle:0.0, tail0.0
+3shot of client 2:head:0.42402826855123676, middle:0.0, tail0.0
+3shot of client 3:head:0.5960264900662252, middle:0.0, tail0.0
+3shot of client 4:head:0.5172413793103449, middle:0.0, tail0.0
+3shot of client 5:head:0.27710843373493976, middle:0.0, tail0.0
+3shot of client 6:head:0.5337078651685393, middle:0.0, tail0.0
+3shot of client 7:head:0.359375, middle:0.0, tail0.0
+3shot of client 8:head:0.52046783625731, middle:0.0, tail0.0
+3shot of client 9:head:0.31141868512110726, middle:0.0, tail0.0
+3shot of client 10:head:0.22330097087378642, middle:0.0, tail0.0
+3shot of client 11:head:0.3663003663003663, middle:0.0, tail0.0
+3shot of client 12:head:0.69, middle:0.0, tail0.0
+3shot of client 13:head:0.0, middle:0.4, tail0.0
+3shot of client 14:head:0.0, middle:0.0, tail0.3125
+3shot of client 15:head:0.11428571428571428, middle:0.0, tail0.0
+3shot of client 16:head:0.7191011235955056, middle:0.0, tail0.0
+3shot of client 17:head:0.0, middle:0.58, tail0.0
+3shot of client 18:head:0.8177215189873418, middle:0.0, tail0.0
+3shot of client 19:head:1.0, middle:0.0, tail0.0
+3shot of client 20:head:0.0, middle:0.21052631578947367, tail0.0
+3shot of client 21:head:0.0, middle:0.24, tail0.0
+3shot of client 22:head:0.6065217391304348, middle:0.0, tail0.0
+3shot of client 23:head:0.3645833333333333, middle:0.0, tail0.0
+3shot of client 24:head:0.8441558441558441, middle:0.0, tail0.0
+3shot of client 25:head:0.8446601941747572, middle:0.0, tail0.0
+3shot of client 26:head:1.0, middle:0.0, tail0.0
+3shot of client 27:head:0.6282051282051282, middle:0.0, tail0.0
+3shot of client 28:head:0.4666666666666667, middle:0.0, tail0.0
+3shot of client 29:head:0.4069767441860465, middle:0.0, tail0.0
+3shot of client 30:head:0.2537313432835821, middle:0.0, tail0.0
+3shot of client 31:head:0.4027777777777778, middle:0.0, tail0.0
+3shot of client 32:head:0.2794759825327511, middle:0.0, tail0.0
+3shot of client 33:head:0.25675675675675674, middle:0.0, tail0.0
+3shot of client 34:head:0.1864406779661017, middle:0.0, tail0.0
+3shot of client 35:head:0.8263888888888888, middle:0.0, tail0.0
+3shot of client 36:head:1.0, middle:0.0, tail0.0
+3shot of client 37:head:0.5980066445182725, middle:0.0, tail0.0
+3shot of client 38:head:0.19607843137254902, middle:0.0, tail0.0
+3shot of client 39:head:0.0, middle:0.28125, tail0.0
+round 1, local average test acc  0.3695 
+
+round 1, local macro average F1 score  0.0712 
+
+round 1, local weighted average F1 score  0.2519 
+
+round 1, global test acc  0.1000 
+
+round 1, average 3shot acc: [head: 0.4397, middle: 0.0428, tail: 0.0078] 
+
+round 1, global 3shot acc: [head: 0.3333, middle: 0.0000, tail: 0.0000] 
+
+3shot of client 0:head:0.5119047619047619, middle:0.5769230769230769, tail0.0
+3shot of client 1:head:0.6081871345029239, middle:0.0, tail0.0
+3shot of client 2:head:0.5795053003533569, middle:0.0, tail0.0
+3shot of client 3:head:0.6997792494481236, middle:0.0, tail0.0
+3shot of client 4:head:0.8620689655172413, middle:0.0, tail0.0
+3shot of client 5:head:0.24497991967871485, middle:0.20689655172413793, tail0.0
+3shot of client 6:head:0.6404494382022472, middle:0.0, tail0.0
+3shot of client 7:head:0.484375, middle:0.0, tail0.0
+3shot of client 8:head:0.5789473684210527, middle:0.0, tail0.0
+3shot of client 9:head:0.2768166089965398, middle:0.16981132075471697, tail0.0
+3shot of client 10:head:0.1941747572815534, middle:0.0, tail0.0
+3shot of client 11:head:0.2673992673992674, middle:0.3076923076923077, tail0.0
+3shot of client 12:head:0.575, middle:0.0, tail0.1111111111111111
+3shot of client 13:head:0.015625, middle:0.4, tail0.2857142857142857
+3shot of client 14:head:0.3387096774193548, middle:0.0, tail0.1875
+3shot of client 15:head:0.41904761904761906, middle:0.0, tail0.0
+3shot of client 16:head:0.6123595505617978, middle:0.5434782608695652, tail0.0
+3shot of client 17:head:0.7396694214876033, middle:0.5, tail0.0
+3shot of client 18:head:0.660759493670886, middle:0.21739130434782608, tail0.0
+3shot of client 19:head:0.7662337662337663, middle:0.208955223880597, tail0.0
+3shot of client 20:head:0.25806451612903225, middle:0.10526315789473684, tail0.0
+3shot of client 21:head:0.11382113821138211, middle:0.2, tail0.0
+3shot of client 22:head:0.5043478260869565, middle:0.2719298245614035, tail0.0
+3shot of client 23:head:0.6822916666666666, middle:0.0, tail0.0
+3shot of client 24:head:0.6623376623376623, middle:0.3235294117647059, tail0.0
+3shot of client 25:head:0.6844660194174758, middle:0.3333333333333333, tail0.0
+3shot of client 26:head:0.8192771084337349, middle:0.014285714285714285, tail0.3333333333333333
+3shot of client 27:head:0.5384615384615384, middle:0.1875, tail0.0
+3shot of client 28:head:0.3904761904761905, middle:0.2916666666666667, tail0.0
+3shot of client 29:head:0.5523255813953488, middle:0.0, tail0.0
+3shot of client 30:head:0.39552238805970147, middle:0.0, tail0.0
+3shot of client 31:head:0.3472222222222222, middle:0.0, tail0.0
+3shot of client 32:head:0.21397379912663755, middle:0.6, tail0.0
+3shot of client 33:head:0.7027027027027027, middle:0.0, tail0.0
+3shot of client 34:head:0.23728813559322035, middle:0.0, tail0.0
+3shot of client 35:head:0.625, middle:0.0, tail0.0
+3shot of client 36:head:0.8081632653061225, middle:0.17647058823529413, tail0.0
+3shot of client 37:head:0.521594684385382, middle:0.0, tail0.5263157894736842
+  1%|          | 3/500 [12:11<33:37:03, 243.51s/it]  1%|          | 4/500 [15:39<31:34:40, 229.19s/it]  1%|          | 5/500 [19:18<31:01:22, 225.62s/it]3shot of client 38:head:0.16666666666666666, middle:0.0, tail0.0
+3shot of client 39:head:0.19148936170212766, middle:0.21875, tail0.0
+round 2, local average test acc  0.4276 
+
+round 2, local macro average F1 score  0.1405 
+
+round 2, local weighted average F1 score  0.3891 
+
+round 2, global test acc  0.1643 
+
+round 2, average 3shot acc: [head: 0.4873, middle: 0.1463, tail: 0.0361] 
+
+round 2, global 3shot acc: [head: 0.5477, middle: 0.0000, tail: 0.0000] 
+
+3shot of client 0:head:0.6547619047619048, middle:0.5384615384615384, tail0.0
+3shot of client 1:head:0.6081871345029239, middle:0.16666666666666666, tail0.0
+3shot of client 2:head:0.7385159010600707, middle:0.0, tail0.0
+3shot of client 3:head:0.7770419426048565, middle:0.0, tail0.0
+3shot of client 4:head:0.8505747126436781, middle:0.0, tail0.5
+3shot of client 5:head:0.5742971887550201, middle:0.20689655172413793, tail0.0
+3shot of client 6:head:0.7078651685393258, middle:0.0, tail0.0
+3shot of client 7:head:0.5208333333333334, middle:0.0, tail0.0
+3shot of client 8:head:0.543859649122807, middle:0.0, tail0.0
+3shot of client 9:head:0.6920415224913494, middle:0.16981132075471697, tail0.0
+3shot of client 10:head:0.6796116504854369, middle:0.0, tail0.0
+3shot of client 11:head:0.5238095238095238, middle:0.3076923076923077, tail0.0
+3shot of client 12:head:0.725, middle:0.0, tail0.1111111111111111
+3shot of client 13:head:0.6328125, middle:0.3, tail0.2857142857142857
+3shot of client 14:head:0.6747311827956989, middle:0.0, tail0.1875
+3shot of client 15:head:0.580952380952381, middle:0.0, tail0.0
+3shot of client 16:head:0.7528089887640449, middle:0.5434782608695652, tail0.0
+3shot of client 17:head:0.7231404958677686, middle:0.74, tail0.0
+3shot of client 18:head:0.7721518987341772, middle:0.21739130434782608, tail0.0
+3shot of client 19:head:0.7532467532467533, middle:0.208955223880597, tail0.1111111111111111
+3shot of client 20:head:0.5403225806451613, middle:0.10526315789473684, tail0.0
+3shot of client 21:head:0.43089430894308944, middle:0.16, tail0.0
+3shot of client 22:head:0.7260869565217392, middle:0.2719298245614035, tail0.0
+3shot of client 23:head:0.8020833333333334, middle:0.0, tail0.0
+3shot of client 24:head:0.670995670995671, middle:0.3235294117647059, tail0.0
+3shot of client 25:head:0.6456310679611651, middle:0.6666666666666666, tail0.0
+3shot of client 26:head:0.8072289156626506, middle:0.22857142857142856, tail0.3333333333333333
+3shot of client 27:head:0.6666666666666666, middle:0.1875, tail0.0
+3shot of client 28:head:0.37142857142857144, middle:0.4583333333333333, tail0.0
+3shot of client 29:head:0.6569767441860465, middle:0.0, tail0.0
+3shot of client 30:head:0.4626865671641791, middle:0.0, tail0.0
+3shot of client 31:head:0.6805555555555556, middle:0.0, tail0.0
+3shot of client 32:head:0.3406113537117904, middle:0.6, tail0.0
+3shot of client 33:head:0.777027027027027, middle:0.0, tail0.0
+3shot of client 34:head:0.4067796610169492, middle:0.0, tail0.0
+3shot of client 35:head:0.6388888888888888, middle:0.25925925925925924, tail0.0
+3shot of client 36:head:0.7510204081632653, middle:0.37254901960784315, tail0.0
+3shot of client 37:head:0.7375415282392026, middle:0.0, tail0.47368421052631576
+3shot of client 38:head:0.6078431372549019, middle:0.0, tail0.0
+3shot of client 39:head:0.7021276595744681, middle:0.25, tail0.0
+round 3, local average test acc  0.5687 
+
+round 3, local macro average F1 score  0.2161 
+
+round 3, local weighted average F1 score  0.5616 
+
+round 3, global test acc  0.2184 
+
+round 3, average 3shot acc: [head: 0.6477, middle: 0.1821, tail: 0.0501] 
+
+round 3, global 3shot acc: [head: 0.7277, middle: 0.0003, tail: 0.0000] 
+
+3shot of client 0:head:0.6964285714285714, middle:0.5, tail0.0
+3shot of client 1:head:0.5789473684210527, middle:0.125, tail0.0
+3shot of client 2:head:0.7137809187279152, middle:0.0, tail0.08333333333333333
+3shot of client 3:head:0.7770419426048565, middle:0.04819277108433735, tail0.0
+3shot of client 4:head:0.8735632183908046, middle:0.0, tail0.5
+3shot of client 5:head:0.5783132530120482, middle:0.20689655172413793, tail0.0
+3shot of client 6:head:0.7415730337078652, middle:0.0, tail0.0
+3shot of client 7:head:0.5572916666666666, middle:0.0, tail0.0
+3shot of client 8:head:0.5789473684210527, middle:0.0, tail0.0
+3shot of client 9:head:0.6920415224913494, middle:0.1509433962264151, tail0.0
+3shot of client 10:head:0.6796116504854369, middle:0.0, tail0.0
+3shot of client 11:head:0.5384615384615384, middle:0.23076923076923078, tail0.0
+3shot of client 12:head:0.765, middle:0.0, tail0.2222222222222222
+3shot of client 13:head:0.6171875, middle:0.3, tail0.14285714285714285
+3shot of client 14:head:0.6397849462365591, middle:0.0, tail0.25
+3shot of client 15:head:0.580952380952381, middle:0.0, tail0.0
+3shot of client 16:head:0.7640449438202247, middle:0.5, tail0.0
+3shot of client 17:head:0.6859504132231405, middle:0.82, tail0.0
+3shot of client 18:head:0.8151898734177215, middle:0.21739130434782608, tail0.0
+3shot of client 19:head:0.8138528138528138, middle:0.2835820895522388, tail0.1111111111111111
+3shot of client 20:head:0.49193548387096775, middle:0.10526315789473684, tail0.0
+3shot of client 21:head:0.4715447154471545, middle:0.16, tail0.0
+3shot of client 22:head:0.7608695652173914, middle:0.2982456140350877, tail0.0
+3shot of client 23:head:0.765625, middle:0.0, tail0.0
+3shot of client 24:head:0.7142857142857143, middle:0.3235294117647059, tail0.09090909090909091
+3shot of client 25:head:0.7135922330097088, middle:0.5416666666666666, tail0.0
+3shot of client 26:head:0.8433734939759037, middle:0.3142857142857143, tail0.25
+3shot of client 27:head:0.6410256410256411, middle:0.1875, tail0.0
+3shot of client 28:head:0.41904761904761906, middle:0.5, tail0.0
+3shot of client 29:head:0.6802325581395349, middle:0.0, tail0.0
+3shot of client 30:head:0.4626865671641791, middle:0.0, tail0.0
+3shot of client 31:head:0.6736111111111112, middle:0.0, tail0.0
+3shot of client 32:head:0.4017467248908297, middle:0.5777777777777777, tail0.0
+3shot of client 33:head:0.75, middle:0.125, tail0.0
+3shot of client 34:head:0.4067796610169492, middle:0.0, tail0.0
+3shot of client 35:head:0.7083333333333334, middle:0.25925925925925924, tail0.0
+3shot of client 36:head:0.8122448979591836, middle:0.37254901960784315, tail0.16666666666666666
+3shot of client 37:head:0.7408637873754153, middle:0.045454545454545456, tail0.47368421052631576
+3shot of client 38:head:0.5686274509803921, middle:0.0, tail0.0
+3shot of client 39:head:0.6382978723404256, middle:0.28125, tail0.0
+round 4, local average test acc  0.5792 
+
+round 4, local macro average F1 score  0.2265 
+
+round 4, local weighted average F1 score  0.5693 
+
+round 4, global test acc  0.2250 
+
+round 4, average 3shot acc: [head: 0.6588, middle: 0.1869, tail: 0.0573] 
+
+round 4, global 3shot acc: [head: 0.7153, middle: 0.0347, tail: 0.0000] 
+
+3shot of client 0:head:0.7321428571428571, middle:0.46153846153846156, tail0.0
+3shot of client 1:head:0.5847953216374269, middle:0.1875, tail0.0
+3shot of client 2:head:0.7314487632508834, middle:0.0, tail0.08333333333333333
+3shot of client 3:head:0.7947019867549668, middle:0.060240963855421686, tail0.0
+3shot of client 4:head:0.8390804597701149, middle:0.0, tail0.75
+3shot of client 5:head:0.6465863453815262, middle:0.27586206896551724, tail0.0
+3shot of client 6:head:0.7415730337078652, middle:0.09090909090909091, tail0.0
+3shot of client 7:head:0.5677083333333334, middle:0.0, tail0.0
+3shot of client 8:head:0.5789473684210527, middle:0.0, tail0.0
+3shot of client 9:head:0.7612456747404844, middle:0.1320754716981132, tail0.1
+3shot of client 10:head:0.7572815533980582, middle:0.09523809523809523, tail0.0
+3shot of client 11:head:0.6117216117216118, middle:0.15384615384615385, tail0.0
+3shot of client 12:head:0.845, middle:0.0, tail0.2222222222222222
+3shot of client 13:head:0.65625, middle:0.3, tail0.0
+3shot of client 14:head:0.6774193548387096, middle:0.11428571428571428, tail0.25
+3shot of client 15:head:0.6285714285714286, middle:0.0, tail0.0
+3shot of client 16:head:0.8146067415730337, middle:0.43478260869565216, tail0.0
+3shot of client 17:head:0.6033057851239669, middle:0.86, tail0.0
+  1%|          | 6/500 [23:19<31:41:38, 230.97s/it]0<31:16:54, 227.97s/it]  1%|▏         | 7/500 [26:59<30:50:11, 225.17s/it]3shot of client 15:head:0.6476190476190476, middle:0.0, tail0.0
+3shot of client 16:head:0.8033707865168539, middle:0.43478260869565216, tail0.0
+3shot of client 17:head:0.6239669421487604, middle:0.8, tail0.0
+3shot of client 18:head:0.8278481012658228, middle:0.30434782608695654, tail0.0
+3shot of client 19:head:0.8571428571428571, middle:0.23880597014925373, tail0.1111111111111111
+3shot of client 20:head:0.5161290322580645, middle:0.10526315789473684, tail0.0
+3shot of client 21:head:0.4796747967479675, middle:0.16, tail0.0
+3shot of client 22:head:0.7891304347826087, middle:0.2631578947368421, tail0.0
+3shot of client 23:head:0.7552083333333334, middle:0.0, tail0.125
+3shot of client 24:head:0.7532467532467533, middle:0.29411764705882354, tail0.09090909090909091
+3shot of client 25:head:0.7330097087378641, middle:0.625, tail0.0
+3shot of client 26:head:0.8765060240963856, middle:0.35714285714285715, tail0.25
+3shot of client 27:head:0.6923076923076923, middle:0.25, tail0.0
+3shot of client 28:head:0.42857142857142855, middle:0.5, tail0.0
+3shot of client 29:head:0.7034883720930233, middle:0.0, tail0.0
+3shot of client 30:head:0.5, middle:0.045454545454545456, tail0.0
+3shot of client 31:head:0.7222222222222222, middle:0.0, tail0.0
+3shot of client 32:head:0.462882096069869, middle:0.5333333333333333, tail0.0
+3shot of client 33:head:0.7364864864864865, middle:0.25, tail0.0
+3shot of client 34:head:0.4915254237288136, middle:0.0, tail0.0
+3shot of client 35:head:0.7291666666666666, middle:0.2222222222222222, tail0.0
+3shot of client 36:head:0.8448979591836735, middle:0.39215686274509803, tail0.16666666666666666
+3shot of client 37:head:0.760797342192691, middle:0.045454545454545456, tail0.5263157894736842
+3shot of client 38:head:0.5686274509803921, middle:0.09523809523809523, tail0.0
+3shot of client 39:head:0.6666666666666666, middle:0.34375, tail0.0
+round 5, local average test acc  0.6007 
+
+round 5, local macro average F1 score  0.2442 
+
+round 5, local weighted average F1 score  0.6064 
+
+round 5, global test acc  0.2367 
+
+round 5, average 3shot acc: [head: 0.6824, middle: 0.2038, tail: 0.0547] 
+
+round 5, global 3shot acc: [head: 0.7237, middle: 0.0653, tail: 0.0000] 
+
+3shot of client 0:head:0.7559523809523809, middle:0.4230769230769231, tail0.0
+3shot of client 1:head:0.6023391812865497, middle:0.25, tail0.0
+3shot of client 2:head:0.7597173144876325, middle:0.0, tail0.3333333333333333
+3shot of client 3:head:0.8101545253863135, middle:0.0963855421686747, tail0.0
+3shot of client 4:head:0.8390804597701149, middle:0.0, tail0.75
+3shot of client 5:head:0.6385542168674698, middle:0.3793103448275862, tail0.0
+3shot of client 6:head:0.7415730337078652, middle:0.09090909090909091, tail0.0
+3shot of client 7:head:0.59375, middle:0.0, tail0.0
+3shot of client 8:head:0.6491228070175439, middle:0.0, tail0.0
+3shot of client 9:head:0.7681660899653979, middle:0.1320754716981132, tail0.1
+3shot of client 10:head:0.7572815533980582, middle:0.14285714285714285, tail0.0
+3shot of client 11:head:0.6483516483516484, middle:0.15384615384615385, tail0.0
+3shot of client 12:head:0.845, middle:0.0, tail0.3333333333333333
+3shot of client 13:head:0.6875, middle:0.3, tail0.0
+3shot of client 14:head:0.696236559139785, middle:0.17142857142857143, tail0.25
+3shot of client 15:head:0.6666666666666666, middle:0.0, tail0.0
+3shot of client 16:head:0.8202247191011236, middle:0.43478260869565216, tail0.0
+3shot of client 17:head:0.6239669421487604, middle:0.86, tail0.0
+3shot of client 18:head:0.8430379746835444, middle:0.33695652173913043, tail0.0
+3shot of client 19:head:0.8701298701298701, middle:0.23880597014925373, tail0.1111111111111111
+3shot of client 20:head:0.5564516129032258, middle:0.10526315789473684, tail0.0
+3shot of client 21:head:0.5203252032520326, middle:0.16, tail0.0
+3shot of client 22:head:0.808695652173913, middle:0.2894736842105263, tail0.0
+3shot of client 23:head:0.765625, middle:0.0, tail0.125
+3shot of client 24:head:0.7532467532467533, middle:0.29411764705882354, tail0.18181818181818182
+3shot of client 25:head:0.7475728155339806, middle:0.6666666666666666, tail0.0
+3shot of client 26:head:0.8825301204819277, middle:0.4142857142857143, tail0.16666666666666666
+3shot of client 27:head:0.7307692307692307, middle:0.3125, tail0.0
+3shot of client 28:head:0.44761904761904764, middle:0.5416666666666666, tail0.0
+3shot of client 29:head:0.7209302325581395, middle:0.0, tail0.0
+3shot of client 30:head:0.5074626865671642, middle:0.045454545454545456, tail0.0
+3shot of client 31:head:0.7569444444444444, middle:0.0, tail0.0
+3shot of client 32:head:0.5065502183406113, middle:0.5333333333333333, tail0.0
+3shot of client 33:head:0.7432432432432432, middle:0.2916666666666667, tail0.0
+3shot of client 34:head:0.4745762711864407, middle:0.0, tail0.0
+3shot of client 35:head:0.7708333333333334, middle:0.25925925925925924, tail0.0
+3shot of client 36:head:0.8612244897959184, middle:0.4117647058823529, tail0.25
+3shot of client 37:head:0.7973421926910299, middle:0.10606060606060606, tail0.42105263157894735
+3shot of client 38:head:0.6078431372549019, middle:0.09523809523809523, tail0.0
+3shot of client 39:head:0.6879432624113475, middle:0.375, tail0.0
+round 6, local average test acc  0.6247 
+
+round 6, local macro average F1 score  0.2564 
+
+round 6, local weighted average F1 score  0.6140 
+
+round 6, global test acc  0.2503 
+
+round 6, average 3shot acc: [head: 0.7066, middle: 0.2228, tail: 0.0756] 
+
+round 6, global 3shot acc: [head: 0.7410, middle: 0.0933, tail: 0.0000] 
+
+3shot of client 0:head:0.75, middle:0.46153846153846156, tail0.0
+3shot of client 1:head:0.6140350877192983, middle:0.25, tail0.0
+3shot of client 2:head:0.7632508833922261, middle:0.0, tail0.4166666666666667
+3shot of client 3:head:0.8079470198675497, middle:0.0963855421686747, tail0.0
+3shot of client 4:head:0.8505747126436781, middle:0.0, tail0.75
+3shot of client 5:head:0.6506024096385542, middle:0.3793103448275862, tail0.0
+3shot of client 6:head:0.7696629213483146, middle:0.09090909090909091, tail0.0
+3shot of client 7:head:0.6041666666666666, middle:0.0, tail0.0
+3shot of client 8:head:0.6549707602339181, middle:0.0, tail0.0
+3shot of client 9:head:0.7681660899653979, middle:0.1320754716981132, tail0.1
+3shot of client 10:head:0.7572815533980582, middle:0.14285714285714285, tail0.0
+3shot of client 11:head:0.6556776556776557, middle:0.19230769230769232, tail0.0
+3shot of client 12:head:0.835, middle:0.0, tail0.3333333333333333
+3shot of client 13:head:0.6796875, middle:0.3, tail0.0
+3shot of client 14:head:0.717741935483871, middle:0.14285714285714285, tail0.25
+3shot of client 15:head:0.6761904761904762, middle:0.0, tail0.0
+3shot of client 16:head:0.8258426966292135, middle:0.45652173913043476, tail0.0
+3shot of client 17:head:0.6900826446280992, middle:0.84, tail0.0
+3shot of client 18:head:0.8481012658227848, middle:0.32608695652173914, tail0.0
+3shot of client 19:head:0.8658008658008658, middle:0.26865671641791045, tail0.2222222222222222
+3shot of client 20:head:0.5564516129032258, middle:0.10526315789473684, tail0.0
+3shot of client 21:head:0.5121951219512195, middle:0.16, tail0.0
+3shot of client 22:head:0.8021739130434783, middle:0.2807017543859649, tail0.0
+3shot of client 23:head:0.765625, middle:0.0, tail0.125
+3shot of client 24:head:0.7402597402597403, middle:0.2647058823529412, tail0.09090909090909091
+3shot of client 25:head:0.7378640776699029, middle:0.7083333333333334, tail0.0
+3shot of client 26:head:0.8795180722891566, middle:0.44285714285714284, tail0.16666666666666666
+3shot of client 27:head:0.7051282051282052, middle:0.3125, tail0.0
+3shot of client 28:head:0.44761904761904764, middle:0.5, tail0.0
+3shot of client 29:head:0.7383720930232558, middle:0.0, tail0.0
+3shot of client 30:head:0.5149253731343284, middle:0.045454545454545456, tail0.0
+3shot of client 31:head:0.7430555555555556, middle:0.0, tail0.0
+3shot of client 32:head:0.5065502183406113, middle:0.6222222222222222, tail0.0
+3shot of client 33:head:0.777027027027027, middle:0.25, tail0.0
+3shot of client 34:head:0.4915254237288136, middle:0.0, tail0.0
+3shot of client 35:head:0.7708333333333334, middle:0.25925925925925924, tail0.0
+  2%|▏         | 8/500 [31:04<31:37:36, 231.42s/it]

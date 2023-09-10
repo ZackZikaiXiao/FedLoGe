@@ -25,3 +25,7 @@ fedrod_weightdecay.log
 /output_nospar
 /demo.pth
 /demo.log
+/output
+/fig
+/cifar100_100_0_05_dense
+/cifar100_100_0_05_sparse_etf

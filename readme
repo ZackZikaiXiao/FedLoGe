@@ -164,6 +164,33 @@ nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 2 > spar_e
 nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 0 > spar_etf_bsm_norm_est.log 2>&1 &
 3053433
 
+用构造的sparse etf进行训练,norm=1
+nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 0 > my_designed_sparse_etf.log 2>&1 &
+3499238
+用构造的sparse etf进行训练,norm=0.1
+nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 1 > my_designed_sparse_etf_norm01.log 2>&1 &
+3504052
+用构造的sparse etf进行训练,norm=0.03
+nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 1 > my_designed_sparse_etf_norm003.log 2>&1 &
+3504741
+用构造的sparse etf进行训练,norm=0.15
+nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 2 > my_designed_sparse_etf_norm015.log 2>&1 &
+3505098
+
+不sparse，直接用norm=0.15的etf来
+nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 3 > etf_norm015.log 2>&1 &
+3508021
+
+if cls_switch == "ETF":
+    # 初始化ETF分类器 
+    etf = ETF_Classifier(in_features, out_features) 
+    # 新建线性层,权重使用ETF分类器的ori_M
+    g_head = nn.Linear(in_features, out_features).to(args.device) 
+    # sparse_etf_mat = etf.gen_sparse_ETF()
+    g_head.weight.data = etf.ori_M.to(args.device)
+    # g_head.weight.data = sparse_etf_mat.to(args.device)
+    g_head.weight.data = g_head.weight.data.t()
+    g_head.weight.data *= 0.15
 
 
 cifar 10的spar
@@ -202,4 +229,31 @@ nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 1 > cifar1
 
 用self search得到的稀疏化继续finetune训练
 nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 2 > self_search_spar.log 2>&1 &
-3222370
+3277242
+
+
+
+
+nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 2 > self_search_spar.log 2>&1 &
+
+
+
+
+
+FedAvg
+nohup python main.py --alpha_dirichlet 0.5 --IF 0.02 --beta 0 --gpu 0 > a_fedavg.log 2>&1 &
+3192011
+nohup python main.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 0 > b_fedavg.log 2>&1 &
+3192117
+nohup python main.py --alpha_dirichlet 1 --IF 0.02 --beta 0 --gpu 0 > c_fedavg.log 2>&1 &
+3192252
+nohup python main.py --alpha_dirichlet 1 --IF 0.01 --beta 0 --gpu 1 > d_fedavg.log 2>&1 &
+3192335
+nohup python main.py --alpha_dirichlet 0.5 --IF 0.02 --beta 0 --gpu 1 > e_fedavg.log 2>&1 &
+3192453
+nohup python main.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 1 > f_fedavg.log 2>&1 &
+3192541
+nohup python main.py --alpha_dirichlet 1 --IF 0.02 --beta 0 --gpu 2 > g_fedavg.log 2>&1 &
+3192673
+nohup python main.py --alpha_dirichlet 1 --IF 0.01 --beta 0 --gpu 2 > h_fedavg.log 2>&1 &
+3192793

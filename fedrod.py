@@ -22,7 +22,7 @@ from util.etf_methods import ETF_Classifier
 
 np.set_printoptions(threshold=np.inf)
 
-load_switch = True  # True / False
+load_switch = False  # True / False
 save_switch = False # True / False
 cls_switch = "ETF" # ETF / sparfix / dropout_ETF / w_dropout_ETF / PR_ETF
 pretrain_cls = False
@@ -143,7 +143,7 @@ class w_dropout_ETF(nn.Module):
     def get_dropout_mask(self, shape, dropout_rate):
         # save current RNG state
         rng_state = torch.random.get_rng_state()
-        # generate dropout mask
+        # generate dropout mask  
         mask = (torch.rand(shape) > dropout_rate).float().to(args.device)
         # restore RNG state
         torch.random.set_rng_state(rng_state)
@@ -233,7 +233,9 @@ if __name__ == '__main__':
         etf = ETF_Classifier(in_features, out_features) 
         # 新建线性层,权重使用ETF分类器的ori_M
         g_head = nn.Linear(in_features, out_features).to(args.device) 
-        g_head.weight.data = etf.ori_M.to(args.device)
+        sparse_etf_mat = etf.gen_sparse_ETF(feat_in = in_features, num_classes = out_features, beta=0.6)
+        # g_head.weight.data = etf.ori_M.to(args.device)
+        g_head.weight.data = sparse_etf_mat.to(args.device)
         g_head.weight.data = g_head.weight.data.t()
         # nn.init.sparse_(g_head.weight, sparsity=0.5)
 
@@ -293,8 +295,8 @@ if __name__ == '__main__':
         l_heads.append(nn.Linear(in_features, out_features).to(args.device))
 
     if load_switch == True:
-            rnd = 427
-            load_dir = "./output_nospar/"
+            rnd = 499
+            load_dir = "./output1/" # output1  output_nospar
             model = torch.load(load_dir + "model_" + str(rnd) + ".pth").to(args.device)
             g_head = torch.load(load_dir + "g_head_" + str(rnd) + ".pth").to(args.device)
             # g_head_t = torch.load(load_dir + "g_head_" + str(rnd) + ".pth").to(args.device)
@@ -304,8 +306,10 @@ if __name__ == '__main__':
                 l_heads[i] = torch.load(load_dir + "l_head_" + str(i) + ".pth").to(args.device)
             w_glob = model.state_dict()  # return a dictionary containing a whole state of the module
             w_locals = [copy.deepcopy(w_glob) for i in range(args.num_users)]
-    acc_s2, global_3shot_acc, g_head = globaltest_feat_collapse(copy.deepcopy(model).to(args.device), g_head, dataset_test, args, dataset_class = datasetObj)
+
+    # acc_s2, global_3shot_acc, g_head = globaltest_feat_collapse(copy.deepcopy(model).to(args.device), g_head, dataset_test, args, dataset_class = datasetObj)
     # globaltest_classmean
+    
     # acc_s2, global_3shot_acc = globaltest_calibra(copy.deepcopy(model).to(args.device), copy.deepcopy(g_head).to(args.device), copy.deepcopy(g_aux).to(args.device), dataset_test, args, dataset_class = datasetObj)
     # add fl training
     for rnd in tqdm(range(args.rounds)):
