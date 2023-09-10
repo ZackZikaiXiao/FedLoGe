@@ -375,4 +375,4 @@ round 4, global 3shot acc: [head: 0.5620, middle: 0.0000, tail: 0.0000]
 3shot of client 18:head:0.589041095890411, middle:0.0, tail0.07142857142857142
 3shot of client 19:head:0.6983471074380165, middle:0.11904761904761904, tail0.0
 3shot of client 20:head:0.8560606060606061, middle:0.0, tail0.6
-  1%|          | 6/500 [21:25<29:30:12, 215.00s/it]
+  1%|          | 6/500 [21:25<29:30:12, 215.00s/it]  1%|▏         | 7/500 [25:03<29:36:29, 216.21s/it]
