@@ -18,9 +18,11 @@ from util.dataset import *
 from model.build_model import build_model
 
 np.set_printoptions(threshold=np.inf)
-save_switch = True
-dataset_switch = 'cifar100' # cifar10 / cifar100
+load_switch = False
+save_switch = False
 save_dir = "./output/h/"
+dataset_switch = 'cifar100' # cifar10 / cifar100
+
 
 
 def get_acc_file_path(args):
@@ -97,7 +99,14 @@ if __name__ == '__main__':
     m = max(int(args.frac * args.num_users), 1) #num_select_clients 
     prob = [1/args.num_users for j in range(args.num_users)]
 
-   
+    if load_switch == True:
+        rnd = 499
+        load_dir = "./output1/" # output1  output_nospar
+        model = torch.load(load_dir + "model_" + str(rnd) + ".pth").to(args.device)
+        w_glob = model.state_dict()  # return a dictionary containing a whole state of the module
+
+        
+            
     # add fl training
     for rnd in tqdm(range(args.rounds)):
         w_locals, loss_locals = [], []

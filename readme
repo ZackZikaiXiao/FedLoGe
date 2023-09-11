@@ -237,7 +237,7 @@ nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 2 > self_s
 nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 2 > self_search_spar.log 2>&1 &
 
 
-
+###################################################################################################
 
 
 FedAvg
@@ -257,3 +257,43 @@ nohup python main.py --alpha_dirichlet 1 --IF 0.02 --beta 0 --gpu 2 > g_fedavg.l
 3192673
 nohup python main.py --alpha_dirichlet 1 --IF 0.01 --beta 0 --gpu 2 > h_fedavg.log 2>&1 &
 3192793
+
+
+
+FedProx
+(base) zikaixiao@zju:~/zikai/aapfl/pfed_lastest$ nohup python main.py --alpha_dirichlet 0.5 --IF 0.02 --beta 0.01 --gpu 3 > a_fedprox.log 2>&1 &
+[21] 3235157
+(base) zikaixiao@zju:~/zikai/aapfl/pfed_lastest$ nohup python main.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0.01 --gpu 3 > b_fedprox.log 2>&1 &
+[22] 3235158
+(base) zikaixiao@zju:~/zikai/aapfl/pfed_lastest$ nohup python main.py --alpha_dirichlet 1 --IF 0.02 --beta 0.01 --gpu 3 > c_fedprox.log 2>&1 &
+[23] 3235159
+(base) zikaixiao@zju:~/zikai/aapfl/pfed_lastest$ nohup python main.py --alpha_dirichlet 1 --IF 0.01 --beta 0.01 --gpu 4 > d_fedprox.log 2>&1 &
+[24] 3235160
+(base) zikaixiao@zju:~/zikai/aapfl/pfed_lastest$ nohup python main.py --alpha_dirichlet 0.5 --IF 0.02 --beta 0.01 --gpu 4 > e_fedprox.log 2>&1 &
+[25] 3235161
+(base) zikaixiao@zju:~/zikai/aapfl/pfed_lastest$ nohup python main.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0.01 --gpu 4 > f_fedprox.log 2>&1 &
+[26] 3235162
+(base) zikaixiao@zju:~/zikai/aapfl/pfed_lastest$ nohup python main.py --alpha_dirichlet 1 --IF 0.02 --beta 0.01 --gpu 5 > g_fedprox.log 2>&1 &
+[27] 3235163
+(base) zikaixiao@zju:~/zikai/aapfl/pfed_lastest$ nohup python main.py --alpha_dirichlet 1 --IF 0.01 --beta 0.01 --gpu 5 > h_fedprox.log 2>&1 &
+[28] 3235385
+
+
+FedBN
+/home/zikaixiao/zikai/aapfl/fl_gba_cifar100/fedbn.py
+nohup python fedbn.py --alpha_dirichlet 0.5 --IF 0.02 --beta 0 --gpu 2 > a_fedbn.log 2>&1 &
+[29] 3237483
+nohup python fedbn.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 5 > b_fedbn.log 2>&1 &
+[30] 3237484
+nohup python fedbn.py --alpha_dirichlet 1 --IF 0.02 --beta 0 --gpu 6 > c_fedbn.log 2>&1 &
+[31] 3237485
+nohup python fedbn.py --alpha_dirichlet 1 --IF 0.01 --beta 0 --gpu 6 > d_fedbn.log 2>&1 &
+[32] 3237486
+nohup python fedbn.py --alpha_dirichlet 0.5 --IF 0.02 --beta 0 --gpu 7 > e_fedbn.log 2>&1 &
+[33] 3237487
+nohup python fedbn.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 7 > f_fedbn.log 2>&1 &
+[34] 3237488
+nohup python fedbn.py --alpha_dirichlet 1 --IF 0.02 --beta 0 --gpu 7 > g_fedbn.log 2>&1 &
+[35] 3237489
+nohup python fedbn.py --alpha_dirichlet 1 --IF 0.01 --beta 0 --gpu 7 > h_fedbn.log 2>&1 &
+[36] 3237779
