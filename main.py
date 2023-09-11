@@ -18,29 +18,41 @@ from util.dataset import *
 from model.build_model import build_model
 
 np.set_printoptions(threshold=np.inf)
-load_switch = False
+load_switch = True
 save_switch = False
-save_dir = "./output/h/"
-dataset_switch = 'cifar100' # cifar10 / cifar100
+save_dir = "./output/c/"
+# Get the last character before the trailing slash
+last_char = save_dir.split("/")[-2]
+
+# Set dataset_switch based on the last character
+if last_char in ['a', 'b', 'c', 'd']:
+    dataset_switch = 'cifar10'
+elif last_char in ['e', 'f', 'g', 'h']:
+    dataset_switch = 'cifar100'
+# dataset_switch = 'cifar10' # cifar10 / cifar100
+
+if load_switch:
+    load_dir = "./output/" + last_char + '/'
+    if last_char == 'a':
+        load_rnd = 85
+    elif last_char == 'b':
+        load_rnd = 120
+    elif last_char == 'c':
+        load_rnd = 100
+    elif last_char == 'd':
+        load_rnd = 100
+    elif last_char == 'e':
+        load_rnd = 100
+    elif last_char == 'f':
+        load_rnd = 100
+    elif last_char == 'g':
+        load_rnd = 100
+    elif last_char == 'h':
+        load_rnd = 100
+    else:
+        print("Invalid character; cannot determine load_rnd.")
 
 
-
-def get_acc_file_path(args):
-
-    rootpath = './temp/'
-    if not os.path.exists(rootpath):  #for fedavg, beta = 0, 
-        os.makedirs(rootpath)
- 
-    if args.balanced_global:
-        rootpath+='global_' 
-    rootpath += 'fl'
-    if args.beta > 0: # set default mu = 1, and set beta = 1 when using fedprox
-        #args.mu = 1
-        rootpath += "_LP_%.2f" % (args.beta)
-    fpath =  rootpath + '_acc_{}_{}_cons_frac{}_iid{}_iter{}_ep{}_lr{}_N{}_{}_seed{}_p{}_dirichlet{}_IF{}_Loss{}.txt'.format(
-        args.dataset, args.model, args.frac, args.iid, args.rounds, args.local_ep, args.lr, args.num_users, args.num_classes, args.seed, args.non_iid_prob_class, args.alpha_dirichlet, args.IF, args.loss_type)
-    return fpath
-   
 if __name__ == '__main__':
     # parse args
     # args = args_parser()
@@ -60,10 +72,6 @@ if __name__ == '__main__':
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = True
 
-
-    fpath = get_acc_file_path(args)
-    f_acc = open(fpath,'a')
-    print(fpath)
 
     # pdb.set_trace()
 
@@ -100,15 +108,21 @@ if __name__ == '__main__':
     prob = [1/args.num_users for j in range(args.num_users)]
 
     if load_switch == True:
-        rnd = 499
-        load_dir = "./output1/" # output1  output_nospar
-        model = torch.load(load_dir + "model_" + str(rnd) + ".pth").to(args.device)
+        # load_dir = "./output1/" # output1  output_nospar
+        model = torch.load(load_dir + "model_" + str(load_rnd) + ".pth").to(args.device)
         w_glob = model.state_dict()  # return a dictionary containing a whole state of the module
+        
+        netglob.load_state_dict(copy.deepcopy(w_glob))
+        acc_s2, global_3shot_acc = globaltest_villina(copy.deepcopy(netglob).to(args.device), dataset_test, args, dataset_class = datasetObj)
+        print("pretrain:")
+        print("acc_s2", acc_s2)
+        print("global_3shot_acc",global_3shot_acc)
+        
 
         
             
     # add fl training
-    for rnd in tqdm(range(args.rounds)):
+    for load_rnd in tqdm(range(args.rounds)):
         w_locals, loss_locals = [], []
         idxs_users = np.random.choice(range(args.num_users), m, replace=False, p=prob)
                 
@@ -188,7 +202,7 @@ if __name__ == '__main__':
         netglob.load_state_dict(copy.deepcopy(w_glob))
         acc_s2, global_3shot_acc = globaltest_villina(copy.deepcopy(netglob).to(args.device), dataset_test, args, dataset_class = datasetObj)
         if save_switch == True:
-            torch.save(netglob, save_dir + "model_" + str(rnd) + ".pth")
+            torch.save(netglob, save_dir + "model_" + str(load_rnd) + ".pth")
 
         # f_acc.write('round %d, local average test acc  %.4f \n'%(rnd, avg_local_acc))
         # f_acc.write('round %d, local macro average F1 score  %.4f \n'%(rnd, avg_f1_macro))
@@ -197,10 +211,10 @@ if __name__ == '__main__':
         # f_acc.write('round %d, global 3shot acc: [head: %.4f, middle: %.4f, tail: %.4f] \n'%(rnd, global_3shot_acc["head"], global_3shot_acc["middle"], global_3shot_acc["tail"]))
         # f_acc.write('round %d, average 3shot acc: [head: %.4f, middle: %.4f, tail: %.4f] \n'%(rnd, avg3shot_acc["head"], avg3shot_acc["middle"], avg3shot_acc["tail"]))
         # f_acc.flush()
-        print('round %d, local average test acc  %.4f \n'%(rnd, avg_local_acc))
-        print('round %d, local macro average F1 score  %.4f \n'%(rnd, avg_f1_macro))
-        print('round %d, local weighted average F1 score  %.4f \n'%(rnd, avg_f1_weighted))
-        print('round %d, global test acc  %.4f \n'%(rnd, acc_s2))
-        print('round %d, average 3shot acc: [head: %.4f, middle: %.4f, tail: %.4f] \n'%(rnd, avg3shot_acc["head"], avg3shot_acc["middle"], avg3shot_acc["tail"]))
-        print('round %d, global 3shot acc: [head: %.4f, middle: %.4f, tail: %.4f] \n'%(rnd, global_3shot_acc["head"], global_3shot_acc["middle"], global_3shot_acc["tail"]))
+        print('round %d, local average test acc  %.4f \n'%(load_rnd, avg_local_acc))
+        print('round %d, local macro average F1 score  %.4f \n'%(load_rnd, avg_f1_macro))
+        print('round %d, local weighted average F1 score  %.4f \n'%(load_rnd, avg_f1_weighted))
+        print('round %d, global test acc  %.4f \n'%(load_rnd, acc_s2))
+        print('round %d, average 3shot acc: [head: %.4f, middle: %.4f, tail: %.4f] \n'%(load_rnd, avg3shot_acc["head"], avg3shot_acc["middle"], avg3shot_acc["tail"]))
+        print('round %d, global 3shot acc: [head: %.4f, middle: %.4f, tail: %.4f] \n'%(load_rnd, global_3shot_acc["head"], global_3shot_acc["middle"], global_3shot_acc["tail"]))
     torch.cuda.empty_cache()
