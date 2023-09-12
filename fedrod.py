@@ -23,10 +23,10 @@ from util.etf_methods import ETF_Classifier
 np.set_printoptions(threshold=np.inf)
 
 load_switch = False  # True / False
-save_switch = False # True / False
+save_switch = True # True / False
 cls_switch = "ETF" # ETF / sparfix / dropout_ETF / w_dropout_ETF / PR_ETF
 pretrain_cls = False
-dataset_switch = 'cifar100' # cifar10 / cifar100
+dataset_switch = 'cifar10' # cifar10 / cifar100
 aggregation_switch = 'fedavg' # fedavg / class_wise
 global_test_head = 'g_head'  # g_aux / g_head
 internal_frozen = False  # True / False
@@ -282,8 +282,6 @@ if __name__ == '__main__':
         nn.init.sparse_(g_head.weight, sparsity=0.6)   # 在任意col上，10%类别为0
 
 
-
-
     if pretrain_cls == True:
         g_head.load_state_dict({k.replace('linear.', ''): v for k, v in torch.load("/home/zikaixiao/zikai/aapfl/pfed_lastest/demo.pth").items() if 'linear' in k})
 
@@ -366,12 +364,12 @@ if __name__ == '__main__':
             acc_3shot_local_list.append(acc_3shot_local) ###################
 
         if save_switch == True:
-            load_dir = "./output_nospar/"
-            torch.save(model, load_dir + "model_" + str(rnd) + ".pth")
-            torch.save(g_head, load_dir + "g_head_" + str(rnd) + ".pth")
-            torch.save(g_aux, load_dir + "g_aux_" + str(rnd) + ".pth")
+            save_dir = "./output/ours/c/"
+            torch.save(model, save_dir + "model_" + str(rnd) + ".pth")
+            torch.save(g_head, save_dir + "g_head_" + str(rnd) + ".pth")
+            torch.save(g_aux, save_dir + "g_aux_" + str(rnd) + ".pth")
             for i in range(args.num_users):
-                torch.save(l_heads[i], load_dir + "l_head_" + str(i) + ".pth")
+                torch.save(l_heads[i], save_dir + "l_head_" + str(i) + ".pth")
 
         # start:calculate acc_3shot_local
         avg3shot_acc={"head":0, "middle":0, "tail":0}

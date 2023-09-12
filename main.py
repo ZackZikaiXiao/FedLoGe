@@ -20,7 +20,7 @@ from model.build_model import build_model
 np.set_printoptions(threshold=np.inf)
 load_switch = True
 save_switch = False
-save_dir = "./output/c/"
+save_dir = "./output/h/"
 # Get the last character before the trailing slash
 last_char = save_dir.split("/")[-2]
 
@@ -42,13 +42,13 @@ if load_switch:
     elif last_char == 'd':
         load_rnd = 100
     elif last_char == 'e':
-        load_rnd = 100
+        load_rnd = 70
     elif last_char == 'f':
-        load_rnd = 100
+        load_rnd = 110
     elif last_char == 'g':
-        load_rnd = 100
+        load_rnd = 80
     elif last_char == 'h':
-        load_rnd = 100
+        load_rnd = 90
     else:
         print("Invalid character; cannot determine load_rnd.")
 
