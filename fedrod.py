@@ -26,7 +26,7 @@ load_switch = False  # True / False
 save_switch = True # True / False
 cls_switch = "ETF" # ETF / sparfix / dropout_ETF / w_dropout_ETF / PR_ETF
 pretrain_cls = False
-dataset_switch = 'cifar10' # cifar10 / cifar100
+dataset_switch = 'cifar100' # cifar10 / cifar100
 aggregation_switch = 'fedavg' # fedavg / class_wise
 global_test_head = 'g_head'  # g_aux / g_head
 internal_frozen = False  # True / False
@@ -364,7 +364,7 @@ if __name__ == '__main__':
             acc_3shot_local_list.append(acc_3shot_local) ###################
 
         if save_switch == True:
-            save_dir = "./output/ours/c/"
+            save_dir = "./output/ours/h/"
             torch.save(model, save_dir + "model_" + str(rnd) + ".pth")
             torch.save(g_head, save_dir + "g_head_" + str(rnd) + ".pth")
             torch.save(g_aux, save_dir + "g_aux_" + str(rnd) + ".pth")

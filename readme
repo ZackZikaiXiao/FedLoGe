@@ -304,7 +304,7 @@ kill 3308131 3308227 3308499 3308709 3308842  3308965  3309102 3309235 3342279 3
 
 Ours
 nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.02 --beta 0 --gpu 0 > a_ours.log 2>&1 &
-
+9496
 nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 0 > b_ours.log 2>&1 &
 
 nohup python fedrod.py --alpha_dirichlet 1 --IF 0.02 --beta 0 --gpu 1 > c_ours.log 2>&1 &
