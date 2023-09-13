@@ -154,7 +154,7 @@ class ResNet(nn.Module):
         out = self.avgpool(out)
         out = out.view(out.size(0), -1)
         #print(out.size())
-        out = self.projection(out)      ## projection layer
+        # out = self.projection(out)      ## projection layer
         # out = out / out.norm(dim=1, keepdim=True)   # 形成etf的”相同norm“
         x1 = self.linear(out)
         if  latent_output == False:
