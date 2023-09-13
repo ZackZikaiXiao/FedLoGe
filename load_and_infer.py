@@ -101,6 +101,7 @@ if __name__ == '__main__':
     # acc_s2, global_3shot_acc = globaltest(copy.deepcopy(model).to(args.device), g_head, dataset_test, args, dataset_class = datasetObj)
 
     # add fl training
+    load_dir = "./output/ours/d/"
     load_dir = "./output/ours/h/"
     # save_id = "73"
     model = torch.load(load_dir + "model_351.pth").to(args.device)
