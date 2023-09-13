@@ -319,13 +319,30 @@ nohup python fedrod.py --alpha_dirichlet 1 --IF 0.02 --beta 0 --gpu 3 > g_fedbn.
 nohup python fedrod.py --alpha_dirichlet 1 --IF 0.01 --beta 0 --gpu 3 > h_fedbn.log 2>&1 &
 3373368
 
+
+FedPer
+/home/zikaixiao/zikai/aapfl/fl_gba_cifar100/fedper.py
+nohup python fedper.py --alpha_dirichlet 0.5 --IF 0.02 --beta 0 --gpu 4 > a_fedper.log 2>&1 &
+3374506
+nohup python fedper.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 4 > b_fedper.log 2>&1 &
+3374628
+nohup python fedper.py --alpha_dirichlet 1 --IF 0.02 --beta 0 --gpu 5 > c_fedper.log 2>&1 &
+3374748
+nohup python fedper.py --alpha_dirichlet 1 --IF 0.01 --beta 0 --gpu 5 > d_fedper.log 2>&1 &
+3374892
+nohup python fedper.py --alpha_dirichlet 0.5 --IF 0.02 --beta 0 --gpu 6 > e_fedper.log 2>&1 &
+3375026
+nohup python fedper.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 6 > f_fedper.log 2>&1 &
+3375110
+nohup python fedper.py --alpha_dirichlet 1 --IF 0.02 --beta 0 --gpu 7 > g_fedper.log 2>&1 &
+3375271
+nohup python fedper.py --alpha_dirichlet 1 --IF 0.01 --beta 0 --gpu 7 > h_fedper.log 2>&1 &
+3375429
+
+
 Ours
 nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.02 --beta 0 --gpu 0 > a_ours.log 2>&1 &
-<<<<<<< HEAD
 10281
-=======
-9496
->>>>>>> 3e1803dcbf250bc85704860ed45e5018cff4d346
 nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 0 > b_ours.log 2>&1 &
 10625
 nohup python fedrod.py --alpha_dirichlet 1 --IF 0.02 --beta 0 --gpu 1 > c_ours.log 2>&1 &
