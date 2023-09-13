@@ -94,4 +94,1722 @@ Total size of testing set
 9829
 [4012 2394 1429  848  504  295  172   95   53   27]
 40
-  0%|          | 0/500 [00:00<?, ?it/s]
+  0%|          | 0/500 [00:00<?, ?it/s]  0%|          | 1/500 [02:11<18:11:31, 131.25s/it]  0%|          | 2/500 [04:08<17:00:09, 122.91s/it]3shot of client 0:head:0.01282051282051282, middle:0.0, tail0.0
+3shot of client 1:head:0.2, middle:0.0, tail0.0
+3shot of client 2:head:0.0, middle:0.0, tail0.0
+3shot of client 3:head:0.03571428571428571, middle:0.0, tail0.0
+3shot of client 4:head:0.012422360248447204, middle:0.0, tail0.0
+3shot of client 5:head:0.0, middle:0.0, tail0.0
+3shot of client 6:head:0.018018018018018018, middle:0.045454545454545456, tail0.0
+3shot of client 7:head:0.04852320675105485, middle:0.0392156862745098, tail0.0
+3shot of client 8:head:0.2636165577342048, middle:0.0, tail0.0
+3shot of client 9:head:0.15315315315315314, middle:0.0, tail0
+3shot of client 10:head:0.09048723897911833, middle:0.030303030303030304, tail0.0
+3shot of client 11:head:0.026595744680851064, middle:0.05263157894736842, tail0.0
+3shot of client 12:head:0.08608058608058608, middle:0.012048192771084338, tail0.0
+3shot of client 13:head:0.003067484662576687, middle:0.041666666666666664, tail0.0
+3shot of client 14:head:0.0, middle:0.0, tail0.3333333333333333
+3shot of client 15:head:0.010416666666666666, middle:0.0, tail0.0
+3shot of client 16:head:0.0, middle:0.0, tail0.0
+3shot of client 17:head:0.11589403973509933, middle:0.0, tail0.0
+3shot of client 18:head:0.0, middle:0.0, tail0.0
+3shot of client 19:head:0.0379746835443038, middle:0.0, tail0.0
+3shot of client 20:head:0.08264462809917356, middle:0.0, tail0.0
+3shot of client 21:head:0.07058823529411765, middle:0.0, tail0.0
+3shot of client 22:head:0.03389830508474576, middle:0.0, tail0.0
+3shot of client 23:head:0.0364963503649635, middle:0.0, tail0.0
+3shot of client 24:head:0.0223463687150838, middle:0.07142857142857142, tail0.0
+3shot of client 25:head:0.0, middle:0.09090909090909091, tail0.0
+3shot of client 26:head:0.09192825112107623, middle:0.0, tail0.0
+3shot of client 27:head:0.0, middle:0.0, tail0.0
+3shot of client 28:head:0.08823529411764706, middle:0.0, tail0.0
+3shot of client 29:head:0.2441860465116279, middle:0.0, tail0.0
+3shot of client 30:head:0.03008595988538682, middle:0.006535947712418301, tail0.0
+3shot of client 31:head:0.07887323943661972, middle:0.057692307692307696, tail0.0
+3shot of client 32:head:0.0625, middle:0.0, tail0.14285714285714285
+3shot of client 33:head:0.0, middle:0.0, tail0.0
+3shot of client 34:head:0.013888888888888888, middle:0.0, tail0.2
+3shot of client 35:head:0.011235955056179775, middle:0.0, tail0.0
+3shot of client 36:head:0.008733624454148471, middle:0.0, tail0.0
+3shot of client 37:head:0.0, middle:0.0, tail0.0
+3shot of client 38:head:0.00909090909090909, middle:0.05555555555555555, tail0.0
+3shot of client 39:head:0.008264462809917356, middle:0.0, tail0.0
+round 0, local average test acc  0.0456 
+
+round 0, local macro average F1 score  0.0247 
+
+round 0, local weighted average F1 score  0.0629 
+
+round 0, global test acc  0.5578 
+
+round 0, average 3shot acc: [head: 0.0502, middle: 0.0126, tail: 0.0173] 
+
+round 0, global 3shot acc: [head: 0.9173, middle: 0.6733, tail: 0.2015] 
+
+l_head tensor([1.5442, 1.1721, 1.0927, 0.7597, 1.1220, 0.8869, 1.1556, 0.6024, 0.6001,
+        0.7818], device='cuda:4', grad_fn=<LinalgVectorNormBackward0>)
+g_aux tensor([1.2857, 1.2156, 1.2718, 0.9790, 1.0352, 0.9365, 0.7782, 0.7115, 0.6086,
+        0.6700], device='cuda:4', grad_fn=<LinalgVectorNormBackward0>)
+3shot of client 0:head:0.01282051282051282, middle:0.0, tail0.0
+3shot of client 1:head:0.18947368421052632, middle:0.0, tail0.0
+3shot of client 2:head:0.0, middle:0.038461538461538464, tail0.0
+3shot of client 3:head:0.044642857142857144, middle:0.0, tail0.0
+3shot of client 4:head:0.018633540372670808, middle:0.0, tail0.0
+3shot of client 5:head:0.0, middle:0.0, tail0.0
+3shot of client 6:head:0.05405405405405406, middle:0.0, tail0.0
+3shot of client 7:head:0.02531645569620253, middle:0.00980392156862745, tail0.0
+3shot of client 8:head:0.2549019607843137, middle:0.0, tail0.0
+3shot of client 9:head:0.18018018018018017, middle:0.0, tail0
+3shot of client 10:head:0.09976798143851508, middle:0.030303030303030304, tail0.0
+3shot of client 11:head:0.026595744680851064, middle:0.03508771929824561, tail0.0
+3shot of client 12:head:0.07875457875457875, middle:0.0, tail0.037037037037037035
+3shot of client 13:head:0.009202453987730062, middle:0.08333333333333333, tail0.0
+3shot of client 14:head:0.0, middle:0.0, tail0.0
+3shot of client 15:head:0.03125, middle:0.0, tail0.2
+3shot of client 16:head:0.0, middle:0.0, tail0.0
+3shot of client 17:head:0.11258278145695365, middle:0.0, tail0.0
+3shot of client 18:head:0.004975124378109453, middle:0.0, tail0.0
+3shot of client 19:head:0.03164556962025317, middle:0.0, tail0.0
+3shot of client 20:head:0.09090909090909091, middle:0.0, tail0.0
+3shot of client 21:head:0.09411764705882353, middle:0.0, tail0.0
+3shot of client 22:head:0.05084745762711865, middle:0.0, tail0.0
+3shot of client 23:head:0.043795620437956206, middle:0.0, tail0.0
+3shot of client 24:head:0.0223463687150838, middle:0.0, tail0.0
+3shot of client 25:head:0.0, middle:0.0, tail0.0
+3shot of client 26:head:0.08744394618834081, middle:0.0, tail0.0
+3shot of client 27:head:0.0, middle:0.0, tail0.0
+3shot of client 28:head:0.17647058823529413, middle:0.0, tail0.0
+3shot of client 29:head:0.23837209302325582, middle:0.0, tail0.0
+3shot of client 30:head:0.0, middle:0.006535947712418301, tail0.0
+3shot of client 31:head:0.07042253521126761, middle:0.019230769230769232, tail0.0
+3shot of client 32:head:0.06875, middle:0.0, tail0.0
+3shot of client 33:head:0.0, middle:0.0, tail0.0
+3shot of client 34:head:0.013888888888888888, middle:0.0, tail0.0
+3shot of client 35:head:0.028089887640449437, middle:0.0, tail0.0
+3shot of client 36:head:0.004366812227074236, middle:0.0, tail0.0
+3shot of client 37:head:0.0, middle:0.0, tail0.0
+3shot of client 38:head:0.0, middle:0.0, tail0.0
+3shot of client 39:head:0.0, middle:0.0, tail0.0
+round 1, local average test acc  0.0479 
+
+round 1, local macro average F1 score  0.0178 
+
+round 1, local weighted average F1 score  0.0530 
+
+round 1, global test acc  0.5776 
+
+round 1, average 3shot acc: [head: 0.0541, middle: 0.0056, tail: 0.0061] 
+
+round 1, global 3shot acc: [head: 0.9093, middle: 0.6863, tail: 0.2472] 
+
+l_head tensor([1.6517, 1.2100, 0.9345, 0.8877, 1.1623, 1.0186, 1.1196, 0.6025, 0.6002,
+        0.7818], device='cuda:4', grad_fn=<LinalgVectorNormBackward0>)
+g_aux tensor([1.4450, 1.3616, 1.3303, 1.0848, 1.1228, 0.9978, 0.8898, 0.8232, 0.6836,
+        0.7012], device='cuda:4', grad_fn=<LinalgVectorNormBackward0>)
+3shot of client 0:head:0.00641025641025641, middle:0.0, tail0.0
+3shot of client 1:head:0.2, middle:0.0, tail0.0
+3shot of client 2:head:0.0, middle:0.038461538461538464, tail0.0
+3shot of client 3:head:0.03571428571428571, middle:0.0, tail0.0
+3shot of client 4:head:0.012422360248447204, middle:0.0, tail0.0
+3shot of client 5:head:0.02247191011235955, middle:0.0, tail0.0
+3shot of client 6:head:0.07207207207207207, middle:0.0, tail0.0
+3shot of client 7:head:0.012658227848101266, middle:0.00980392156862745, tail0.0
+3shot of client 8:head:0.2549019607843137, middle:0.0, tail0.0
+3shot of client 9:head:0.25225225225225223, middle:0.0, tail0
+3shot of client 10:head:0.08120649651972157, middle:0.0, tail0.0
+3shot of client 11:head:0.06914893617021277, middle:0.03508771929824561, tail0.0
+3shot of client 12:head:0.07875457875457875, middle:0.012048192771084338, tail0.07407407407407407
+3shot of client 13:head:0.003067484662576687, middle:0.08333333333333333, tail0.0
+3shot of client 14:head:0.007042253521126761, middle:0.0, tail0.0
+3shot of client 15:head:0.020833333333333332, middle:0.0, tail0.0
+3shot of client 16:head:0.0, middle:0.0, tail0.0
+3shot of client 17:head:0.10264900662251655, middle:0.0, tail0.0
+3shot of client 18:head:0.024875621890547265, middle:0.0, tail0.0
+3shot of client 19:head:0.02531645569620253, middle:0.03333333333333333, tail0.0
+3shot of client 20:head:0.05785123966942149, middle:0.0, tail0.0
+3shot of client 21:head:0.1411764705882353, middle:0.0, tail0.0
+3shot of client 22:head:0.1016949152542373, middle:0.14285714285714285, tail0.0
+3shot of client 23:head:0.051094890510948905, middle:0.0, tail0.0
+3shot of client 24:head:0.00558659217877095, middle:0.0, tail0.0
+3shot of client 25:head:0.0, middle:0.0, tail0.0
+  1%|          | 3/500 [06:05<16:37:07, 120.38s/it]  1%|          | 4/500 [08:03<16:28:22, 119.56s/it]  1%|          | 5/500 [10:04<16:29:47, 119.97s/it]3shot of client 26:head:0.07847533632286996, middle:0.0, tail0.0
+3shot of client 27:head:0.0, middle:0.0, tail0.0
+3shot of client 28:head:0.22794117647058823, middle:0.0, tail0.0
+3shot of client 29:head:0.22965116279069767, middle:0.0, tail0.0
+3shot of client 30:head:0.0, middle:0.006535947712418301, tail0.0
+3shot of client 31:head:0.04788732394366197, middle:0.019230769230769232, tail0.0
+3shot of client 32:head:0.075, middle:0.0, tail0.0
+3shot of client 33:head:0.0, middle:0.0, tail0.0
+3shot of client 34:head:0.020833333333333332, middle:0.0, tail0.0
+3shot of client 35:head:0.0, middle:0.041666666666666664, tail0.0
+3shot of client 36:head:0.004366812227074236, middle:0.0, tail0.0
+3shot of client 37:head:0.0, middle:0.0, tail0.0
+3shot of client 38:head:0.0, middle:0.05555555555555555, tail0.0
+3shot of client 39:head:0.008264462809917356, middle:0.06666666666666667, tail0.0
+round 2, local average test acc  0.0522 
+
+round 2, local macro average F1 score  0.0228 
+
+round 2, local weighted average F1 score  0.0682 
+
+round 2, global test acc  0.5806 
+
+round 2, average 3shot acc: [head: 0.0583, middle: 0.0136, tail: 0.0019] 
+
+round 2, global 3shot acc: [head: 0.9050, middle: 0.7030, tail: 0.2455] 
+
+l_head tensor([1.9838, 1.5879, 1.0852, 0.9322, 1.3538, 1.1081, 1.1120, 0.6026, 0.6003,
+        0.7818], device='cuda:4', grad_fn=<LinalgVectorNormBackward0>)
+g_aux tensor([1.5514, 1.4075, 1.4218, 1.1025, 1.1914, 1.0543, 0.9289, 0.8727, 0.7752,
+        0.7384], device='cuda:4', grad_fn=<LinalgVectorNormBackward0>)
+3shot of client 0:head:0.00641025641025641, middle:0.0, tail0.0
+3shot of client 1:head:0.23157894736842105, middle:0.0, tail0.0
+3shot of client 2:head:0.0, middle:0.0, tail0.0
+3shot of client 3:head:0.026785714285714284, middle:0.0, tail0.0
+3shot of client 4:head:0.006211180124223602, middle:0.0, tail0.0
+3shot of client 5:head:0.0, middle:0.125, tail0.0
+3shot of client 6:head:0.07207207207207207, middle:0.045454545454545456, tail0.0
+3shot of client 7:head:0.008438818565400843, middle:0.00980392156862745, tail0.0
+3shot of client 8:head:0.2549019607843137, middle:0.0, tail0.0
+3shot of client 9:head:0.2072072072072072, middle:0.0, tail0
+3shot of client 10:head:0.08352668213457076, middle:0.0, tail0.0
+3shot of client 11:head:0.061170212765957445, middle:0.05263157894736842, tail0.0
+3shot of client 12:head:0.0641025641025641, middle:0.07228915662650602, tail0.07407407407407407
+3shot of client 13:head:0.012269938650306749, middle:0.08333333333333333, tail0.0
+3shot of client 14:head:0.014084507042253521, middle:0.0, tail0.0
+3shot of client 15:head:0.0, middle:0.0, tail0.0
+3shot of client 16:head:0.0, middle:0.0, tail0.0
+3shot of client 17:head:0.10596026490066225, middle:0.0, tail0.0
+3shot of client 18:head:0.009950248756218905, middle:0.0, tail0.0
+3shot of client 19:head:0.03164556962025317, middle:0.03333333333333333, tail0.0
+3shot of client 20:head:0.049586776859504134, middle:0.0, tail0.0
+3shot of client 21:head:0.11764705882352941, middle:0.0, tail0.0
+3shot of client 22:head:0.0847457627118644, middle:0.0, tail0.0
+3shot of client 23:head:0.043795620437956206, middle:0.0, tail0.0
+3shot of client 24:head:0.00558659217877095, middle:0.0, tail0.0
+3shot of client 25:head:0.0, middle:0.0, tail0.0
+3shot of client 26:head:0.07623318385650224, middle:0.0, tail0.0
+3shot of client 27:head:0.0, middle:0.0, tail0.0
+3shot of client 28:head:0.18382352941176472, middle:0.0, tail0.0
+3shot of client 29:head:0.25872093023255816, middle:0.0, tail0.0
+3shot of client 30:head:0.0, middle:0.006535947712418301, tail0.0
+3shot of client 31:head:0.05070422535211268, middle:0.019230769230769232, tail0.0
+3shot of client 32:head:0.08125, middle:0.0, tail0.0
+3shot of client 33:head:0.0, middle:0.0, tail0.0
+3shot of client 34:head:0.020833333333333332, middle:0.0, tail0.0
+3shot of client 35:head:0.0, middle:0.0, tail0.0
+3shot of client 36:head:0.004366812227074236, middle:0.0, tail0.0
+3shot of client 37:head:0.0, middle:0.09523809523809523, tail0.0
+3shot of client 38:head:0.00909090909090909, middle:0.0, tail0.0
+3shot of client 39:head:0.008264462809917356, middle:0.06666666666666667, tail0.0
+round 3, local average test acc  0.0495 
+
+round 3, local macro average F1 score  0.0207 
+
+round 3, local weighted average F1 score  0.0657 
+
+round 3, global test acc  0.5835 
+
+round 3, average 3shot acc: [head: 0.0548, middle: 0.0152, tail: 0.0019] 
+
+round 3, global 3shot acc: [head: 0.9047, middle: 0.6990, tail: 0.2560] 
+
+l_head tensor([1.8956, 1.5767, 1.1230, 0.9391, 1.3340, 1.1624, 1.2058, 0.6027, 0.6004,
+        0.7818], device='cuda:4', grad_fn=<LinalgVectorNormBackward0>)
+g_aux tensor([1.6849, 1.4768, 1.5022, 1.1749, 1.2168, 1.1327, 0.9649, 0.9079, 0.8685,
+        0.7805], device='cuda:4', grad_fn=<LinalgVectorNormBackward0>)
+3shot of client 0:head:0.01282051282051282, middle:0.0, tail0.0
+3shot of client 1:head:0.2, middle:0.0, tail0.0
+3shot of client 2:head:0.0, middle:0.038461538461538464, tail0.0
+3shot of client 3:head:0.044642857142857144, middle:0.0, tail0.0
+3shot of client 4:head:0.006211180124223602, middle:0.0, tail0.0
+3shot of client 5:head:0.02247191011235955, middle:0.125, tail0.0
+3shot of client 6:head:0.07207207207207207, middle:0.0, tail0.0
+3shot of client 7:head:0.006329113924050633, middle:0.0196078431372549, tail0.0
+3shot of client 8:head:0.27450980392156865, middle:0.0, tail0.0
+3shot of client 9:head:0.1981981981981982, middle:0.0, tail0
+3shot of client 10:head:0.08816705336426914, middle:0.0, tail0.0
+3shot of client 11:head:0.08776595744680851, middle:0.03508771929824561, tail0.0
+3shot of client 12:head:0.09523809523809523, middle:0.024096385542168676, tail0.037037037037037035
+3shot of client 13:head:0.003067484662576687, middle:0.08333333333333333, tail0.0
+3shot of client 14:head:0.007042253521126761, middle:0.0, tail0.0
+3shot of client 15:head:0.020833333333333332, middle:0.0, tail0.0
+3shot of client 16:head:0.0125, middle:0.0, tail0.0
+3shot of client 17:head:0.11920529801324503, middle:0.0, tail0.0
+3shot of client 18:head:0.03482587064676617, middle:0.0, tail0.0
+3shot of client 19:head:0.02531645569620253, middle:0.03333333333333333, tail0.0
+3shot of client 20:head:0.04132231404958678, middle:0.0, tail0.0
+3shot of client 21:head:0.1411764705882353, middle:0.0, tail0.0
+3shot of client 22:head:0.0847457627118644, middle:0.0, tail0.0
+3shot of client 23:head:0.051094890510948905, middle:0.0, tail0.0
+3shot of client 24:head:0.00558659217877095, middle:0.0, tail0.0
+3shot of client 25:head:0.0, middle:0.0, tail0.0
+3shot of client 26:head:0.07623318385650224, middle:0.0, tail0.0
+3shot of client 27:head:0.0, middle:0.0, tail0.0
+3shot of client 28:head:0.15441176470588236, middle:0.0, tail0.0
+3shot of client 29:head:0.25290697674418605, middle:0.0, tail0.0
+3shot of client 30:head:0.0, middle:0.006535947712418301, tail0.027777777777777776
+3shot of client 31:head:0.07887323943661972, middle:0.0, tail0.0
+3shot of client 32:head:0.08125, middle:0.0, tail0.0
+3shot of client 33:head:0.0, middle:0.0, tail0.0
+3shot of client 34:head:0.020833333333333332, middle:0.0, tail0.0
+3shot of client 35:head:0.0, middle:0.0, tail0.0
+3shot of client 36:head:0.004366812227074236, middle:0.0, tail0.0
+3shot of client 37:head:0.010309278350515464, middle:0.047619047619047616, tail0.0
+3shot of client 38:head:0.0, middle:0.0, tail0.0
+3shot of client 39:head:0.0, middle:0.0, tail0.0
+round 4, local average test acc  0.0519 
+
+round 4, local macro average F1 score  0.0231 
+
+round 4, local weighted average F1 score  0.0750 
+
+round 4, global test acc  0.5897 
+
+round 4, average 3shot acc: [head: 0.0584, middle: 0.0103, tail: 0.0017] 
+
+round 4, global 3shot acc: [head: 0.9073, middle: 0.6837, tail: 0.2810] 
+
+l_head tensor([1.9827, 1.5728, 1.2046, 0.9620, 1.2931, 1.1744, 1.1897, 0.6029, 0.6006,
+        0.7818], device='cuda:4', grad_fn=<LinalgVectorNormBackward0>)
+g_aux tensor([1.7597, 1.5430, 1.5519, 1.2079, 1.2472, 1.1441, 0.9895, 0.9309, 0.9341,
+        0.8091], device='cuda:4', grad_fn=<LinalgVectorNormBackward0>)
+3shot of client 0:head:0.019230769230769232, middle:0.0, tail0.0
+3shot of client 1:head:0.21052631578947367, middle:0.0, tail0.0
+3shot of client 2:head:0.0, middle:0.0, tail0.0
+  1%|          | 6/500 [12:03<16:24:09, 119.53s/it]  1%|▏         | 7/500 [14:00<16:15:58, 118.78s/it]3shot of client 3:head:0.05357142857142857, middle:0.0, tail0.0
+3shot of client 4:head:0.006211180124223602, middle:0.0, tail0.0
+3shot of client 5:head:0.0, middle:0.125, tail0.0
+3shot of client 6:head:0.05405405405405406, middle:0.0, tail0.0
+3shot of client 7:head:0.004219409282700422, middle:0.0196078431372549, tail0.0
+3shot of client 8:head:0.2766884531590414, middle:0.0, tail0.0
+3shot of client 9:head:0.1981981981981982, middle:0.0, tail0
+3shot of client 10:head:0.0765661252900232, middle:0.0, tail0.0
+3shot of client 11:head:0.06914893617021277, middle:0.0, tail0.0
+3shot of client 12:head:0.09157509157509157, middle:0.0963855421686747, tail0.07407407407407407
+3shot of client 13:head:0.006134969325153374, middle:0.08333333333333333, tail0.0
+3shot of client 14:head:0.007042253521126761, middle:0.0, tail0.0
+3shot of client 15:head:0.0, middle:0.0, tail0.0
+3shot of client 16:head:0.0125, middle:0.0, tail0.0
+3shot of client 17:head:0.12251655629139073, middle:0.0, tail0.0
+3shot of client 18:head:0.024875621890547265, middle:0.0, tail0.0
+3shot of client 19:head:0.02531645569620253, middle:0.0, tail0.0
+3shot of client 20:head:0.049586776859504134, middle:0.0, tail0.0
+3shot of client 21:head:0.15294117647058825, middle:0.0, tail0.0
+3shot of client 22:head:0.0847457627118644, middle:0.0, tail0.0
+3shot of client 23:head:0.051094890510948905, middle:0.0, tail0.0
+3shot of client 24:head:0.00558659217877095, middle:0.0, tail0.0
+3shot of client 25:head:0.0, middle:0.0, tail0.0
+3shot of client 26:head:0.08744394618834081, middle:0.0, tail0.0
+3shot of client 27:head:0.0, middle:0.0, tail0.0
+3shot of client 28:head:0.15441176470588236, middle:0.0, tail0.0
+3shot of client 29:head:0.25, middle:0.0, tail0.0
+3shot of client 30:head:0.0028653295128939827, middle:0.006535947712418301, tail0.0
+3shot of client 31:head:0.061971830985915494, middle:0.0, tail0.0
+3shot of client 32:head:0.08125, middle:0.04, tail0.0
+3shot of client 33:head:0.0, middle:0.0, tail0.0
+3shot of client 34:head:0.020833333333333332, middle:0.0, tail0.0
+3shot of client 35:head:0.0, middle:0.0, tail0.0
+3shot of client 36:head:0.0, middle:0.0, tail0.0
+3shot of client 37:head:0.010309278350515464, middle:0.0, tail0.0
+3shot of client 38:head:0.00909090909090909, middle:0.0, tail0.0
+3shot of client 39:head:0.008264462809917356, middle:0.0, tail0.0
+round 5, local average test acc  0.0508 
+
+round 5, local macro average F1 score  0.0165 
+
+round 5, local weighted average F1 score  0.0601 
+
+round 5, global test acc  0.5872 
+
+round 5, average 3shot acc: [head: 0.0572, middle: 0.0093, tail: 0.0019] 
+
+round 5, global 3shot acc: [head: 0.9057, middle: 0.6897, tail: 0.2715] 
+
+l_head tensor([2.0036, 1.7086, 1.2657, 1.0175, 1.3344, 1.3058, 1.2631, 0.6031, 0.6008,
+        0.7818], device='cuda:4', grad_fn=<LinalgVectorNormBackward0>)
+g_aux tensor([1.8697, 1.5664, 1.6294, 1.2695, 1.3005, 1.1758, 1.0006, 0.9598, 1.0159,
+        0.8353], device='cuda:4', grad_fn=<LinalgVectorNormBackward0>)
+3shot of client 0:head:0.01282051282051282, middle:0.0, tail0.0
+3shot of client 1:head:0.21052631578947367, middle:0.0, tail0.0
+3shot of client 2:head:0.0, middle:0.0, tail0.0
+3shot of client 3:head:0.05357142857142857, middle:0.0, tail0.0
+3shot of client 4:head:0.018633540372670808, middle:0.041666666666666664, tail0.0
+3shot of client 5:head:0.011235955056179775, middle:0.125, tail0.0
+3shot of client 6:head:0.02702702702702703, middle:0.0, tail0.0
+3shot of client 7:head:0.004219409282700422, middle:0.00980392156862745, tail0.0
+3shot of client 8:head:0.2984749455337691, middle:0.0, tail0.0
+3shot of client 9:head:0.13513513513513514, middle:0.0, tail0
+3shot of client 10:head:0.09744779582366589, middle:0.0, tail0.0
+3shot of client 11:head:0.05851063829787234, middle:0.03508771929824561, tail0.0
+3shot of client 12:head:0.11172161172161173, middle:0.07228915662650602, tail0.0
+3shot of client 13:head:0.009202453987730062, middle:0.08333333333333333, tail0.0
+3shot of client 14:head:0.014084507042253521, middle:0.0, tail0.0
+3shot of client 15:head:0.020833333333333332, middle:0.0, tail0.2
+3shot of client 16:head:0.0, middle:0.0, tail0.0
+3shot of client 17:head:0.1423841059602649, middle:0.0, tail0.0
+3shot of client 18:head:0.0, middle:0.0, tail0.0
+3shot of client 19:head:0.03164556962025317, middle:0.03333333333333333, tail0.0
+3shot of client 20:head:0.0743801652892562, middle:0.0, tail0.0
+3shot of client 21:head:0.08235294117647059, middle:0.0, tail0.0
+3shot of client 22:head:0.05084745762711865, middle:0.0, tail0.0
+3shot of client 23:head:0.051094890510948905, middle:0.0, tail0.0
+3shot of client 24:head:0.0223463687150838, middle:0.0, tail0.0
+3shot of client 25:head:0.0, middle:0.0, tail0.0
+3shot of client 26:head:0.10762331838565023, middle:0.0, tail0.0
+3shot of client 27:head:0.0, middle:0.0, tail0.0
+3shot of client 28:head:0.08823529411764706, middle:0.0, tail0.0
+3shot of client 29:head:0.25872093023255816, middle:0.0, tail0.0
+3shot of client 30:head:0.0, middle:0.006535947712418301, tail0.027777777777777776
+3shot of client 31:head:0.09295774647887324, middle:0.019230769230769232, tail0.0
+3shot of client 32:head:0.08125, middle:0.08, tail0.0
+3shot of client 33:head:0.0, middle:0.0, tail0.0
+3shot of client 34:head:0.006944444444444444, middle:0.0, tail0.0
+3shot of client 35:head:0.0056179775280898875, middle:0.0, tail0.0
+3shot of client 36:head:0.004366812227074236, middle:0.0, tail0.0
+3shot of client 37:head:0.010309278350515464, middle:0.0, tail0.0
+3shot of client 38:head:0.0, middle:0.0, tail0.0
+3shot of client 39:head:0.0, middle:0.0, tail0.0
+round 6, local average test acc  0.0494 
+
+round 6, local macro average F1 score  0.0200 
+
+round 6, local weighted average F1 score  0.0553 
+
+round 6, global test acc  0.5932 
+
+round 6, average 3shot acc: [head: 0.0549, middle: 0.0127, tail: 0.0058] 
+
+round 6, global 3shot acc: [head: 0.9120, middle: 0.6840, tail: 0.2860] 
+
+l_head tensor([1.9879, 1.6543, 1.3321, 1.0152, 1.4498, 1.2781, 1.2515, 0.6032, 0.6009,
+        0.7818], device='cuda:4', grad_fn=<LinalgVectorNormBackward0>)
+g_aux tensor([1.9592, 1.6244, 1.6782, 1.3016, 1.3269, 1.2187, 1.0336, 0.9879, 1.0694,
+        0.8845], device='cuda:4', grad_fn=<LinalgVectorNormBackward0>)
+3shot of client 0:head:0.01282051282051282, middle:0.0, tail0.0
+3shot of client 1:head:0.21052631578947367, middle:0.0, tail0.0
+3shot of client 2:head:0.0, middle:0.0, tail0.0
+3shot of client 3:head:0.0625, middle:0.0, tail0.0
+3shot of client 4:head:0.018633540372670808, middle:0.041666666666666664, tail0.0
+3shot of client 5:head:0.0, middle:0.125, tail0.0
+3shot of client 6:head:0.018018018018018018, middle:0.0, tail0.0
+3shot of client 7:head:0.004219409282700422, middle:0.00980392156862745, tail0.0
+3shot of client 8:head:0.2984749455337691, middle:0.0, tail0.0
+3shot of client 9:head:0.13513513513513514, middle:0.0, tail0
+3shot of client 10:head:0.09280742459396751, middle:0.0, tail0.0
+3shot of client 11:head:0.05053191489361702, middle:0.0, tail0.0
+3shot of client 12:head:0.11538461538461539, middle:0.060240963855421686, tail0.0
+3shot of client 13:head:0.009202453987730062, middle:0.08333333333333333, tail0.0
+3shot of client 14:head:0.014084507042253521, middle:0.0, tail0.0
+3shot of client 15:head:0.010416666666666666, middle:0.0, tail0.2
+3shot of client 16:head:0.0, middle:0.0, tail0.0
+3shot of client 17:head:0.152317880794702, middle:0.0, tail0.0
+3shot of client 18:head:0.0, middle:0.0, tail0.0
+3shot of client 19:head:0.03164556962025317, middle:0.0, tail0.0
+3shot of client 20:head:0.0743801652892562, middle:0.0, tail0.0
+3shot of client 21:head:0.08235294117647059, middle:0.0, tail0.0
+3shot of client 22:head:0.03389830508474576, middle:0.0, tail0.0
+3shot of client 23:head:0.051094890510948905, middle:0.0, tail0.0
+3shot of client 24:head:0.027932960893854747, middle:0.0, tail0.0
+3shot of client 25:head:0.0, middle:0.0, tail0.0
+3shot of client 26:head:0.09641255605381166, middle:0.0, tail0.0
+3shot of client 27:head:0.0, middle:0.0, tail0.0
+3shot of client 28:head:0.09558823529411764, middle:0.0, tail0.0
+3shot of client 29:head:0.25290697674418605, middle:0.0, tail0.0
+  2%|▏         | 8/500 [15:57<16:08:00, 118.05s/it]  2%|▏         | 9/500 [17:55<16:06:41, 118.13s/it]  2%|▏         | 10/500 [19:57<16:15:25, 119.44s/it]3shot of client 30:head:0.0014326647564469914, middle:0.006535947712418301, tail0.027777777777777776
+3shot of client 31:head:0.09577464788732394, middle:0.0, tail0.0
+3shot of client 32:head:0.0875, middle:0.0, tail0.0
+3shot of client 33:head:0.0, middle:0.0, tail0.0
+3shot of client 34:head:0.034722222222222224, middle:0.0, tail0.0
+3shot of client 35:head:0.011235955056179775, middle:0.0, tail0.0
+3shot of client 36:head:0.004366812227074236, middle:0.0, tail0.14285714285714285
+3shot of client 37:head:0.010309278350515464, middle:0.0, tail0.0
+3shot of client 38:head:0.00909090909090909, middle:0.0, tail0.0
+3shot of client 39:head:0.0, middle:0.06666666666666667, tail0.0
+round 7, local average test acc  0.0493 
+
+round 7, local macro average F1 score  0.0203 
+
+round 7, local weighted average F1 score  0.0703 
+
+round 7, global test acc  0.5946 
+
+round 7, average 3shot acc: [head: 0.0551, middle: 0.0098, tail: 0.0095] 
+
+round 7, global 3shot acc: [head: 0.9033, middle: 0.7020, tail: 0.2825] 
+
+l_head tensor([1.9771, 1.6310, 1.2791, 1.0563, 1.5303, 1.2709, 1.2703, 0.6034, 0.6011,
+        0.7818], device='cuda:4', grad_fn=<LinalgVectorNormBackward0>)
+g_aux tensor([2.0040, 1.6708, 1.7155, 1.3765, 1.3635, 1.2441, 1.0482, 1.0051, 1.1053,
+        0.9100], device='cuda:4', grad_fn=<LinalgVectorNormBackward0>)
+3shot of client 0:head:0.019230769230769232, middle:0.0, tail0.0
+3shot of client 1:head:0.23157894736842105, middle:0.0, tail0.0
+3shot of client 2:head:0.0, middle:0.0, tail0.0
+3shot of client 3:head:0.07142857142857142, middle:0.0, tail0.0
+3shot of client 4:head:0.012422360248447204, middle:0.0, tail0.0
+3shot of client 5:head:0.0, middle:0.125, tail0.0
+3shot of client 6:head:0.04504504504504504, middle:0.0, tail0.0
+3shot of client 7:head:0.006329113924050633, middle:0.0, tail0.0
+3shot of client 8:head:0.3006535947712418, middle:0.0, tail0.0
+3shot of client 9:head:0.15315315315315314, middle:0.0, tail0
+3shot of client 10:head:0.08584686774941995, middle:0.0, tail0.0
+3shot of client 11:head:0.061170212765957445, middle:0.0, tail0.0
+3shot of client 12:head:0.11721611721611722, middle:0.024096385542168676, tail0.0
+3shot of client 13:head:0.003067484662576687, middle:0.08333333333333333, tail0.0
+3shot of client 14:head:0.007042253521126761, middle:0.0, tail0.0
+3shot of client 15:head:0.010416666666666666, middle:0.0, tail0.0
+3shot of client 16:head:0.0, middle:0.0, tail0.0
+3shot of client 17:head:0.15562913907284767, middle:0.0, tail0.0
+3shot of client 18:head:0.0, middle:0.0, tail0.0
+3shot of client 19:head:0.03164556962025317, middle:0.0, tail0.0
+3shot of client 20:head:0.0743801652892562, middle:0.0, tail0.0
+3shot of client 21:head:0.08235294117647059, middle:0.0, tail0.0
+3shot of client 22:head:0.03389830508474576, middle:0.0, tail0.0
+3shot of client 23:head:0.043795620437956206, middle:0.0, tail0.0
+3shot of client 24:head:0.0111731843575419, middle:0.0, tail0.0
+3shot of client 25:head:0.0, middle:0.0, tail0.0
+3shot of client 26:head:0.09417040358744394, middle:0.0, tail0.0
+3shot of client 27:head:0.0, middle:0.0, tail0.0
+3shot of client 28:head:0.11764705882352941, middle:0.0, tail0.0
+3shot of client 29:head:0.2558139534883721, middle:0.0, tail0.0
+3shot of client 30:head:0.0, middle:0.006535947712418301, tail0.027777777777777776
+3shot of client 31:head:0.09295774647887324, middle:0.0, tail0.0
+3shot of client 32:head:0.075, middle:0.08, tail0.0
+3shot of client 33:head:0.0, middle:0.0, tail0.0
+3shot of client 34:head:0.013888888888888888, middle:0.0, tail0.0
+3shot of client 35:head:0.0056179775280898875, middle:0.0, tail0.0
+3shot of client 36:head:0.008733624454148471, middle:0.0, tail0.0
+3shot of client 37:head:0.020618556701030927, middle:0.0, tail0.0
+3shot of client 38:head:0.00909090909090909, middle:0.0, tail0.0
+3shot of client 39:head:0.0, middle:0.0, tail0.0
+round 8, local average test acc  0.0497 
+
+round 8, local macro average F1 score  0.0166 
+
+round 8, local weighted average F1 score  0.0532 
+
+round 8, global test acc  0.5992 
+
+round 8, average 3shot acc: [head: 0.0563, middle: 0.0080, tail: 0.0007] 
+
+round 8, global 3shot acc: [head: 0.8973, middle: 0.7137, tail: 0.2897] 
+
+l_head tensor([2.0428, 1.6461, 1.2869, 1.0377, 1.4950, 1.2717, 1.3046, 0.6037, 0.6014,
+        0.7818], device='cuda:4', grad_fn=<LinalgVectorNormBackward0>)
+g_aux tensor([2.0860, 1.7030, 1.7606, 1.4036, 1.3877, 1.2731, 1.0646, 1.0224, 1.1552,
+        0.9331], device='cuda:4', grad_fn=<LinalgVectorNormBackward0>)
+3shot of client 0:head:0.019230769230769232, middle:0.0, tail0.0
+3shot of client 1:head:0.23157894736842105, middle:0.07692307692307693, tail0.0
+3shot of client 2:head:0.0, middle:0.0, tail0.0
+3shot of client 3:head:0.05357142857142857, middle:0.0, tail0.0
+3shot of client 4:head:0.018633540372670808, middle:0.0, tail0.0
+3shot of client 5:head:0.0, middle:0.0, tail0.0
+3shot of client 6:head:0.04504504504504504, middle:0.0, tail0.0
+3shot of client 7:head:0.002109704641350211, middle:0.00980392156862745, tail0.0
+3shot of client 8:head:0.29411764705882354, middle:0.0, tail0.0
+3shot of client 9:head:0.17117117117117117, middle:0.0, tail0
+3shot of client 10:head:0.09280742459396751, middle:0.0, tail0.0
+3shot of client 11:head:0.05319148936170213, middle:0.017543859649122806, tail0.0
+3shot of client 12:head:0.10989010989010989, middle:0.03614457831325301, tail0.0
+3shot of client 13:head:0.0, middle:0.08333333333333333, tail0.0
+3shot of client 14:head:0.007042253521126761, middle:0.0, tail0.0
+3shot of client 15:head:0.010416666666666666, middle:0.0, tail0.2
+3shot of client 16:head:0.0125, middle:0.0, tail0.0
+3shot of client 17:head:0.15562913907284767, middle:0.0, tail0.0
+3shot of client 18:head:0.004975124378109453, middle:0.16666666666666666, tail0.0
+3shot of client 19:head:0.03164556962025317, middle:0.0, tail0.0
+3shot of client 20:head:0.0743801652892562, middle:0.0, tail0.0
+3shot of client 21:head:0.08235294117647059, middle:0.0, tail0.0
+3shot of client 22:head:0.03389830508474576, middle:0.0, tail0.0
+3shot of client 23:head:0.043795620437956206, middle:0.0, tail0.0
+3shot of client 24:head:0.00558659217877095, middle:0.0, tail0.0
+3shot of client 25:head:0.0, middle:0.0, tail0.0
+3shot of client 26:head:0.09417040358744394, middle:0.0, tail0.0
+3shot of client 27:head:0.0, middle:0.0, tail0.0
+3shot of client 28:head:0.11764705882352941, middle:0.0, tail0.0
+3shot of client 29:head:0.2703488372093023, middle:0.0, tail0.0
+3shot of client 30:head:0.0, middle:0.006535947712418301, tail0.027777777777777776
+3shot of client 31:head:0.09577464788732394, middle:0.0, tail0.0
+3shot of client 32:head:0.075, middle:0.0, tail0.0
+3shot of client 33:head:0.0, middle:0.0, tail0.0
+3shot of client 34:head:0.013888888888888888, middle:0.0, tail0.0
+3shot of client 35:head:0.0, middle:0.0, tail0.0
+3shot of client 36:head:0.004366812227074236, middle:0.0, tail0.0
+3shot of client 37:head:0.010309278350515464, middle:0.0, tail0.0
+3shot of client 38:head:0.0, middle:0.05555555555555555, tail0.0
+3shot of client 39:head:0.008264462809917356, middle:0.0, tail0.0
+round 9, local average test acc  0.0499 
+
+round 9, local macro average F1 score  0.0161 
+
+round 9, local weighted average F1 score  0.0413 
+
+round 9, global test acc  0.6029 
+
+round 9, average 3shot acc: [head: 0.0561, middle: 0.0113, tail: 0.0058] 
+
+round 9, global 3shot acc: [head: 0.8990, middle: 0.7080, tail: 0.3020] 
+
+l_head tensor([2.0192, 1.6653, 1.3428, 1.0503, 1.5184, 1.2820, 1.3103, 0.6039, 0.6016,
+        0.7818], device='cuda:4', grad_fn=<LinalgVectorNormBackward0>)
+g_aux tensor([2.1508, 1.7066, 1.7864, 1.4390, 1.4290, 1.2857, 1.0817, 1.0438, 1.1844,
+        0.9574], device='cuda:4', grad_fn=<LinalgVectorNormBackward0>)
+3shot of client 0:head:0.01282051282051282, middle:0.14285714285714285, tail0.0
+3shot of client 1:head:0.25263157894736843, middle:0.0, tail0.0
+3shot of client 2:head:0.0, middle:0.07692307692307693, tail0.0
+3shot of client 3:head:0.0625, middle:0.0, tail0.0
+3shot of client 4:head:0.012422360248447204, middle:0.041666666666666664, tail0.0
+3shot of client 5:head:0.011235955056179775, middle:0.125, tail0.0
+3shot of client 6:head:0.02702702702702703, middle:0.0, tail0.0
+  2%|▏         | 11/500 [21:59<16:17:54, 119.99s/it]  2%|▏         | 12/500 [23:53<16:02:23, 118.33s/it]3shot of client 7:head:0.004219409282700422, middle:0.0, tail0.0
+3shot of client 8:head:0.3159041394335512, middle:0.0, tail0.0
+3shot of client 9:head:0.14414414414414414, middle:0.038461538461538464, tail0
+3shot of client 10:head:0.09976798143851508, middle:0.0, tail0.0
+3shot of client 11:head:0.05053191489361702, middle:0.03508771929824561, tail0.0
+3shot of client 12:head:0.1282051282051282, middle:0.024096385542168676, tail0.0
+3shot of client 13:head:0.003067484662576687, middle:0.08333333333333333, tail0.0
+3shot of client 14:head:0.035211267605633804, middle:0.0, tail0.0
+3shot of client 15:head:0.020833333333333332, middle:0.0, tail0.0
+3shot of client 16:head:0.0, middle:0.0, tail0.0
+3shot of client 17:head:0.16225165562913907, middle:0.0, tail0.0
+3shot of client 18:head:0.004975124378109453, middle:0.0, tail0.0
+3shot of client 19:head:0.03164556962025317, middle:0.0, tail0.0
+3shot of client 20:head:0.0743801652892562, middle:0.0, tail0.0
+3shot of client 21:head:0.08235294117647059, middle:0.0, tail0.0
+3shot of client 22:head:0.03389830508474576, middle:0.0, tail0.0
+3shot of client 23:head:0.051094890510948905, middle:0.0, tail0.0
+3shot of client 24:head:0.0223463687150838, middle:0.0, tail0.0
+3shot of client 25:head:0.0, middle:0.0, tail0.0
+3shot of client 26:head:0.10089686098654709, middle:0.0, tail0.0
+3shot of client 27:head:0.0, middle:0.0, tail0.0
+3shot of client 28:head:0.10294117647058823, middle:0.0, tail0.0
+3shot of client 29:head:0.2819767441860465, middle:0.0, tail0.0
+3shot of client 30:head:0.0014326647564469914, middle:0.006535947712418301, tail0.027777777777777776
+3shot of client 31:head:0.10985915492957747, middle:0.0, tail0.0
+3shot of client 32:head:0.0875, middle:0.04, tail0.0
+3shot of client 33:head:0.0, middle:0.07142857142857142, tail0.0
+3shot of client 34:head:0.020833333333333332, middle:0.0, tail0.0
+3shot of client 35:head:0.0056179775280898875, middle:0.0, tail0.0
+3shot of client 36:head:0.013100436681222707, middle:0.0, tail0.0
+3shot of client 37:head:0.010309278350515464, middle:0.0, tail0.0
+3shot of client 38:head:0.01818181818181818, middle:0.0, tail0.0
+3shot of client 39:head:0.008264462809917356, middle:0.0, tail0.0
+round 10, local average test acc  0.0541 
+
+round 10, local macro average F1 score  0.0235 
+
+round 10, local weighted average F1 score  0.0648 
+
+round 10, global test acc  0.6057 
+
+round 10, average 3shot acc: [head: 0.0601, middle: 0.0171, tail: 0.0007] 
+
+round 10, global 3shot acc: [head: 0.9083, middle: 0.6917, tail: 0.3142] 
+
+l_head tensor([2.0057, 1.6586, 1.2790, 1.0918, 1.5609, 1.3307, 1.3518, 0.6041, 0.6017,
+        0.7819], device='cuda:4', grad_fn=<LinalgVectorNormBackward0>)
+g_aux tensor([2.2137, 1.7370, 1.8675, 1.4786, 1.4492, 1.3130, 1.1174, 1.0490, 1.2103,
+        0.9783], device='cuda:4', grad_fn=<LinalgVectorNormBackward0>)
+3shot of client 0:head:0.01282051282051282, middle:0.0, tail0.0
+3shot of client 1:head:0.23157894736842105, middle:0.0, tail0.0
+3shot of client 2:head:0.0, middle:0.0, tail0.0
+3shot of client 3:head:0.05357142857142857, middle:0.0, tail0.0
+3shot of client 4:head:0.018633540372670808, middle:0.0, tail0.0
+3shot of client 5:head:0.0, middle:0.0, tail0.0
+3shot of client 6:head:0.06306306306306306, middle:0.0, tail0.0
+3shot of client 7:head:0.006329113924050633, middle:0.0, tail0.0
+3shot of client 8:head:0.30501089324618735, middle:0.0, tail0.0
+3shot of client 9:head:0.23423423423423423, middle:0.0, tail0
+3shot of client 10:head:0.08120649651972157, middle:0.0, tail0.0
+3shot of client 11:head:0.034574468085106384, middle:0.0, tail0.0
+3shot of client 12:head:0.10256410256410256, middle:0.024096385542168676, tail0.0
+3shot of client 13:head:0.0, middle:0.08333333333333333, tail0.0
+3shot of client 14:head:0.007042253521126761, middle:0.0, tail0.0
+3shot of client 15:head:0.010416666666666666, middle:0.0, tail0.0
+3shot of client 16:head:0.0, middle:0.0, tail0.0
+3shot of client 17:head:0.1423841059602649, middle:0.0, tail0.0
+3shot of client 18:head:0.004975124378109453, middle:0.0, tail0.0
+3shot of client 19:head:0.02531645569620253, middle:0.0, tail0.0
+3shot of client 20:head:0.04132231404958678, middle:0.0, tail0.0
+3shot of client 21:head:0.1411764705882353, middle:0.0, tail0.0
+3shot of client 22:head:0.0847457627118644, middle:0.0, tail0.0
+3shot of client 23:head:0.051094890510948905, middle:0.0, tail0.0
+3shot of client 24:head:0.01675977653631285, middle:0.0, tail0.0
+3shot of client 25:head:0.0, middle:0.0, tail0.0
+3shot of client 26:head:0.07623318385650224, middle:0.0, tail0.0
+3shot of client 27:head:0.0, middle:0.0, tail0.0
+3shot of client 28:head:0.14705882352941177, middle:0.0, tail0.0
+3shot of client 29:head:0.2703488372093023, middle:0.0, tail0.0
+3shot of client 30:head:0.0, middle:0.006535947712418301, tail0.0
+3shot of client 31:head:0.07042253521126761, middle:0.0, tail0.0
+3shot of client 32:head:0.08125, middle:0.04, tail0.0
+3shot of client 33:head:0.0, middle:0.0, tail0.0
+3shot of client 34:head:0.020833333333333332, middle:0.0, tail0.0
+3shot of client 35:head:0.0, middle:0.0, tail0.0
+3shot of client 36:head:0.008733624454148471, middle:0.0, tail0.0
+3shot of client 37:head:0.0, middle:0.0, tail0.0
+3shot of client 38:head:0.00909090909090909, middle:0.0, tail0.0
+3shot of client 39:head:0.0, middle:0.06666666666666667, tail0.0
+round 11, local average test acc  0.0517 
+
+round 11, local macro average F1 score  0.0228 
+
+round 11, local weighted average F1 score  0.0855 
+
+round 11, global test acc  0.6003 
+
+round 11, average 3shot acc: [head: 0.0588, middle: 0.0055, tail: 0.0000] 
+
+round 11, global 3shot acc: [head: 0.9010, middle: 0.6973, tail: 0.3020] 
+
+l_head tensor([2.0433, 1.6657, 1.3341, 1.1716, 1.5218, 1.3602, 1.3379, 0.6043, 0.6019,
+        0.7819], device='cuda:4', grad_fn=<LinalgVectorNormBackward0>)
+g_aux tensor([2.2807, 1.7470, 1.9089, 1.4958, 1.4483, 1.3468, 1.1212, 1.0718, 1.2260,
+        0.9869], device='cuda:4', grad_fn=<LinalgVectorNormBackward0>)
+3shot of client 0:head:0.019230769230769232, middle:0.0, tail0.0
+3shot of client 1:head:0.24210526315789474, middle:0.0, tail0.0
+3shot of client 2:head:0.0, middle:0.0, tail0.0
+3shot of client 3:head:0.044642857142857144, middle:0.0, tail0.0
+3shot of client 4:head:0.018633540372670808, middle:0.0, tail0.0
+3shot of client 5:head:0.0, middle:0.0, tail0.0
+3shot of client 6:head:0.05405405405405406, middle:0.0, tail0.0
+3shot of client 7:head:0.006329113924050633, middle:0.0, tail0.0
+3shot of client 8:head:0.3006535947712418, middle:0.0, tail0.0
+3shot of client 9:head:0.18018018018018017, middle:0.0, tail0
+3shot of client 10:head:0.08352668213457076, middle:0.0, tail0.0
+3shot of client 11:head:0.02925531914893617, middle:0.0, tail0.0
+3shot of client 12:head:0.11172161172161173, middle:0.024096385542168676, tail0.0
+3shot of client 13:head:0.003067484662576687, middle:0.08333333333333333, tail0.0
+3shot of client 14:head:0.014084507042253521, middle:0.0, tail0.0
+3shot of client 15:head:0.010416666666666666, middle:0.0, tail0.0
+3shot of client 16:head:0.0, middle:0.0, tail0.0
+3shot of client 17:head:0.1390728476821192, middle:0.0, tail0.0
+3shot of client 18:head:0.014925373134328358, middle:0.16666666666666666, tail0.0
+3shot of client 19:head:0.02531645569620253, middle:0.03333333333333333, tail0.0
+3shot of client 20:head:0.06611570247933884, middle:0.0, tail0.0
+3shot of client 21:head:0.11764705882352941, middle:0.0, tail0.0
+3shot of client 22:head:0.05084745762711865, middle:0.0, tail0.0
+3shot of client 23:head:0.043795620437956206, middle:0.0, tail0.0
+3shot of client 24:head:0.01675977653631285, middle:0.0, tail0.0
+3shot of client 25:head:0.0, middle:0.0, tail0.0
+3shot of client 26:head:0.08295964125560538, middle:0.0, tail0.0
+3shot of client 27:head:0.0, middle:0.0, tail0.0
+3shot of client 28:head:0.11764705882352941, middle:0.0, tail0.0
+3shot of client 29:head:0.27325581395348836, middle:0.0, tail0.0
+3shot of client 30:head:0.0, middle:0.006535947712418301, tail0.0
+3shot of client 31:head:0.08450704225352113, middle:0.0, tail0.0
+3shot of client 32:head:0.075, middle:0.0, tail0.0
+3shot of client 33:head:0.0, middle:0.0, tail0.0
+3shot of client 34:head:0.020833333333333332, middle:0.0, tail0.0
+  3%|▎         | 13/500 [25:51<15:58:44, 118.12s/it]  3%|▎         | 14/500 [27:51<16:00:58, 118.64s/it]  3%|▎         | 15/500 [29:47<15:53:06, 117.91s/it]3shot of client 35:head:0.0, middle:0.0, tail0.0
+3shot of client 36:head:0.004366812227074236, middle:0.0, tail0.0
+3shot of client 37:head:0.020618556701030927, middle:0.0, tail0.0
+3shot of client 38:head:0.0, middle:0.0, tail0.0
+3shot of client 39:head:0.0, middle:0.0, tail0.0
+round 12, local average test acc  0.0499 
+
+round 12, local macro average F1 score  0.0170 
+
+round 12, local weighted average F1 score  0.0718 
+
+round 12, global test acc  0.5986 
+
+round 12, average 3shot acc: [head: 0.0568, middle: 0.0078, tail: 0.0000] 
+
+round 12, global 3shot acc: [head: 0.9070, middle: 0.6940, tail: 0.2957] 
+
+l_head tensor([2.0486, 1.6693, 1.3515, 1.0865, 1.5669, 1.3896, 1.3678, 0.6047, 0.6022,
+        0.7819], device='cuda:4', grad_fn=<LinalgVectorNormBackward0>)
+g_aux tensor([2.3515, 1.7709, 1.9441, 1.5364, 1.4718, 1.3714, 1.0990, 1.0804, 1.2433,
+        1.0160], device='cuda:4', grad_fn=<LinalgVectorNormBackward0>)
+3shot of client 0:head:0.01282051282051282, middle:0.0, tail0.0
+3shot of client 1:head:0.23157894736842105, middle:0.0, tail0.0
+3shot of client 2:head:0.0, middle:0.0, tail0.0
+3shot of client 3:head:0.0625, middle:0.0, tail0.0
+3shot of client 4:head:0.031055900621118012, middle:0.0, tail0.0
+3shot of client 5:head:0.0, middle:0.0, tail0.0
+3shot of client 6:head:0.036036036036036036, middle:0.0, tail0.0
+3shot of client 7:head:0.008438818565400843, middle:0.0, tail0.08
+3shot of client 8:head:0.3224400871459695, middle:0.0, tail0.0
+3shot of client 9:head:0.18018018018018017, middle:0.0, tail0
+3shot of client 10:head:0.0951276102088167, middle:0.0, tail0.0
+3shot of client 11:head:0.05053191489361702, middle:0.0, tail0.0
+3shot of client 12:head:0.12454212454212454, middle:0.12048192771084337, tail0.0
+3shot of client 13:head:0.006134969325153374, middle:0.08333333333333333, tail0.0
+3shot of client 14:head:0.007042253521126761, middle:0.0, tail0.0
+3shot of client 15:head:0.010416666666666666, middle:0.0, tail0.2
+3shot of client 16:head:0.0, middle:0.0, tail0.3333333333333333
+3shot of client 17:head:0.16887417218543047, middle:0.0, tail0.0
+3shot of client 18:head:0.014925373134328358, middle:0.0, tail0.0
+3shot of client 19:head:0.03164556962025317, middle:0.0, tail0.0
+3shot of client 20:head:0.09090909090909091, middle:0.0, tail0.0
+3shot of client 21:head:0.10588235294117647, middle:0.0, tail0.0
+3shot of client 22:head:0.05084745762711865, middle:0.0, tail0.0
+3shot of client 23:head:0.043795620437956206, middle:0.0, tail0.0
+3shot of client 24:head:0.0223463687150838, middle:0.0, tail0.0
+3shot of client 25:head:0.0, middle:0.0, tail0.0
+3shot of client 26:head:0.09865470852017937, middle:0.0, tail0.0
+3shot of client 27:head:0.0, middle:0.0, tail0.0
+3shot of client 28:head:0.11764705882352941, middle:0.0, tail0.0
+3shot of client 29:head:0.27325581395348836, middle:0.0, tail0.0
+3shot of client 30:head:0.0, middle:0.006535947712418301, tail0.0
+3shot of client 31:head:0.09577464788732394, middle:0.0, tail0.0
+3shot of client 32:head:0.08125, middle:0.04, tail0.0
+3shot of client 33:head:0.0, middle:0.0, tail0.0
+3shot of client 34:head:0.020833333333333332, middle:0.0, tail0.0
+3shot of client 35:head:0.0, middle:0.0, tail0.0
+3shot of client 36:head:0.004366812227074236, middle:0.0, tail0.0
+3shot of client 37:head:0.020618556701030927, middle:0.0, tail0.0
+3shot of client 38:head:0.0, middle:0.0, tail0.0
+3shot of client 39:head:0.0, middle:0.0, tail0.0
+round 13, local average test acc  0.0539 
+
+round 13, local macro average F1 score  0.0217 
+
+round 13, local weighted average F1 score  0.0577 
+
+round 13, global test acc  0.6091 
+
+round 13, average 3shot acc: [head: 0.0605, middle: 0.0063, tail: 0.0157] 
+
+round 13, global 3shot acc: [head: 0.8963, middle: 0.7173, tail: 0.3125] 
+
+l_head tensor([2.1110, 1.6880, 1.3147, 1.1543, 1.6302, 1.4185, 1.3685, 0.6048, 0.6023,
+        0.7819], device='cuda:4', grad_fn=<LinalgVectorNormBackward0>)
+g_aux tensor([2.3930, 1.7969, 1.9880, 1.5795, 1.4957, 1.4173, 1.1288, 1.0931, 1.2681,
+        1.0375], device='cuda:4', grad_fn=<LinalgVectorNormBackward0>)
+3shot of client 0:head:0.019230769230769232, middle:0.0, tail0.0
+3shot of client 1:head:0.21052631578947367, middle:0.0, tail0.0
+3shot of client 2:head:0.0, middle:0.0, tail0.0
+3shot of client 3:head:0.017857142857142856, middle:0.0, tail0.0
+3shot of client 4:head:0.024844720496894408, middle:0.0, tail0.0
+3shot of client 5:head:0.0, middle:0.0, tail0.0
+3shot of client 6:head:0.05405405405405406, middle:0.0, tail0.0
+3shot of client 7:head:0.004219409282700422, middle:0.0, tail0.04
+3shot of client 8:head:0.30718954248366015, middle:0.0, tail0.0
+3shot of client 9:head:0.23423423423423423, middle:0.0, tail0
+3shot of client 10:head:0.08816705336426914, middle:0.0, tail0.0
+3shot of client 11:head:0.04521276595744681, middle:0.017543859649122806, tail0.0
+3shot of client 12:head:0.10622710622710622, middle:0.024096385542168676, tail0.0
+3shot of client 13:head:0.0, middle:0.041666666666666664, tail0.0
+3shot of client 14:head:0.014084507042253521, middle:0.0, tail0.0
+3shot of client 15:head:0.010416666666666666, middle:0.0, tail0.0
+3shot of client 16:head:0.0125, middle:0.0, tail0.0
+3shot of client 17:head:0.11589403973509933, middle:0.0, tail0.0
+3shot of client 18:head:0.01990049751243781, middle:0.0, tail0.0
+3shot of client 19:head:0.02531645569620253, middle:0.0, tail0.0
+3shot of client 20:head:0.05785123966942149, middle:0.0, tail0.0
+3shot of client 21:head:0.15294117647058825, middle:0.0, tail0.0
+3shot of client 22:head:0.0847457627118644, middle:0.0, tail0.0
+3shot of client 23:head:0.051094890510948905, middle:0.0, tail0.0
+3shot of client 24:head:0.01675977653631285, middle:0.0, tail0.0
+3shot of client 25:head:0.01818181818181818, middle:0.0, tail0.0
+3shot of client 26:head:0.08744394618834081, middle:0.0, tail0.0
+3shot of client 27:head:0.0, middle:0.0, tail0.0
+3shot of client 28:head:0.19852941176470587, middle:0.0, tail0.0
+3shot of client 29:head:0.2761627906976744, middle:0.0, tail0.0
+3shot of client 30:head:0.0, middle:0.006535947712418301, tail0.0
+3shot of client 31:head:0.07605633802816901, middle:0.0, tail0.0
+3shot of client 32:head:0.075, middle:0.0, tail0.0
+3shot of client 33:head:0.0, middle:0.0, tail0.0
+3shot of client 34:head:0.013888888888888888, middle:0.0, tail0.0
+3shot of client 35:head:0.0, middle:0.0, tail0.0
+3shot of client 36:head:0.004366812227074236, middle:0.0, tail0.0
+3shot of client 37:head:0.010309278350515464, middle:0.0, tail0.0
+3shot of client 38:head:0.00909090909090909, middle:0.0, tail0.0
+3shot of client 39:head:0.008264462809917356, middle:0.0, tail0.0
+round 14, local average test acc  0.0536 
+
+round 14, local macro average F1 score  0.0205 
+
+round 14, local weighted average F1 score  0.0770 
+
+round 14, global test acc  0.5988 
+
+round 14, average 3shot acc: [head: 0.0613, middle: 0.0022, tail: 0.0010] 
+
+round 14, global 3shot acc: [head: 0.8990, middle: 0.7163, tail: 0.2855] 
+
+l_head tensor([2.0853, 1.7117, 1.2653, 1.0987, 1.6794, 1.4938, 1.4129, 0.6050, 0.6024,
+        0.7820], device='cuda:4', grad_fn=<LinalgVectorNormBackward0>)
+g_aux tensor([2.4709, 1.8312, 2.0274, 1.6138, 1.5293, 1.4513, 1.1391, 1.1057, 1.2766,
+        1.0541], device='cuda:4', grad_fn=<LinalgVectorNormBackward0>)
+3shot of client 0:head:0.01282051282051282, middle:0.0, tail0.0
+3shot of client 1:head:0.24210526315789474, middle:0.0, tail0.0
+3shot of client 2:head:0.0, middle:0.0, tail0.0
+3shot of client 3:head:0.07142857142857142, middle:0.0, tail0.0
+3shot of client 4:head:0.031055900621118012, middle:0.0, tail0.0
+3shot of client 5:head:0.0, middle:0.0, tail0.0
+3shot of client 6:head:0.036036036036036036, middle:0.0, tail0.0
+3shot of client 7:head:0.006329113924050633, middle:0.0, tail0.0
+3shot of client 8:head:0.31808278867102396, middle:0.0, tail0.0
+3shot of client 9:head:0.1981981981981982, middle:0.0, tail0
+3shot of client 10:head:0.09744779582366589, middle:0.0, tail0.0
+3shot of client 11:head:0.0425531914893617, middle:0.0, tail0.07142857142857142
+3shot of client 12:head:0.11904761904761904, middle:0.024096385542168676, tail0.0
+3shot of client 13:head:0.009202453987730062, middle:0.08333333333333333, tail0.0
+3shot of client 14:head:0.0, middle:0.0, tail0.0
+  3%|▎         | 16/500 [31:46<15:53:56, 118.26s/it]  3%|▎         | 17/500 [33:46<15:57:15, 118.91s/it]3shot of client 15:head:0.020833333333333332, middle:0.0, tail0.2
+3shot of client 16:head:0.0, middle:0.0, tail0.0
+3shot of client 17:head:0.1291390728476821, middle:0.0, tail0.0
+3shot of client 18:head:0.009950248756218905, middle:0.16666666666666666, tail0.0
+3shot of client 19:head:0.03164556962025317, middle:0.0, tail0.0
+3shot of client 20:head:0.08264462809917356, middle:0.0, tail0.0
+3shot of client 21:head:0.08235294117647059, middle:0.0, tail0.0
+3shot of client 22:head:0.05084745762711865, middle:0.0, tail0.0
+3shot of client 23:head:0.043795620437956206, middle:0.0, tail0.0
+3shot of client 24:head:0.01675977653631285, middle:0.0, tail0.0
+3shot of client 25:head:0.0, middle:0.0, tail0.0
+3shot of client 26:head:0.09192825112107623, middle:0.0, tail0.0
+3shot of client 27:head:0.0, middle:0.0, tail0.0
+3shot of client 28:head:0.125, middle:0.0, tail0.0
+3shot of client 29:head:0.26453488372093026, middle:0.0, tail0.0
+3shot of client 30:head:0.0, middle:0.006535947712418301, tail0.027777777777777776
+3shot of client 31:head:0.10422535211267606, middle:0.0, tail0.0
+3shot of client 32:head:0.08125, middle:0.0, tail0.0
+3shot of client 33:head:0.01694915254237288, middle:0.0, tail0.0
+3shot of client 34:head:0.020833333333333332, middle:0.0, tail0.0
+3shot of client 35:head:0.0, middle:0.0, tail0.0
+3shot of client 36:head:0.004366812227074236, middle:0.0, tail0.0
+3shot of client 37:head:0.010309278350515464, middle:0.0, tail0.0
+3shot of client 38:head:0.0, middle:0.0, tail0.0
+3shot of client 39:head:0.008264462809917356, middle:0.06666666666666667, tail0.0
+round 15, local average test acc  0.0525 
+
+round 15, local macro average F1 score  0.0179 
+
+round 15, local weighted average F1 score  0.0610 
+
+round 15, global test acc  0.6041 
+
+round 15, average 3shot acc: [head: 0.0595, middle: 0.0087, tail: 0.0077] 
+
+round 15, global 3shot acc: [head: 0.9033, middle: 0.7013, tail: 0.3067] 
+
+l_head tensor([2.0852, 1.7204, 1.3487, 1.0971, 1.7440, 1.4363, 1.4027, 0.6051, 0.6025,
+        0.7820], device='cuda:4', grad_fn=<LinalgVectorNormBackward0>)
+g_aux tensor([2.5554, 1.8854, 2.0711, 1.6540, 1.5527, 1.4710, 1.1542, 1.1170, 1.3080,
+        1.0789], device='cuda:4', grad_fn=<LinalgVectorNormBackward0>)
+3shot of client 0:head:0.02564102564102564, middle:0.0, tail0.0
+3shot of client 1:head:0.2631578947368421, middle:0.0, tail0.0
+3shot of client 2:head:0.0, middle:0.0, tail0.0
+3shot of client 3:head:0.05357142857142857, middle:0.0, tail0.0
+3shot of client 4:head:0.012422360248447204, middle:0.0, tail0.0
+3shot of client 5:head:0.0, middle:0.0, tail0.0
+3shot of client 6:head:0.06306306306306306, middle:0.0, tail0.0
+3shot of client 7:head:0.006329113924050633, middle:0.0, tail0.0
+3shot of client 8:head:0.3311546840958606, middle:0.0, tail0.0
+3shot of client 9:head:0.26126126126126126, middle:0.0, tail0
+3shot of client 10:head:0.09744779582366589, middle:0.0, tail0.0
+3shot of client 11:head:0.061170212765957445, middle:0.0, tail0.0
+3shot of client 12:head:0.13736263736263737, middle:0.08433734939759036, tail0.0
+3shot of client 13:head:0.0, middle:0.08333333333333333, tail0.0
+3shot of client 14:head:0.007042253521126761, middle:0.0, tail0.0
+3shot of client 15:head:0.03125, middle:0.0, tail0.0
+3shot of client 16:head:0.0125, middle:0.0, tail0.0
+3shot of client 17:head:0.16887417218543047, middle:0.0, tail0.0
+3shot of client 18:head:0.004975124378109453, middle:0.0, tail0.0
+3shot of client 19:head:0.03164556962025317, middle:0.0, tail0.0
+3shot of client 20:head:0.08264462809917356, middle:0.0, tail0.0
+3shot of client 21:head:0.12941176470588237, middle:0.0, tail0.0
+3shot of client 22:head:0.06779661016949153, middle:0.0, tail0.0
+3shot of client 23:head:0.072992700729927, middle:0.0, tail0.0
+3shot of client 24:head:0.0223463687150838, middle:0.0, tail0.0
+3shot of client 25:head:0.0, middle:0.0, tail0.0
+3shot of client 26:head:0.09192825112107623, middle:0.0, tail0.0
+3shot of client 27:head:0.0, middle:0.0, tail0.0
+3shot of client 28:head:0.18382352941176472, middle:0.0, tail0.0
+3shot of client 29:head:0.28488372093023256, middle:0.0, tail0.0
+3shot of client 30:head:0.0, middle:0.006535947712418301, tail0.0
+3shot of client 31:head:0.10704225352112676, middle:0.0, tail0.0
+3shot of client 32:head:0.09375, middle:0.04, tail0.14285714285714285
+3shot of client 33:head:0.0, middle:0.0, tail0.0
+3shot of client 34:head:0.020833333333333332, middle:0.0, tail0.0
+3shot of client 35:head:0.0, middle:0.0, tail0.0
+3shot of client 36:head:0.004366812227074236, middle:0.0, tail0.0
+3shot of client 37:head:0.020618556701030927, middle:0.047619047619047616, tail0.0
+3shot of client 38:head:0.01818181818181818, middle:0.0, tail0.0
+3shot of client 39:head:0.0, middle:0.0, tail0.0
+round 16, local average test acc  0.0610 
+
+round 16, local macro average F1 score  0.0213 
+
+round 16, local weighted average F1 score  0.0563 
+
+round 16, global test acc  0.6200 
+
+round 16, average 3shot acc: [head: 0.0692, middle: 0.0065, tail: 0.0037] 
+
+round 16, global 3shot acc: [head: 0.9010, middle: 0.7063, tail: 0.3445] 
+
+l_head tensor([2.1196, 1.7190, 1.3261, 1.1276, 1.7300, 1.4569, 1.4021, 0.6053, 0.6027,
+        0.7820], device='cuda:4', grad_fn=<LinalgVectorNormBackward0>)
+g_aux tensor([2.5985, 1.8965, 2.1027, 1.6869, 1.5812, 1.4846, 1.1538, 1.1181, 1.3090,
+        1.0924], device='cuda:4', grad_fn=<LinalgVectorNormBackward0>)
+3shot of client 0:head:0.01282051282051282, middle:0.0, tail0.0
+3shot of client 1:head:0.2631578947368421, middle:0.0, tail0.0
+3shot of client 2:head:0.0, middle:0.0, tail0.0
+3shot of client 3:head:0.05357142857142857, middle:0.0, tail0.0
+3shot of client 4:head:0.012422360248447204, middle:0.0, tail0.0
+3shot of client 5:head:0.0, middle:0.0, tail0.0
+3shot of client 6:head:0.05405405405405406, middle:0.0, tail0.0
+3shot of client 7:head:0.006329113924050633, middle:0.0, tail0.0
+3shot of client 8:head:0.3355119825708061, middle:0.0, tail0.0
+3shot of client 9:head:0.23423423423423423, middle:0.0, tail0
+3shot of client 10:head:0.0951276102088167, middle:0.0, tail0.058823529411764705
+3shot of client 11:head:0.05053191489361702, middle:0.0, tail0.0
+3shot of client 12:head:0.13003663003663005, middle:0.04819277108433735, tail0.0
+3shot of client 13:head:0.0, middle:0.08333333333333333, tail0.0
+3shot of client 14:head:0.0, middle:0.0, tail0.0
+3shot of client 15:head:0.041666666666666664, middle:0.0, tail0.2
+3shot of client 16:head:0.0, middle:0.0, tail0.0
+3shot of client 17:head:0.15894039735099338, middle:0.0, tail0.0
+3shot of client 18:head:0.014925373134328358, middle:0.0, tail0.0
+3shot of client 19:head:0.03164556962025317, middle:0.0, tail0.0
+3shot of client 20:head:0.08264462809917356, middle:0.0, tail0.0
+3shot of client 21:head:0.12941176470588237, middle:0.0, tail0.0
+3shot of client 22:head:0.06779661016949153, middle:0.0, tail0.0
+3shot of client 23:head:0.06569343065693431, middle:0.0, tail0.0
+3shot of client 24:head:0.027932960893854747, middle:0.0, tail0.0
+3shot of client 25:head:0.0, middle:0.0, tail0.0
+3shot of client 26:head:0.10538116591928251, middle:0.0, tail0.0
+3shot of client 27:head:0.0, middle:0.0, tail0.0
+3shot of client 28:head:0.17647058823529413, middle:0.0, tail0.0
+3shot of client 29:head:0.3081395348837209, middle:0.0, tail0.0
+3shot of client 30:head:0.0, middle:0.0196078431372549, tail0.0
+3shot of client 31:head:0.12112676056338029, middle:0.0, tail0.0
+3shot of client 32:head:0.06875, middle:0.0, tail0.0
+3shot of client 33:head:0.0, middle:0.0, tail0.0
+3shot of client 34:head:0.027777777777777776, middle:0.0, tail0.0
+3shot of client 35:head:0.0, middle:0.0, tail0.0
+3shot of client 36:head:0.008733624454148471, middle:0.0, tail0.0
+3shot of client 37:head:0.0, middle:0.047619047619047616, tail0.0
+3shot of client 38:head:0.00909090909090909, middle:0.0, tail0.0
+3shot of client 39:head:0.008264462809917356, middle:0.0, tail0.0
+round 17, local average test acc  0.0596 
+
+round 17, local macro average F1 score  0.0202 
+
+round 17, local weighted average F1 score  0.0788 
+
+round 17, global test acc  0.5941 
+
+round 17, average 3shot acc: [head: 0.0676, middle: 0.0050, tail: 0.0066] 
+
+round 17, global 3shot acc: [head: 0.8890, middle: 0.7160, tail: 0.2815] 
+
+l_head   4%|▎         | 18/500 [35:43<15:49:19, 118.17s/it]  4%|▍         | 19/500 [37:42<15:50:04, 118.51s/it]  4%|▍         | 20/500 [39:46<16:00:23, 120.05s/it]tensor([2.1182, 1.7240, 1.3213, 1.1725, 1.7709, 1.4582, 1.4485, 0.6058, 0.6030,
+        0.7821], device='cuda:4', grad_fn=<LinalgVectorNormBackward0>)
+g_aux tensor([2.6950, 1.9450, 2.1592, 1.7472, 1.5957, 1.5120, 1.1569, 1.1393, 1.3302,
+        1.1014], device='cuda:4', grad_fn=<LinalgVectorNormBackward0>)
+3shot of client 0:head:0.01282051282051282, middle:0.0, tail0.0
+3shot of client 1:head:0.24210526315789474, middle:0.0, tail0.0
+3shot of client 2:head:0.0, middle:0.0, tail0.0
+3shot of client 3:head:0.05357142857142857, middle:0.0, tail0.0
+3shot of client 4:head:0.018633540372670808, middle:0.0, tail0.0
+3shot of client 5:head:0.0, middle:0.0, tail0.0
+3shot of client 6:head:0.06306306306306306, middle:0.0, tail0.0
+3shot of client 7:head:0.004219409282700422, middle:0.0, tail0.0
+3shot of client 8:head:0.3311546840958606, middle:0.0, tail0.0
+3shot of client 9:head:0.21621621621621623, middle:0.0, tail0
+3shot of client 10:head:0.09744779582366589, middle:0.0, tail0.058823529411764705
+3shot of client 11:head:0.05319148936170213, middle:0.0, tail0.0
+3shot of client 12:head:0.13186813186813187, middle:0.04819277108433735, tail0.0
+3shot of client 13:head:0.0, middle:0.08333333333333333, tail0.0
+3shot of client 14:head:0.007042253521126761, middle:0.0, tail0.0
+3shot of client 15:head:0.03125, middle:0.0, tail0.0
+3shot of client 16:head:0.0125, middle:0.0, tail0.0
+3shot of client 17:head:0.16225165562913907, middle:0.0, tail0.0
+3shot of client 18:head:0.014925373134328358, middle:0.0, tail0.0
+3shot of client 19:head:0.0189873417721519, middle:0.0, tail0.0
+3shot of client 20:head:0.08264462809917356, middle:0.0, tail0.0
+3shot of client 21:head:0.12941176470588237, middle:0.0, tail0.0
+3shot of client 22:head:0.06779661016949153, middle:0.0, tail0.0
+3shot of client 23:head:0.072992700729927, middle:0.0, tail0.0
+3shot of client 24:head:0.0223463687150838, middle:0.07142857142857142, tail0.0
+3shot of client 25:head:0.0, middle:0.0, tail0.0
+3shot of client 26:head:0.10089686098654709, middle:0.0, tail0.0
+3shot of client 27:head:0.0, middle:0.0, tail0.0
+3shot of client 28:head:0.19117647058823528, middle:0.0, tail0.0
+3shot of client 29:head:0.29941860465116277, middle:0.0, tail0.07692307692307693
+3shot of client 30:head:0.0014326647564469914, middle:0.006535947712418301, tail0.0
+3shot of client 31:head:0.10422535211267606, middle:0.0, tail0.0
+3shot of client 32:head:0.08125, middle:0.0, tail0.14285714285714285
+3shot of client 33:head:0.0, middle:0.0, tail0.0
+3shot of client 34:head:0.013888888888888888, middle:0.0, tail0.0
+3shot of client 35:head:0.0, middle:0.0, tail0.0
+3shot of client 36:head:0.008733624454148471, middle:0.0, tail0.0
+3shot of client 37:head:0.0, middle:0.0, tail0.0
+3shot of client 38:head:0.0, middle:0.0, tail0.0
+3shot of client 39:head:0.008264462809917356, middle:0.0, tail0.0
+round 18, local average test acc  0.0585 
+
+round 18, local macro average F1 score  0.0225 
+
+round 18, local weighted average F1 score  0.0740 
+
+round 18, global test acc  0.6135 
+
+round 18, average 3shot acc: [head: 0.0664, middle: 0.0052, tail: 0.0071] 
+
+round 18, global 3shot acc: [head: 0.9050, middle: 0.6953, tail: 0.3335] 
+
+l_head tensor([2.1539, 1.7543, 1.3521, 1.1581, 1.8036, 1.4240, 1.4132, 0.6063, 0.6035,
+        0.7822], device='cuda:4', grad_fn=<LinalgVectorNormBackward0>)
+g_aux tensor([2.7471, 1.9738, 2.1812, 1.7661, 1.6093, 1.5331, 1.1634, 1.1587, 1.3373,
+        1.1268], device='cuda:4', grad_fn=<LinalgVectorNormBackward0>)
+3shot of client 0:head:0.019230769230769232, middle:0.14285714285714285, tail0.0
+3shot of client 1:head:0.23157894736842105, middle:0.0, tail0.0
+3shot of client 2:head:0.0, middle:0.0, tail0.0
+3shot of client 3:head:0.044642857142857144, middle:0.0, tail0.0
+3shot of client 4:head:0.018633540372670808, middle:0.0, tail0.0
+3shot of client 5:head:0.0, middle:0.0, tail0.0
+3shot of client 6:head:0.05405405405405406, middle:0.0, tail0.0
+3shot of client 7:head:0.006329113924050633, middle:0.0, tail0.0
+3shot of client 8:head:0.3420479302832244, middle:0.0, tail0.0
+3shot of client 9:head:0.2072072072072072, middle:0.0, tail0
+3shot of client 10:head:0.10208816705336426, middle:0.030303030303030304, tail0.058823529411764705
+3shot of client 11:head:0.05319148936170213, middle:0.0, tail0.0
+3shot of client 12:head:0.14285714285714285, middle:0.08433734939759036, tail0.0
+3shot of client 13:head:0.009202453987730062, middle:0.08333333333333333, tail0.0
+3shot of client 14:head:0.007042253521126761, middle:0.0, tail0.0
+3shot of client 15:head:0.020833333333333332, middle:0.0, tail0.0
+3shot of client 16:head:0.0125, middle:0.0, tail0.0
+3shot of client 17:head:0.17549668874172186, middle:0.0, tail0.0
+3shot of client 18:head:0.01990049751243781, middle:0.0, tail0.0
+3shot of client 19:head:0.03164556962025317, middle:0.0, tail0.0
+3shot of client 20:head:0.08264462809917356, middle:0.0, tail0.0
+3shot of client 21:head:0.12941176470588237, middle:0.0, tail0.0
+3shot of client 22:head:0.06779661016949153, middle:0.0, tail0.0
+3shot of client 23:head:0.072992700729927, middle:0.0, tail0.0
+3shot of client 24:head:0.027932960893854747, middle:0.0, tail0.0
+3shot of client 25:head:0.0, middle:0.0, tail0.0
+3shot of client 26:head:0.12331838565022421, middle:0.0, tail0.0
+3shot of client 27:head:0.0, middle:0.0, tail0.0
+3shot of client 28:head:0.16176470588235295, middle:0.1, tail0.0
+3shot of client 29:head:0.3023255813953488, middle:0.0, tail0.0
+3shot of client 30:head:0.0028653295128939827, middle:0.006535947712418301, tail0.0
+3shot of client 31:head:0.11549295774647887, middle:0.0, tail0.0
+3shot of client 32:head:0.09375, middle:0.0, tail0.0
+3shot of client 33:head:0.0, middle:0.0, tail0.0
+3shot of client 34:head:0.034722222222222224, middle:0.0, tail0.0
+3shot of client 35:head:0.0056179775280898875, middle:0.0, tail0.0
+3shot of client 36:head:0.008733624454148471, middle:0.0, tail0.0
+3shot of client 37:head:0.020618556701030927, middle:0.0, tail0.0
+3shot of client 38:head:0.00909090909090909, middle:0.0, tail0.0
+3shot of client 39:head:0.0, middle:0.0, tail0.0
+round 19, local average test acc  0.0608 
+
+round 19, local macro average F1 score  0.0193 
+
+round 19, local weighted average F1 score  0.0685 
+
+round 19, global test acc  0.6193 
+
+round 19, average 3shot acc: [head: 0.0689, middle: 0.0112, tail: 0.0015] 
+
+round 19, global 3shot acc: [head: 0.9060, middle: 0.6920, tail: 0.3497] 
+
+l_head tensor([2.1760, 1.7725, 1.3326, 1.1647, 1.8278, 1.4452, 1.4396, 0.6066, 0.6032,
+        0.7823], device='cuda:4', grad_fn=<LinalgVectorNormBackward0>)
+g_aux tensor([2.7900, 1.9957, 2.2052, 1.7850, 1.6215, 1.5598, 1.1613, 1.1757, 1.3522,
+        1.1562], device='cuda:4', grad_fn=<LinalgVectorNormBackward0>)
+3shot of client 0:head:0.01282051282051282, middle:0.0, tail0.0
+3shot of client 1:head:0.23157894736842105, middle:0.0, tail0.0
+3shot of client 2:head:0.0, middle:0.0, tail0.0
+3shot of client 3:head:0.044642857142857144, middle:0.0, tail0.0
+3shot of client 4:head:0.024844720496894408, middle:0.0, tail0.0
+3shot of client 5:head:0.0, middle:0.0, tail0.0
+3shot of client 6:head:0.05405405405405406, middle:0.0, tail0.0
+3shot of client 7:head:0.004219409282700422, middle:0.00980392156862745, tail0.0
+3shot of client 8:head:0.3202614379084967, middle:0.0, tail0.0
+3shot of client 9:head:0.21621621621621623, middle:0.038461538461538464, tail0
+3shot of client 10:head:0.0951276102088167, middle:0.0, tail0.0
+3shot of client 11:head:0.034574468085106384, middle:0.0, tail0.0
+3shot of client 12:head:0.12087912087912088, middle:0.024096385542168676, tail0.0
+3shot of client 13:head:0.0, middle:0.08333333333333333, tail0.0
+3shot of client 14:head:0.014084507042253521, middle:0.0, tail0.0
+3shot of client 15:head:0.020833333333333332, middle:0.0, tail0.0
+3shot of client 16:head:0.0125, middle:0.0, tail0.0
+3shot of client 17:head:0.1390728476821192, middle:0.0, tail0.0
+3shot of client 18:head:0.009950248756218905, middle:0.0, tail0.0
+3shot of client 19:head:0.02531645569620253, middle:0.0, tail0.0
+3shot of client 20:head:0.0743801652892562, middle:0.0, tail0.0
+3shot of client 21:head:0.10588235294117647, middle:0.0, tail0.0
+3shot of client 22:head:0.06779661016949153, middle:0.0, tail0.0
+  4%|▍         | 21/500 [41:53<16:15:11, 122.15s/it]  4%|▍         | 22/500 [43:55<16:14:21, 122.30s/it]  5%|▍         | 23/500 [45:53<16:02:25, 121.06s/it]3shot of client 23:head:0.051094890510948905, middle:0.0, tail0.0
+3shot of client 24:head:0.01675977653631285, middle:0.0, tail0.0
+3shot of client 25:head:0.0, middle:0.0, tail0.0
+3shot of client 26:head:0.09192825112107623, middle:0.0, tail0.0
+3shot of client 27:head:0.0, middle:0.0, tail0.0
+3shot of client 28:head:0.16176470588235295, middle:0.0, tail0.0
+3shot of client 29:head:0.2877906976744186, middle:0.0, tail0.07692307692307693
+3shot of client 30:head:0.0014326647564469914, middle:0.006535947712418301, tail0.027777777777777776
+3shot of client 31:head:0.09577464788732394, middle:0.0, tail0.0
+3shot of client 32:head:0.06875, middle:0.0, tail0.14285714285714285
+3shot of client 33:head:0.0, middle:0.0, tail0.0
+3shot of client 34:head:0.013888888888888888, middle:0.0, tail0.0
+3shot of client 35:head:0.0, middle:0.0, tail0.0
+3shot of client 36:head:0.008733624454148471, middle:0.0, tail0.0
+3shot of client 37:head:0.010309278350515464, middle:0.0, tail0.0
+3shot of client 38:head:0.0, middle:0.05555555555555555, tail0.0
+3shot of client 39:head:0.0, middle:0.06666666666666667, tail0.0
+round 20, local average test acc  0.0541 
+
+round 20, local macro average F1 score  0.0237 
+
+round 20, local weighted average F1 score  0.0780 
+
+round 20, global test acc  0.6065 
+
+round 20, average 3shot acc: [head: 0.0609, middle: 0.0071, tail: 0.0063] 
+
+round 20, global 3shot acc: [head: 0.9060, middle: 0.6970, tail: 0.3140] 
+
+l_head tensor([2.2119, 1.7830, 1.3369, 1.1418, 1.8867, 1.4412, 1.4828, 0.6067, 0.6032,
+        0.7823], device='cuda:4', grad_fn=<LinalgVectorNormBackward0>)
+g_aux tensor([2.8509, 2.0127, 2.2478, 1.8093, 1.6485, 1.6043, 1.1704, 1.1800, 1.3708,
+        1.1620], device='cuda:4', grad_fn=<LinalgVectorNormBackward0>)
+3shot of client 0:head:0.019230769230769232, middle:0.0, tail0.0
+3shot of client 1:head:0.23157894736842105, middle:0.0, tail0.0
+3shot of client 2:head:0.0, middle:0.038461538461538464, tail0.0
+3shot of client 3:head:0.044642857142857144, middle:0.0, tail0.0
+3shot of client 4:head:0.018633540372670808, middle:0.0, tail0.0
+3shot of client 5:head:0.0, middle:0.0, tail0.0
+3shot of client 6:head:0.07207207207207207, middle:0.0, tail0.0
+3shot of client 7:head:0.004219409282700422, middle:0.0, tail0.04
+3shot of client 8:head:0.2984749455337691, middle:0.0, tail0.0
+3shot of client 9:head:0.24324324324324326, middle:0.0, tail0
+3shot of client 10:head:0.10208816705336426, middle:0.0, tail0.0
+3shot of client 11:head:0.034574468085106384, middle:0.017543859649122806, tail0.0
+3shot of client 12:head:0.11355311355311355, middle:0.04819277108433735, tail0.0
+3shot of client 13:head:0.009202453987730062, middle:0.041666666666666664, tail0.0
+3shot of client 14:head:0.014084507042253521, middle:0.0, tail0.0
+3shot of client 15:head:0.020833333333333332, middle:0.0, tail0.2
+3shot of client 16:head:0.0125, middle:0.0, tail0.0
+3shot of client 17:head:0.1490066225165563, middle:0.0, tail0.0
+3shot of client 18:head:0.009950248756218905, middle:0.16666666666666666, tail0.0
+3shot of client 19:head:0.0189873417721519, middle:0.0, tail0.0
+3shot of client 20:head:0.08264462809917356, middle:0.0, tail0.0
+3shot of client 21:head:0.12941176470588237, middle:0.0, tail0.0
+3shot of client 22:head:0.06779661016949153, middle:0.0, tail0.0
+3shot of client 23:head:0.051094890510948905, middle:0.0, tail0.0
+3shot of client 24:head:0.0223463687150838, middle:0.0, tail0.0
+3shot of client 25:head:0.0, middle:0.0, tail0.0
+3shot of client 26:head:0.08520179372197309, middle:0.0, tail0.0
+3shot of client 27:head:0.0, middle:0.0, tail0.0
+3shot of client 28:head:0.19852941176470587, middle:0.0, tail0.0
+3shot of client 29:head:0.2877906976744186, middle:0.0, tail0.07692307692307693
+3shot of client 30:head:0.0, middle:0.006535947712418301, tail0.0
+3shot of client 31:head:0.10704225352112676, middle:0.0, tail0.0
+3shot of client 32:head:0.075, middle:0.0, tail0.0
+3shot of client 33:head:0.0, middle:0.0, tail0.0
+3shot of client 34:head:0.013888888888888888, middle:0.0, tail0.0
+3shot of client 35:head:0.0, middle:0.041666666666666664, tail0.0
+3shot of client 36:head:0.008733624454148471, middle:0.0, tail0.0
+3shot of client 37:head:0.010309278350515464, middle:0.0, tail0.0
+3shot of client 38:head:0.0, middle:0.0, tail0.0
+3shot of client 39:head:0.0, middle:0.0, tail0.0
+round 21, local average test acc  0.0566 
+
+round 21, local macro average F1 score  0.0187 
+
+round 21, local weighted average F1 score  0.0635 
+
+round 21, global test acc  0.6098 
+
+round 21, average 3shot acc: [head: 0.0639, middle: 0.0090, tail: 0.0081] 
+
+round 21, global 3shot acc: [head: 0.9020, middle: 0.6940, tail: 0.3275] 
+
+l_head tensor([2.2450, 1.7858, 1.3672, 1.1186, 1.9202, 1.5331, 1.5052, 0.6067, 0.6033,
+        0.7823], device='cuda:4', grad_fn=<LinalgVectorNormBackward0>)
+g_aux tensor([2.9037, 2.0580, 2.2691, 1.8550, 1.6652, 1.6083, 1.1765, 1.1953, 1.3877,
+        1.1735], device='cuda:4', grad_fn=<LinalgVectorNormBackward0>)
+3shot of client 0:head:0.01282051282051282, middle:0.0, tail0.0
+3shot of client 1:head:0.2631578947368421, middle:0.0, tail0.0
+3shot of client 2:head:0.0, middle:0.0, tail0.0
+3shot of client 3:head:0.07142857142857142, middle:0.0, tail0.0
+3shot of client 4:head:0.024844720496894408, middle:0.0, tail0.0
+3shot of client 5:head:0.0, middle:0.0, tail0.0
+3shot of client 6:head:0.06306306306306306, middle:0.0, tail0.0
+3shot of client 7:head:0.004219409282700422, middle:0.0, tail0.0
+3shot of client 8:head:0.3202614379084967, middle:0.0, tail0.0
+3shot of client 9:head:0.24324324324324326, middle:0.0, tail0
+3shot of client 10:head:0.11600928074245939, middle:0.0, tail0.0
+3shot of client 11:head:0.047872340425531915, middle:0.0, tail0.0
+3shot of client 12:head:0.13736263736263737, middle:0.04819277108433735, tail0.0
+3shot of client 13:head:0.0, middle:0.08333333333333333, tail0.0
+3shot of client 14:head:0.014084507042253521, middle:0.0, tail0.0
+3shot of client 15:head:0.020833333333333332, middle:0.0, tail0.2
+3shot of client 16:head:0.0125, middle:0.0, tail0.0
+3shot of client 17:head:0.16556291390728478, middle:0.0, tail0.0
+3shot of client 18:head:0.01990049751243781, middle:0.0, tail0.0
+3shot of client 19:head:0.02531645569620253, middle:0.0, tail0.0
+3shot of client 20:head:0.09090909090909091, middle:0.14285714285714285, tail0.0
+3shot of client 21:head:0.12941176470588237, middle:0.0, tail0.0
+3shot of client 22:head:0.0847457627118644, middle:0.0, tail0.0
+3shot of client 23:head:0.051094890510948905, middle:0.0, tail0.0
+3shot of client 24:head:0.01675977653631285, middle:0.0, tail0.0
+3shot of client 25:head:0.0, middle:0.09090909090909091, tail0.0
+3shot of client 26:head:0.1031390134529148, middle:0.0, tail0.0
+3shot of client 27:head:0.0, middle:0.0, tail0.0
+3shot of client 28:head:0.19852941176470587, middle:0.1, tail0.0
+3shot of client 29:head:0.29069767441860467, middle:0.0, tail0.0
+3shot of client 30:head:0.0, middle:0.013071895424836602, tail0.027777777777777776
+3shot of client 31:head:0.11267605633802817, middle:0.0, tail0.0
+3shot of client 32:head:0.1, middle:0.0, tail0.14285714285714285
+3shot of client 33:head:0.0, middle:0.0, tail0.0
+3shot of client 34:head:0.020833333333333332, middle:0.0, tail0.0
+3shot of client 35:head:0.0, middle:0.0, tail0.0
+3shot of client 36:head:0.004366812227074236, middle:0.0, tail0.0
+3shot of client 37:head:0.0, middle:0.0, tail0.0
+3shot of client 38:head:0.00909090909090909, middle:0.0, tail0.0
+3shot of client 39:head:0.008264462809917356, middle:0.0, tail0.0
+round 22, local average test acc  0.0619 
+
+round 22, local macro average F1 score  0.0246 
+
+round 22, local weighted average F1 score  0.0686 
+
+round 22, global test acc  0.6195 
+
+round 22, average 3shot acc: [head: 0.0696, middle: 0.0120, tail: 0.0095] 
+
+round 22, global 3shot acc: [head: 0.9000, middle: 0.7033, tail: 0.3462] 
+
+l_head tensor([2.2734, 1.7846, 1.4056, 1.1464, 1.9343, 1.5091, 1.4816, 0.6069, 0.6035,
+        0.7824], device='cuda:4', grad_fn=<LinalgVectorNormBackward0>)
+g_aux tensor([2.9528, 2.0807, 2.3025, 1.8767, 1.6776, 1.6365, 1.1982, 1.2044, 1.3954,
+        1.1935], device='cuda:4', grad_fn=<LinalgVectorNormBackward0>)
+  5%|▍         | 24/500 [47:51<15:52:54, 120.11s/it]  5%|▌         | 25/500 [49:52<15:53:13, 120.41s/it]3shot of client 0:head:0.01282051282051282, middle:0.0, tail0.0
+3shot of client 1:head:0.25263157894736843, middle:0.0, tail0.0
+3shot of client 2:head:0.0, middle:0.0, tail0.0
+3shot of client 3:head:0.05357142857142857, middle:0.0, tail0.0
+3shot of client 4:head:0.018633540372670808, middle:0.0, tail0.0
+3shot of client 5:head:0.0, middle:0.0, tail0.0
+3shot of client 6:head:0.06306306306306306, middle:0.0, tail0.0
+3shot of client 7:head:0.004219409282700422, middle:0.0, tail0.0
+3shot of client 8:head:0.3311546840958606, middle:0.0, tail0.0
+3shot of client 9:head:0.27927927927927926, middle:0.0, tail0
+3shot of client 10:head:0.10672853828306264, middle:0.0, tail0.058823529411764705
+3shot of client 11:head:0.031914893617021274, middle:0.017543859649122806, tail0.0
+3shot of client 12:head:0.1336996336996337, middle:0.04819277108433735, tail0.0
+3shot of client 13:head:0.006134969325153374, middle:0.041666666666666664, tail0.0
+3shot of client 14:head:0.007042253521126761, middle:0.0, tail0.0
+3shot of client 15:head:0.010416666666666666, middle:0.0, tail0.0
+3shot of client 16:head:0.025, middle:0.0, tail0.0
+3shot of client 17:head:0.17218543046357615, middle:0.0, tail0.0
+3shot of client 18:head:0.024875621890547265, middle:0.0, tail0.0
+3shot of client 19:head:0.0189873417721519, middle:0.0, tail0.0
+3shot of client 20:head:0.08264462809917356, middle:0.0, tail0.0
+3shot of client 21:head:0.1411764705882353, middle:0.0, tail0.0
+3shot of client 22:head:0.06779661016949153, middle:0.0, tail0.0
+3shot of client 23:head:0.06569343065693431, middle:0.0, tail0.0
+3shot of client 24:head:0.027932960893854747, middle:0.0, tail0.0
+3shot of client 25:head:0.0, middle:0.0, tail0.0
+3shot of client 26:head:0.08968609865470852, middle:0.0, tail0.0
+3shot of client 27:head:0.0, middle:0.06666666666666667, tail0.0
+3shot of client 28:head:0.21323529411764705, middle:0.0, tail0.0
+3shot of client 29:head:0.27906976744186046, middle:0.0, tail0.0
+3shot of client 30:head:0.0, middle:0.006535947712418301, tail0.0
+3shot of client 31:head:0.09859154929577464, middle:0.0, tail0.0
+3shot of client 32:head:0.0875, middle:0.0, tail0.0
+3shot of client 33:head:0.0, middle:0.0, tail0.0
+3shot of client 34:head:0.020833333333333332, middle:0.0, tail0.0
+3shot of client 35:head:0.0056179775280898875, middle:0.0, tail0.0
+3shot of client 36:head:0.0, middle:0.0, tail0.0
+3shot of client 37:head:0.0, middle:0.0, tail0.0
+3shot of client 38:head:0.0, middle:0.0, tail0.0
+3shot of client 39:head:0.0, middle:0.0, tail0.0
+round 23, local average test acc  0.0600 
+
+round 23, local macro average F1 score  0.0230 
+
+round 23, local weighted average F1 score  0.0929 
+
+round 23, global test acc  0.6099 
+
+round 23, average 3shot acc: [head: 0.0683, middle: 0.0045, tail: 0.0015] 
+
+round 23, global 3shot acc: [head: 0.8927, middle: 0.7123, tail: 0.3210] 
+
+l_head tensor([2.2601, 1.7891, 1.3662, 1.1400, 1.9779, 1.5422, 1.4844, 0.6071, 0.6037,
+        0.7824], device='cuda:4', grad_fn=<LinalgVectorNormBackward0>)
+g_aux tensor([3.0295, 2.1038, 2.3482, 1.9032, 1.7151, 1.6867, 1.2145, 1.2256, 1.4045,
+        1.2033], device='cuda:4', grad_fn=<LinalgVectorNormBackward0>)
+3shot of client 0:head:0.00641025641025641, middle:0.0, tail0.0
+3shot of client 1:head:0.25263157894736843, middle:0.0, tail0.0
+3shot of client 2:head:0.0, middle:0.0, tail0.0
+3shot of client 3:head:0.03571428571428571, middle:0.0, tail0.0
+3shot of client 4:head:0.018633540372670808, middle:0.0, tail0.0
+3shot of client 5:head:0.011235955056179775, middle:0.0, tail0.0
+3shot of client 6:head:0.07207207207207207, middle:0.0, tail0.0
+3shot of client 7:head:0.002109704641350211, middle:0.0, tail0.0
+3shot of client 8:head:0.3137254901960784, middle:0.0, tail0.0
+3shot of client 9:head:0.25225225225225223, middle:0.0, tail0
+3shot of client 10:head:0.09976798143851508, middle:0.0, tail0.0
+3shot of client 11:head:0.03723404255319149, middle:0.0, tail0.0
+3shot of client 12:head:0.12637362637362637, middle:0.012048192771084338, tail0.0
+3shot of client 13:head:0.0, middle:0.08333333333333333, tail0.0
+3shot of client 14:head:0.0, middle:0.0, tail0.0
+3shot of client 15:head:0.020833333333333332, middle:0.0, tail0.2
+3shot of client 16:head:0.0125, middle:0.0, tail0.0
+3shot of client 17:head:0.152317880794702, middle:0.0, tail0.0
+3shot of client 18:head:0.009950248756218905, middle:0.16666666666666666, tail0.0
+3shot of client 19:head:0.0189873417721519, middle:0.0, tail0.0
+3shot of client 20:head:0.09917355371900827, middle:0.0, tail0.0
+3shot of client 21:head:0.12941176470588237, middle:0.0, tail0.0
+3shot of client 22:head:0.06779661016949153, middle:0.0, tail0.0
+3shot of client 23:head:0.06569343065693431, middle:0.0, tail0.14285714285714285
+3shot of client 24:head:0.0223463687150838, middle:0.0, tail0.0
+3shot of client 25:head:0.0, middle:0.0, tail0.0
+3shot of client 26:head:0.10538116591928251, middle:0.0, tail0.0
+3shot of client 27:head:0.0, middle:0.0, tail0.0
+3shot of client 28:head:0.17647058823529413, middle:0.0, tail0.0
+3shot of client 29:head:0.29651162790697677, middle:0.0, tail0.0
+3shot of client 30:head:0.0, middle:0.006535947712418301, tail0.027777777777777776
+3shot of client 31:head:0.10422535211267606, middle:0.0, tail0.0
+3shot of client 32:head:0.075, middle:0.0, tail0.0
+3shot of client 33:head:0.0, middle:0.0, tail0.0
+3shot of client 34:head:0.020833333333333332, middle:0.0, tail0.0
+3shot of client 35:head:0.0, middle:0.0, tail0.0
+3shot of client 36:head:0.004366812227074236, middle:0.0, tail0.0
+3shot of client 37:head:0.010309278350515464, middle:0.0, tail0.0
+3shot of client 38:head:0.0, middle:0.05555555555555555, tail0.0
+3shot of client 39:head:0.008264462809917356, middle:0.0, tail0.0
+round 24, local average test acc  0.0581 
+
+round 24, local macro average F1 score  0.0264 
+
+round 24, local weighted average F1 score  0.0927 
+
+round 24, global test acc  0.6185 
+
+round 24, average 3shot acc: [head: 0.0657, middle: 0.0081, tail: 0.0095] 
+
+round 24, global 3shot acc: [head: 0.8970, middle: 0.6897, tail: 0.3562] 
+
+l_head tensor([2.2939, 1.7907, 1.3915, 1.1396, 2.0001, 1.5080, 1.4779, 0.6074, 0.6039,
+        0.7825], device='cuda:4', grad_fn=<LinalgVectorNormBackward0>)
+g_aux tensor([3.0662, 2.1216, 2.3637, 1.9320, 1.7172, 1.6954, 1.2266, 1.2294, 1.4221,
+        1.2149], device='cuda:4', grad_fn=<LinalgVectorNormBackward0>)
+3shot of client 0:head:0.01282051282051282, middle:0.0, tail0.0
+3shot of client 1:head:0.23157894736842105, middle:0.0, tail0.0
+3shot of client 2:head:0.0, middle:0.0, tail0.0
+3shot of client 3:head:0.05357142857142857, middle:0.0, tail0.0
+3shot of client 4:head:0.037267080745341616, middle:0.041666666666666664, tail0.0
+3shot of client 5:head:0.011235955056179775, middle:0.0, tail0.0
+3shot of client 6:head:0.08108108108108109, middle:0.0, tail0.0
+3shot of client 7:head:0.006329113924050633, middle:0.0, tail0.0
+3shot of client 8:head:0.3224400871459695, middle:0.0, tail0.0
+3shot of client 9:head:0.26126126126126126, middle:0.0, tail0
+3shot of client 10:head:0.11600928074245939, middle:0.0, tail0.0
+3shot of client 11:head:0.05053191489361702, middle:0.0, tail0.0
+3shot of client 12:head:0.14285714285714285, middle:0.060240963855421686, tail0.0
+3shot of client 13:head:0.006134969325153374, middle:0.08333333333333333, tail0.0
+3shot of client 14:head:0.0, middle:0.0, tail0.0
+3shot of client 15:head:0.041666666666666664, middle:0.0, tail0.0
+3shot of client 16:head:0.0375, middle:0.0, tail0.0
+3shot of client 17:head:0.16556291390728478, middle:0.0, tail0.0
+3shot of client 18:head:0.004975124378109453, middle:0.0, tail0.0
+3shot of client 19:head:0.03164556962025317, middle:0.0, tail0.0
+3shot of client 20:head:0.09090909090909091, middle:0.14285714285714285, tail0.0
+3shot of client 21:head:0.12941176470588237, middle:0.0, tail0.0
+3shot of client 22:head:0.06779661016949153, middle:0.0, tail0.0
+3shot of client 23:head:0.072992700729927, middle:0.0, tail0.0
+3shot of client 24:head:0.027932960893854747, middle:0.0, tail0.0
+3shot of client 25:head:0.0, middle:0.0, tail0.0
+3shot of client 26:head:0.10538116591928251, middle:0.0, tail0.0
+3shot of client 27:head:0.0, middle:0.06666666666666667, tail0.0
+  5%|▌         | 26/500 [51:50<15:44:16, 119.53s/it]  5%|▌         | 27/500 [53:47<15:35:22, 118.65s/it]  6%|▌         | 28/500 [55:45<15:31:59, 118.47s/it]3shot of client 28:head:0.20588235294117646, middle:0.0, tail0.0
+3shot of client 29:head:0.3023255813953488, middle:0.0, tail0.0
+3shot of client 30:head:0.0, middle:0.013071895424836602, tail0.027777777777777776
+3shot of client 31:head:0.10985915492957747, middle:0.0, tail0.0
+3shot of client 32:head:0.1, middle:0.04, tail0.0
+3shot of client 33:head:0.0, middle:0.0, tail0.0
+3shot of client 34:head:0.027777777777777776, middle:0.0, tail0.0
+3shot of client 35:head:0.0, middle:0.0, tail0.0
+3shot of client 36:head:0.004366812227074236, middle:0.0, tail0.0
+3shot of client 37:head:0.010309278350515464, middle:0.0, tail0.0
+3shot of client 38:head:0.01818181818181818, middle:0.0, tail0.0
+3shot of client 39:head:0.0, middle:0.0, tail0.0
+round 25, local average test acc  0.0637 
+
+round 25, local macro average F1 score  0.0239 
+
+round 25, local weighted average F1 score  0.0724 
+
+round 25, global test acc  0.6261 
+
+round 25, average 3shot acc: [head: 0.0722, middle: 0.0112, tail: 0.0007] 
+
+round 25, global 3shot acc: [head: 0.8940, middle: 0.7103, tail: 0.3620] 
+
+l_head tensor([2.3235, 1.8022, 1.3572, 1.1261, 2.0133, 1.5142, 1.4772, 0.6075, 0.6040,
+        0.7825], device='cuda:4', grad_fn=<LinalgVectorNormBackward0>)
+g_aux tensor([3.1131, 2.1510, 2.3958, 1.9819, 1.7527, 1.7065, 1.2255, 1.2405, 1.4219,
+        1.2296], device='cuda:4', grad_fn=<LinalgVectorNormBackward0>)
+3shot of client 0:head:0.019230769230769232, middle:0.14285714285714285, tail0.0
+3shot of client 1:head:0.25263157894736843, middle:0.0, tail0.0
+3shot of client 2:head:0.0, middle:0.0, tail0.0
+3shot of client 3:head:0.05357142857142857, middle:0.0, tail0.0
+3shot of client 4:head:0.031055900621118012, middle:0.0, tail0.0
+3shot of client 5:head:0.011235955056179775, middle:0.0, tail0.0
+3shot of client 6:head:0.05405405405405406, middle:0.0, tail0.0
+3shot of client 7:head:0.006329113924050633, middle:0.0, tail0.0
+3shot of client 8:head:0.3485838779956427, middle:0.0, tail0.0
+3shot of client 9:head:0.22522522522522523, middle:0.0, tail0
+3shot of client 10:head:0.12296983758700696, middle:0.0, tail0.0
+3shot of client 11:head:0.07180851063829788, middle:0.0, tail0.0
+3shot of client 12:head:0.14652014652014653, middle:0.024096385542168676, tail0.0
+3shot of client 13:head:0.0, middle:0.041666666666666664, tail0.0
+3shot of client 14:head:0.0, middle:0.0, tail0.0
+3shot of client 15:head:0.03125, middle:0.0, tail0.0
+3shot of client 16:head:0.0, middle:0.0, tail0.0
+3shot of client 17:head:0.19536423841059603, middle:0.0, tail0.0
+3shot of client 18:head:0.004975124378109453, middle:0.0, tail0.0
+3shot of client 19:head:0.03164556962025317, middle:0.0, tail0.0
+3shot of client 20:head:0.08264462809917356, middle:0.0, tail0.0
+3shot of client 21:head:0.12941176470588237, middle:0.0, tail0.0
+3shot of client 22:head:0.06779661016949153, middle:0.0, tail0.0
+3shot of client 23:head:0.06569343065693431, middle:0.0, tail0.0
+3shot of client 24:head:0.027932960893854747, middle:0.0, tail0.0
+3shot of client 25:head:0.0, middle:0.0, tail0.0
+3shot of client 26:head:0.10762331838565023, middle:0.0, tail0.0
+3shot of client 27:head:0.0, middle:0.0, tail0.0
+3shot of client 28:head:0.16176470588235295, middle:0.0, tail0.0
+3shot of client 29:head:0.2877906976744186, middle:0.0, tail0.0
+3shot of client 30:head:0.0, middle:0.006535947712418301, tail0.027777777777777776
+3shot of client 31:head:0.10985915492957747, middle:0.0, tail0.0
+3shot of client 32:head:0.1, middle:0.0, tail0.0
+3shot of client 33:head:0.01694915254237288, middle:0.0, tail0.0
+3shot of client 34:head:0.013888888888888888, middle:0.0, tail0.0
+3shot of client 35:head:0.0, middle:0.0, tail0.0
+3shot of client 36:head:0.021834061135371178, middle:0.0, tail0.0
+3shot of client 37:head:0.0, middle:0.0, tail0.0
+3shot of client 38:head:0.0, middle:0.0, tail0.0
+3shot of client 39:head:0.0, middle:0.0, tail0.0
+round 26, local average test acc  0.0612 
+
+round 26, local macro average F1 score  0.0225 
+
+round 26, local weighted average F1 score  0.0879 
+
+round 26, global test acc  0.6163 
+
+round 26, average 3shot acc: [head: 0.0700, middle: 0.0054, tail: 0.0007] 
+
+round 26, global 3shot acc: [head: 0.9037, middle: 0.6903, tail: 0.3452] 
+
+l_head tensor([2.3080, 1.7901, 1.3954, 1.1343, 2.0264, 1.5862, 1.4410, 0.6077, 0.6042,
+        0.7826], device='cuda:4', grad_fn=<LinalgVectorNormBackward0>)
+g_aux tensor([3.1684, 2.1754, 2.4390, 2.0026, 1.7626, 1.7538, 1.2434, 1.2310, 1.4268,
+        1.2446], device='cuda:4', grad_fn=<LinalgVectorNormBackward0>)
+3shot of client 0:head:0.01282051282051282, middle:0.0, tail0.0
+3shot of client 1:head:0.28421052631578947, middle:0.0, tail0.0
+3shot of client 2:head:0.0, middle:0.0, tail0.0
+3shot of client 3:head:0.0625, middle:0.0, tail0.0
+3shot of client 4:head:0.018633540372670808, middle:0.0, tail0.0
+3shot of client 5:head:0.0, middle:0.0, tail0.0
+3shot of client 6:head:0.05405405405405406, middle:0.0, tail0.0
+3shot of client 7:head:0.004219409282700422, middle:0.0, tail0.0
+3shot of client 8:head:0.35294117647058826, middle:0.0, tail0.0625
+3shot of client 9:head:0.21621621621621623, middle:0.0, tail0
+3shot of client 10:head:0.12993039443155452, middle:0.0, tail0.0
+3shot of client 11:head:0.0797872340425532, middle:0.0, tail0.0
+3shot of client 12:head:0.15934065934065933, middle:0.024096385542168676, tail0.0
+3shot of client 13:head:0.006134969325153374, middle:0.125, tail0.0
+3shot of client 14:head:0.014084507042253521, middle:0.0, tail0.0
+3shot of client 15:head:0.010416666666666666, middle:0.0, tail0.0
+3shot of client 16:head:0.025, middle:0.0, tail0.0
+3shot of client 17:head:0.19205298013245034, middle:0.0, tail0.0
+3shot of client 18:head:0.029850746268656716, middle:0.0, tail0.0
+3shot of client 19:head:0.03164556962025317, middle:0.0, tail0.0
+3shot of client 20:head:0.08264462809917356, middle:0.0, tail0.0
+3shot of client 21:head:0.11764705882352941, middle:0.0, tail0.0
+3shot of client 22:head:0.06779661016949153, middle:0.0, tail0.0
+3shot of client 23:head:0.072992700729927, middle:0.0, tail0.0
+3shot of client 24:head:0.0223463687150838, middle:0.0, tail0.0
+3shot of client 25:head:0.0, middle:0.0, tail0.0
+3shot of client 26:head:0.10986547085201794, middle:0.0, tail0.0
+3shot of client 27:head:0.0, middle:0.0, tail0.0
+3shot of client 28:head:0.14705882352941177, middle:0.0, tail0.0
+3shot of client 29:head:0.313953488372093, middle:0.0, tail0.0
+3shot of client 30:head:0.0, middle:0.013071895424836602, tail0.027777777777777776
+3shot of client 31:head:0.11549295774647887, middle:0.0, tail0.0
+3shot of client 32:head:0.10625, middle:0.0, tail0.0
+3shot of client 33:head:0.0, middle:0.0, tail0.0
+3shot of client 34:head:0.027777777777777776, middle:0.0, tail0.0
+3shot of client 35:head:0.0, middle:0.0, tail0.0
+3shot of client 36:head:0.008733624454148471, middle:0.0, tail0.0
+3shot of client 37:head:0.0, middle:0.047619047619047616, tail0.0
+3shot of client 38:head:0.00909090909090909, middle:0.0, tail0.0
+3shot of client 39:head:0.0, middle:0.0, tail0.0
+round 27, local average test acc  0.0634 
+
+round 27, local macro average F1 score  0.0206 
+
+round 27, local weighted average F1 score  0.0817 
+
+round 27, global test acc  0.6186 
+
+round 27, average 3shot acc: [head: 0.0721, middle: 0.0052, tail: 0.0023] 
+
+round 27, global 3shot acc: [head: 0.9090, middle: 0.6780, tail: 0.3562] 
+
+l_head tensor([2.2850, 1.8078, 1.3728, 1.1650, 2.0526, 1.5049, 1.4813, 0.6080, 0.6045,
+        0.7827], device='cuda:4', grad_fn=<LinalgVectorNormBackward0>)
+g_aux tensor([3.2271, 2.2005, 2.4886, 2.0457, 1.8000, 1.7709, 1.2587, 1.2419, 1.4403,
+        1.2602], device='cuda:4', grad_fn=<LinalgVectorNormBackward0>)
+3shot of client 0:head:0.01282051282051282, middle:0.0, tail0.0
+3shot of client 1:head:0.2631578947368421, middle:0.0, tail0.0
+3shot of client 2:head:0.0, middle:0.0, tail0.0
+3shot of client 3:head:0.044642857142857144, middle:0.0, tail0.0
+3shot of client 4:head:0.018633540372670808, middle:0.0, tail0.0
+3shot of client 5:head:0.0, middle:0.0, tail0.0
+3shot of client 6:head:0.04504504504504504, middle:0.0, tail0.0
+3shot of client 7:head:0.004219409282700422, middle:0.0, tail0.0
+3shot of client 8:head:0.3442265795206972, middle:0.0, tail0.0
+  6%|▌         | 29/500 [57:45<15:34:32, 119.05s/it]  6%|▌         | 30/500 [59:49<15:44:05, 120.52s/it]3shot of client 9:head:0.24324324324324326, middle:0.038461538461538464, tail0
+3shot of client 10:head:0.10904872389791183, middle:0.0, tail0.0
+3shot of client 11:head:0.05851063829787234, middle:0.0, tail0.0
+3shot of client 12:head:0.1446886446886447, middle:0.012048192771084338, tail0.0
+3shot of client 13:head:0.0, middle:0.08333333333333333, tail0.0
+3shot of client 14:head:0.0, middle:0.0, tail0.0
+3shot of client 15:head:0.0, middle:0.0, tail0.0
+3shot of client 16:head:0.0125, middle:0.0, tail0.0
+3shot of client 17:head:0.18211920529801323, middle:0.0, tail0.0
+3shot of client 18:head:0.009950248756218905, middle:0.0, tail0.0
+3shot of client 19:head:0.02531645569620253, middle:0.0, tail0.0
+3shot of client 20:head:0.0743801652892562, middle:0.0, tail0.0
+3shot of client 21:head:0.12941176470588237, middle:0.0, tail0.0
+3shot of client 22:head:0.06779661016949153, middle:0.0, tail0.0
+3shot of client 23:head:0.06569343065693431, middle:0.0, tail0.0
+3shot of client 24:head:0.0223463687150838, middle:0.0, tail0.0
+3shot of client 25:head:0.0, middle:0.0, tail0.0
+3shot of client 26:head:0.09865470852017937, middle:0.0, tail0.0
+3shot of client 27:head:0.0, middle:0.06666666666666667, tail0.0
+3shot of client 28:head:0.17647058823529413, middle:0.0, tail0.0
+3shot of client 29:head:0.29069767441860467, middle:0.0, tail0.0
+3shot of client 30:head:0.0014326647564469914, middle:0.006535947712418301, tail0.027777777777777776
+3shot of client 31:head:0.10704225352112676, middle:0.0, tail0.0
+3shot of client 32:head:0.1, middle:0.04, tail0.0
+3shot of client 33:head:0.0, middle:0.0, tail0.0
+3shot of client 34:head:0.020833333333333332, middle:0.0, tail0.0
+3shot of client 35:head:0.0, middle:0.0, tail0.0
+3shot of client 36:head:0.008733624454148471, middle:0.0, tail0.0
+3shot of client 37:head:0.0, middle:0.0, tail0.0
+3shot of client 38:head:0.0, middle:0.0, tail0.0
+3shot of client 39:head:0.0, middle:0.0, tail0.0
+round 28, local average test acc  0.0592 
+
+round 28, local macro average F1 score  0.0192 
+
+round 28, local weighted average F1 score  0.0675 
+
+round 28, global test acc  0.6140 
+
+round 28, average 3shot acc: [head: 0.0670, middle: 0.0062, tail: 0.0007] 
+
+round 28, global 3shot acc: [head: 0.9033, middle: 0.6927, tail: 0.3380] 
+
+l_head tensor([2.2760, 1.7871, 1.3369, 1.1576, 2.0603, 1.5697, 1.5122, 0.6084, 0.6048,
+        0.7828], device='cuda:4', grad_fn=<LinalgVectorNormBackward0>)
+g_aux tensor([3.2786, 2.2123, 2.5232, 2.0799, 1.8243, 1.7939, 1.2761, 1.2608, 1.4381,
+        1.2684], device='cuda:4', grad_fn=<LinalgVectorNormBackward0>)
+3shot of client 0:head:0.019230769230769232, middle:0.0, tail0.0
+3shot of client 1:head:0.2631578947368421, middle:0.0, tail0.0
+3shot of client 2:head:0.0, middle:0.0, tail0.0
+3shot of client 3:head:0.0625, middle:0.0, tail0.0
+3shot of client 4:head:0.024844720496894408, middle:0.0, tail0.0
+3shot of client 5:head:0.0, middle:0.0, tail0.0
+3shot of client 6:head:0.06306306306306306, middle:0.0, tail0.0
+3shot of client 7:head:0.004219409282700422, middle:0.0, tail0.0
+3shot of client 8:head:0.35294117647058826, middle:0.0, tail0.0
+3shot of client 9:head:0.26126126126126126, middle:0.0, tail0
+3shot of client 10:head:0.12064965197215777, middle:0.0, tail0.0
+3shot of client 11:head:0.06648936170212766, middle:0.017543859649122806, tail0.0
+3shot of client 12:head:0.163003663003663, middle:0.0, tail0.0
+3shot of client 13:head:0.0, middle:0.08333333333333333, tail0.0
+3shot of client 14:head:0.02112676056338028, middle:0.0, tail0.0
+3shot of client 15:head:0.010416666666666666, middle:0.0, tail0.0
+3shot of client 16:head:0.0125, middle:0.0, tail0.0
+3shot of client 17:head:0.17880794701986755, middle:0.0, tail0.0
+3shot of client 18:head:0.014925373134328358, middle:0.0, tail0.0
+3shot of client 19:head:0.03164556962025317, middle:0.0, tail0.0
+3shot of client 20:head:0.09090909090909091, middle:0.0, tail0.0
+3shot of client 21:head:0.1411764705882353, middle:0.0, tail0.0
+3shot of client 22:head:0.0847457627118644, middle:0.0, tail0.0
+3shot of client 23:head:0.06569343065693431, middle:0.0, tail0.0
+3shot of client 24:head:0.01675977653631285, middle:0.0, tail0.0
+3shot of client 25:head:0.0, middle:0.0, tail0.0
+3shot of client 26:head:0.11659192825112108, middle:0.0, tail0.0
+3shot of client 27:head:0.0, middle:0.06666666666666667, tail0.0
+3shot of client 28:head:0.20588235294117646, middle:0.0, tail0.0
+3shot of client 29:head:0.3081395348837209, middle:0.0, tail0.0
+3shot of client 30:head:0.0, middle:0.006535947712418301, tail0.027777777777777776
+3shot of client 31:head:0.11830985915492957, middle:0.0, tail0.0
+3shot of client 32:head:0.1, middle:0.0, tail0.0
+3shot of client 33:head:0.0, middle:0.0, tail0.0
+3shot of client 34:head:0.034722222222222224, middle:0.0, tail0.0
+3shot of client 35:head:0.0, middle:0.0, tail0.0
+3shot of client 36:head:0.013100436681222707, middle:0.0, tail0.0
+3shot of client 37:head:0.0, middle:0.0, tail0.0
+3shot of client 38:head:0.00909090909090909, middle:0.0, tail0.0
+3shot of client 39:head:0.01652892561983471, middle:0.0, tail0.0
+round 29, local average test acc  0.0655 
+
+round 29, local macro average F1 score  0.0201 
+
+round 29, local weighted average F1 score  0.0752 
+
+round 29, global test acc  0.6291 
+
+round 29, average 3shot acc: [head: 0.0748, middle: 0.0044, tail: 0.0007] 
+
+round 29, global 3shot acc: [head: 0.9007, middle: 0.6940, tail: 0.3767] 
+
+l_head tensor([2.2956, 1.7875, 1.3850, 1.1618, 2.0910, 1.5708, 1.4612, 0.6087, 0.6050,
+        0.7829], device='cuda:4', grad_fn=<LinalgVectorNormBackward0>)
+g_aux tensor([3.3253, 2.2286, 2.5490, 2.1134, 1.8474, 1.8071, 1.2910, 1.2703, 1.4599,
+        1.2740], device='cuda:4', grad_fn=<LinalgVectorNormBackward0>)
+3shot of client 0:head:0.00641025641025641, middle:0.0, tail0.0
+3shot of client 1:head:0.2736842105263158, middle:0.07692307692307693, tail0.0
+3shot of client 2:head:0.0, middle:0.0, tail0.0
+3shot of client 3:head:0.05357142857142857, middle:0.0, tail0.0
+3shot of client 4:head:0.024844720496894408, middle:0.0, tail0.0
+3shot of client 5:head:0.0, middle:0.0, tail0.0
+3shot of client 6:head:0.07207207207207207, middle:0.0, tail0.0
+3shot of client 7:head:0.004219409282700422, middle:0.0, tail0.0
+3shot of client 8:head:0.35076252723311546, middle:0.0, tail0.0
+3shot of client 9:head:0.2882882882882883, middle:0.0, tail0
+3shot of client 10:head:0.10672853828306264, middle:0.0, tail0.0
+3shot of client 11:head:0.05053191489361702, middle:0.0, tail0.0
+3shot of client 12:head:0.14285714285714285, middle:0.012048192771084338, tail0.0
+3shot of client 13:head:0.003067484662576687, middle:0.08333333333333333, tail0.0
+3shot of client 14:head:0.0, middle:0.0, tail0.0
+3shot of client 15:head:0.03125, middle:0.0, tail0.0
+3shot of client 16:head:0.0, middle:0.0, tail0.0
+3shot of client 17:head:0.17549668874172186, middle:0.0, tail0.0
+3shot of client 18:head:0.009950248756218905, middle:0.16666666666666666, tail0.0
+3shot of client 19:head:0.0189873417721519, middle:0.0, tail0.0
+3shot of client 20:head:0.05785123966942149, middle:0.0, tail0.0
+3shot of client 21:head:0.1411764705882353, middle:0.0, tail0.0
+3shot of client 22:head:0.0847457627118644, middle:0.0, tail0.0
+3shot of client 23:head:0.06569343065693431, middle:0.0, tail0.0
+3shot of client 24:head:0.027932960893854747, middle:0.0, tail0.0
+3shot of client 25:head:0.0, middle:0.0, tail0.0
+3shot of client 26:head:0.10538116591928251, middle:0.0, tail0.0
+3shot of client 27:head:0.0, middle:0.0, tail0.0
+3shot of client 28:head:0.23529411764705882, middle:0.0, tail0.0
+3shot of client 29:head:0.3168604651162791, middle:0.0, tail0.0
+3shot of client 30:head:0.0, middle:0.006535947712418301, tail0.027777777777777776
+3shot of client 31:head:0.10704225352112676, middle:0.0, tail0.0
+3shot of client 32:head:0.0875, middle:0.0, tail0.0
+3shot of client 33:head:0.0, middle:0.0, tail0.0
+3shot of client 34:head:0.020833333333333332, middle:0.0, tail0.0
+3shot of client 35:head:0.0, middle:0.0, tail0.0
+3shot of client 36:head:0.0, middle:0.025, tail0.14285714285714285
+3shot of client 37:head:0.010309278350515464, middle:0.047619047619047616, tail0.0
+3shot of client 38:head:0.00909090909090909, middle:0.05555555555555555, tail0.0  6%|▌         | 31/500 [1:01:47<15:35:53, 119.73s/it]  6%|▋         | 32/500 [1:03:46<15:32:54, 119.60s/it]  7%|▋         | 33/500 [1:05:44<15:25:59, 118.97s/it]
