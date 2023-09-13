@@ -23,7 +23,7 @@ from util.etf_methods import ETF_Classifier
 np.set_printoptions(threshold=np.inf)
 
 load_switch = False  # True / False
-save_switch = True # True / False
+save_switch = False # True / False
 cls_switch = "ETF" # ETF / sparfix / dropout_ETF / w_dropout_ETF / PR_ETF
 pretrain_cls = False
 dataset_switch = 'cifar100' # cifar10 / cifar100

@@ -941,7 +941,7 @@ class LocalUpdate(object):
             epoch_loss.append(sum(batch_loss)/len(batch_loss))
         return net.state_dict(), copy.deepcopy(g_aux), copy.deepcopy(l_head), sum(epoch_loss) / len(epoch_loss)
     
-
+## gain personalzied l_head
     def update_weights_norm_init(self, net, g_aux, g_head, l_head, seed, net_glob, epoch, mu=1, lr=None):
 
         net.train()
@@ -1021,7 +1021,7 @@ class LocalUpdate(object):
                 batch_loss.append(loss.item())
 
             epoch_loss.append(sum(batch_loss)/len(batch_loss))
-        return net.state_dict(), copy.deepcopy(g_aux), copy.deepcopy(l_head), sum(epoch_loss) / len(epoch_loss)
+        return net.state_dict(), copy.deepcopy(g_aux), copy.deepcopy(l_head), sum(epoch_loss) / (len(epoch_loss) + 1e-10)
     
     def pfedme_update_weights(self, net, seed, net_glob, epoch, mu=1, lr=None):
         net_glob = net_glob
@@ -1352,7 +1352,7 @@ def globaltest(net, g_head, test_dataset, args, dataset_class=None, head_switch=
     return acc, acc_3shot_global
 
 
-def globaltest_calibra(net, g_head, g_aux, test_dataset, args, dataset_class=None, head_switch=True):
+def globaltest_calibra(net, g_aux, test_dataset, args, dataset_class=None, head_switch=True):
     global_test_distribution = dataset_class.global_test_distribution
     three_shot_dict, _ = shot_split(global_test_distribution, threshold_3shot=[75, 95])
     correct_3shot = {"head": 0, "middle": 0, "tail": 0}
@@ -2516,7 +2516,7 @@ def localtest(net, g_head, l_head, test_dataset, dataset_class, idxs, user_id):
 
     class_distribution = dataset_class.local_test_distribution[user_id]
 
-
+    # torch.norm(l_head.weight, dim=1)
     p_mode = 1
 
     if p_mode == 1:
@@ -2573,7 +2573,7 @@ def localtest(net, g_head, l_head, test_dataset, dataset_class, idxs, user_id):
             features = net(images, latent_output=True)
 
             if p_mode != 8:
-                outputs = g_head(features) + l_head(features)
+                outputs = g_head(features) 
                 # outputs = g_head(features) 
                 _, predicted = torch.max(outputs.data, 1)
             else:

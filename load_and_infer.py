@@ -11,7 +11,7 @@ import pdb
 import torch.nn as nn
 from tqdm import tqdm
 from options import args_parser, args_parser_cifar10
-from util.update_baseline import LocalUpdate, globaltest, localtest
+from util.update_baseline import LocalUpdate, globaltest, localtest, globaltest_calibra
 from util.fedavg import *
 # from util.util import add_noise
 from util.dataset import *
@@ -21,7 +21,7 @@ from util.losses import *
 
 np.set_printoptions(threshold=np.inf)
 
-
+dataset_switch = "cifar10"
 
 def get_acc_file_path(args):
 
@@ -41,7 +41,10 @@ def get_acc_file_path(args):
    
 if __name__ == '__main__':
     # parse args
-    args = args_parser()
+    if dataset_switch == 'cifar100':
+        args = args_parser()
+    elif dataset_switch == 'cifar10':
+        args = args_parser_cifar10()
     # print("STOP")
     # return
     torch.manual_seed(args.seed)
@@ -98,11 +101,11 @@ if __name__ == '__main__':
     # acc_s2, global_3shot_acc = globaltest(copy.deepcopy(model).to(args.device), g_head, dataset_test, args, dataset_class = datasetObj)
 
     # add fl training
-    load_dir = "./output_nospar/"
+    load_dir = "./output/ours/d/"
     # save_id = "73"
-    model = torch.load(load_dir + "model_300.pth").to(args.device)
-    g_head = torch.load(load_dir + "g_head_300.pth").to(args.device)
-    g_aux = torch.load(load_dir + "g_aux_300.pth").to(args.device)
+    model = torch.load(load_dir + "model_499.pth").to(args.device)
+    g_head = torch.load(load_dir + "g_head_499.pth").to(args.device)
+    g_aux = torch.load(load_dir + "g_aux_499.pth").to(args.device)
     l_heads = []
     for i in range(args.num_users):
         l_heads.append(torch.load(load_dir +  "l_head_" + str(i) + ".pth").to(args.device))
@@ -138,7 +141,9 @@ if __name__ == '__main__':
     # global test
     # 将g_head除以norm
     # g_head.weight = g_head.weight / norm.unsqueeze(1)
-    acc_s2, global_3shot_acc = globaltest(copy.deepcopy(model).to(args.device), copy.deepcopy(g_head).to(args.device), dataset_test, args, dataset_class = datasetObj)
+    acc_s2, global_3shot_acc = globaltest_calibra(copy.deepcopy(model).to(args.device), g_aux = copy.deepcopy(g_aux).to(args.device), test_dataset = dataset_test, args = args, dataset_class = datasetObj)
+
+    # acc_s2, global_3shot_acc = globaltest(copy.deepcopy(model).to(args.device), copy.deepcopy(g_head).to(args.device), dataset_test, args, dataset_class = datasetObj)
     print(acc_s2)
     print(global_3shot_acc)
 
