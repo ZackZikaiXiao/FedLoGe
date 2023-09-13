@@ -111,10 +111,14 @@ class ETF_Classifier(nn.Module):
         return P
 
     def forward(self, x):
-        x = self.BN_H(x)
+        if x.size(0) > 1:  # Only apply BatchNorm if batch size > 1
+            x = self.BN_H(x)
+            
         x = x / torch.clamp(
-            torch.sqrt(torch.sum(x ** 2, dim=1, keepdims=True)), 1e-8)
+            torch.sqrt(torch.sum(x ** 2, dim=1, keepdims=True)), min=1e-8)
+        
         return x
+
     
     def gen_sparse_ETF(self, feat_in=512, num_classes=100, beta=0.6):
         # Initialize ETF

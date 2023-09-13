@@ -23,9 +23,15 @@ from util.etf_methods import *
 
 np.set_printoptions(threshold=np.inf)
 
-load_switch = False  # True / False
+last_char = "h"
+
+load_switch = True  # True / False
 save_switch = False # True / False
-dataset_switch = 'cifar100' # cifar10 / cifar100
+
+if last_char in ['a', 'b', 'c', 'd']:
+    dataset_switch = 'cifar10'
+elif last_char in ['e', 'f', 'g', 'h']:
+    dataset_switch = 'cifar100'
 aggregation_switch = 'fedavg' # fedavg / class_wise
 global_test_head = 'g_head'  # g_aux / g_head
 internal_frozen = False  # True / False
@@ -33,7 +39,27 @@ internal_frozen = False  # True / False
 etf_layer = True
 loss_switch = "dot_reg_loss" # focous_loss / dot_reg_loss / any others
 
-
+if load_switch:
+    load_dir = "/home/zikaixiao/zikai/aaPFL/pfedlt/output/ours/" + last_char + '/'
+    if last_char == 'a':
+        load_rnd = 85
+    elif last_char == 'b':
+        load_rnd = 120
+    elif last_char == 'c':
+        load_rnd = 100
+    elif last_char == 'd':
+        load_rnd = 100
+    elif last_char == 'e':
+        load_rnd = 70
+    elif last_char == 'f':
+        load_rnd = 110
+    elif last_char == 'g':
+        load_rnd = 80
+    elif last_char == 'h':
+        load_rnd = 90
+    else:
+        print("Invalid character; cannot determine load_rnd.")
+        
 def get_acc_file_path(args):
 
     rootpath = './temp/'
@@ -128,16 +154,32 @@ if __name__ == '__main__':
     for i in range(args.num_users):
         l_heads.append(nn.Linear(in_features, out_features).to(args.device))
 
+    # if load_switch == True:
+    #         rnd = 499
+    #         load_dir = "./output_aggre/"
+    #         model = torch.load(load_dir + "model_" + str(rnd) + ".pth").to(args.device)
+    #         g_head = torch.load(load_dir + "g_head_" + str(rnd) + ".pth").to(args.device)
+    #         g_aux = torch.load(load_dir + "g_aux_" + str(rnd) + ".pth").to(args.device)
+    #         for i in range(args.num_users):
+    #             l_heads[i] = torch.load(load_dir + "l_head_" + str(i) + ".pth").to(args.device)
+    #         w_glob = model.state_dict()  # return a dictionary containing a whole state of the module
+    #         w_locals = [copy.deepcopy(w_glob) for i in range(args.num_users)]
+    
     if load_switch == True:
-            rnd = 499
-            load_dir = "./output_aggre/"
-            model = torch.load(load_dir + "model_" + str(rnd) + ".pth").to(args.device)
-            g_head = torch.load(load_dir + "g_head_" + str(rnd) + ".pth").to(args.device)
-            g_aux = torch.load(load_dir + "g_aux_" + str(rnd) + ".pth").to(args.device)
-            for i in range(args.num_users):
-                l_heads[i] = torch.load(load_dir + "l_head_" + str(i) + ".pth").to(args.device)
-            w_glob = model.state_dict()  # return a dictionary containing a whole state of the module
-            w_locals = [copy.deepcopy(w_glob) for i in range(args.num_users)]
+        # load_dir = "./output1/" # output1  output_nospar
+        model_load = torch.load(load_dir + "model_" + str(load_rnd) + ".pth").to(args.device)
+        w_glob_load = model_load.state_dict()  # return a dictionary containing a whole state of the module 
+        
+        for key, value in w_glob.items():
+            if key.startswith('linear.'):
+                # 直接拷贝linear权重
+                # w_glob[key] = value  
+                continue
+            else:
+                # 拷贝特征提取层权重
+                w_glob[key] = copy.deepcopy(w_glob_load[key])
+        w_locals = [copy.deepcopy(w_glob) for i in range(args.num_users)]
+        
     # acc_s2, global_3shot_acc = globaltest(copy.deepcopy(model).to(args.device), g_head, dataset_test, args, dataset_class = datasetObj)
     # if loss_switch == "dot_reg_loss":
 
