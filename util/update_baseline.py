@@ -2680,11 +2680,12 @@ def localtest_etf(net, g_head, l_head, test_dataset, dataset_class, idxs, user_i
     cur_M = g_head.ori_M
 
     if p_mode == 1:
+        a = 1
         # 方案1：
-        zero_classes = np.where(class_distribution == 0)[0]
-        for i in zero_classes:
-            cur_M[i, :] = -1e10
-            l_head.weight.data[i, :] = -1e10
+        # zero_classes = np.where(class_distribution == 0)[0]
+        # for i in zero_classes:
+        #     cur_M[i, :] = -1e10
+        #     l_head.weight.data[i, :] = -1e10
     elif p_mode == 2:
         # 方案2：
         norm = torch.norm(l_head.weight, p=2, dim=1)
@@ -2734,7 +2735,8 @@ def localtest_etf(net, g_head, l_head, test_dataset, dataset_class, idxs, user_i
 
             if p_mode != 8:
                 features = g_head(features)
-                outputs = torch.matmul(g_head(features), cur_M) + l_head(features)
+                # outputs = torch.matmul(g_head(features), cur_M) + l_head(features)
+                outputs = torch.matmul(g_head(features), cur_M)
                 # outputs = g_head(features) 
                 _, predicted = torch.max(outputs.data, 1)
             elif p_mode == 8:

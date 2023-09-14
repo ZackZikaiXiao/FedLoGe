@@ -67,5 +67,5 @@ def args_parser_cifar10():
 
     parser.add_argument('--balanced_global', default=False, action='store_true', help="balanced global distribution or long tailed global distribution, clients are heterogeneous.")
     parser.add_argument('--IF', type=float, default=0.02, help="imbalance factor: Min/Max") # 0.1
-    parser.add_argument('--gpu', type=int, default=7, help="gpu")
+    parser.add_argument('--gpu', type=int, default=0, help="gpu")
     return parser.parse_args()
