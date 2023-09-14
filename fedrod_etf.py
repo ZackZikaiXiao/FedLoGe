@@ -23,7 +23,7 @@ from util.etf_methods import *
 
 np.set_printoptions(threshold=np.inf)
 
-last_char = "h"
+last_char = "e"
 
 load_switch = True  # True / False
 save_switch = False # True / False
