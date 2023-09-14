@@ -324,22 +324,39 @@ nohup python fedrod.py --alpha_dirichlet 1 --IF 0.01 --beta 0 --gpu 3 > h_fedbn.
 FedPer
 /home/zikaixiao/zikai/aapfl/fl_gba_cifar100/fedper.py
 nohup python fedper.py --alpha_dirichlet 0.5 --IF 0.02 --beta 0 --gpu 4 > a_fedper.log 2>&1 &
-3374506
-nohup python fedper.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 4 > b_fedper.log 2>&1 &
-3374628
-nohup python fedper.py --alpha_dirichlet 1 --IF 0.02 --beta 0 --gpu 5 > c_fedper.log 2>&1 &
-3374748
-nohup python fedper.py --alpha_dirichlet 1 --IF 0.01 --beta 0 --gpu 5 > d_fedper.log 2>&1 &
-3374892
-nohup python fedper.py --alpha_dirichlet 0.5 --IF 0.02 --beta 0 --gpu 6 > e_fedper.log 2>&1 &
-3375026
-nohup python fedper.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 6 > f_fedper.log 2>&1 &
-3375110
-nohup python fedper.py --alpha_dirichlet 1 --IF 0.02 --beta 0 --gpu 7 > g_fedper.log 2>&1 &
-3375271
-nohup python fedper.py --alpha_dirichlet 1 --IF 0.01 --beta 0 --gpu 7 > h_fedper.log 2>&1 &
-3375429
 
+nohup python fedper.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 4 > b_fedper.log 2>&1 &
+
+nohup python fedper.py --alpha_dirichlet 1 --IF 0.02 --beta 0 --gpu 5 > c_fedper.log 2>&1 &
+
+nohup python fedper.py --alpha_dirichlet 1 --IF 0.01 --beta 0 --gpu 5 > d_fedper.log 2>&1 &
+
+nohup python fedper.py --alpha_dirichlet 0.5 --IF 0.02 --beta 0 --gpu 6 > e_fedper.log 2>&1 &
+
+nohup python fedper.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 6 > f_fedper.log 2>&1 &
+
+nohup python fedper.py --alpha_dirichlet 1 --IF 0.02 --beta 0 --gpu 7 > g_fedper.log 2>&1 &
+
+nohup python fedper.py --alpha_dirichlet 1 --IF 0.01 --beta 0 --gpu 7 > h_fedper.log 2>&1 &
+
+FedRep
+/home/zikaixiao/zikai/aapfl/fl_gba_cifar100/fedper.py
+nohup python fedrep.py --alpha_dirichlet 0.5 --IF 0.02 --beta 0 --gpu 0 > a_fedrep.log 2>&1 &
+3598419
+nohup python fedrep.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 0 > b_fedrep.log 2>&1 &
+3598509
+nohup python fedrep.py --alpha_dirichlet 1 --IF 0.02 --beta 0 --gpu 1 > c_fedrep.log 2>&1 &
+3598587
+nohup python fedrep.py --alpha_dirichlet 1 --IF 0.01 --beta 0 --gpu 1 > d_fedrep.log 2>&1 &
+3598641
+nohup python fedrep.py --alpha_dirichlet 0.5 --IF 0.02 --beta 0 --gpu 2 > e_fedrep.log 2>&1 &
+3598734
+nohup python fedrep.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 2 > f_fedrep.log 2>&1 &
+3598833
+nohup python fedrep.py --alpha_dirichlet 1 --IF 0.02 --beta 0 --gpu 3 > g_fedrep.log 2>&1 &
+3598915
+nohup python fedrep.py --alpha_dirichlet 1 --IF 0.01 --beta 0 --gpu 3 > h_fedrep.log 2>&1 &
+3599017
 
 FedETF
 /home/zikaixiao/zikai/aaPFL/pfedlt/fedrod_etf.py
