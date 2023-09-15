@@ -11,7 +11,7 @@ import pdb
 
 from tqdm import tqdm
 from options import args_parser, args_parser_cifar10
-from util.update_baseline import LocalUpdate, globaltest_villina, localtest_villina
+from util.update_baseline import LocalUpdate, globaltest_villina, localtest_villina, globaltest
 from util.fedavg import *
 # from util.util import add_noise
 from util.dataset import *
@@ -19,8 +19,8 @@ from model.build_model import build_model
 
 np.set_printoptions(threshold=np.inf)
 load_switch = True
-save_switch = True
-save_dir = "./output/f/"
+save_switch = False
+save_dir = "./output/h/"
 # Get the last character before the trailing slash
 last_char = save_dir.split("/")[-2]
 
@@ -33,22 +33,6 @@ elif last_char in ['e', 'f', 'g', 'h']:
 
 if load_switch:
     load_dir = "./output/" + last_char + '/'
-    # if last_char == 'a':
-    #     load_rnd = 499
-    # elif last_char == 'b':
-    #     load_rnd = 120
-    # elif last_char == 'c':
-    #     load_rnd = 100
-    # elif last_char == 'd':
-    #     load_rnd = 100
-    # elif last_char == 'e':
-    #     load_rnd = 70
-    # elif last_char == 'f':
-    #     load_rnd = 110
-    # elif last_char == 'g':
-    #     load_rnd = 80
-    # elif last_char == 'h':
-    #     load_rnd = 90
     if last_char == 'a':
         load_rnd = 499
     elif last_char == 'b':
@@ -125,32 +109,35 @@ if __name__ == '__main__':
 
     if load_switch == True:
         # load_dir = "./output1/" # output1  output_nospar
-        model = torch.load(load_dir + "model_" + str(load_rnd) + ".pth").to(args.device)
+        model = torch.load(load_dir + "model_" + str(1000) + ".pth").to(args.device)
         w_glob = model.state_dict()  # return a dictionary containing a whole state of the module
         
         netglob.load_state_dict(copy.deepcopy(w_glob))
+        w_locals = [copy.deepcopy(w_glob) for i in range(args.num_users)]
         acc_s2, global_3shot_acc = globaltest_villina(copy.deepcopy(netglob).to(args.device), dataset_test, args, dataset_class = datasetObj)
+        # acc_s2, global_3shot_acc = globaltest(copy.deepcopy(model).to(args.device), dataset_test, args=args, dataset_class = datasetObj)
         print("pretrain:")
         print("acc_s2", acc_s2)
         print("global_3shot_acc",global_3shot_acc)
         
 
         
-            
+    args.local_ep = 1
     # add fl training
     for load_rnd in tqdm(range(args.rounds)):
-        w_locals, loss_locals = [], []
+        loss_locals = []
         idxs_users = np.random.choice(range(args.num_users), m, replace=False, p=prob)
                 
         for idx in range(args.num_users):  # training over the subset, in fedper, all clients train
+            netglob.load_state_dict(copy.deepcopy(w_locals[idx]))
             local = LocalUpdate(args=args, dataset=dataset_train, idxs=dict_users[idx])
-            w_local, loss_local = local.update_weights(net=copy.deepcopy(netglob).to(args.device), seed=args.seed, net_glob=netglob.to(args.device), epoch=args.local_ep)
-            w_locals.append(copy.deepcopy(w_local))  # store every updated model
+            w_locals[idx], loss_local = local.update_weights_ditto(net=copy.deepcopy(netglob).to(args.device), seed=args.seed, net_glob=netglob.to(args.device), epoch=args.local_ep)
+            # w_locals.append(copy.deepcopy(w_local))  # store every updated 
             loss_locals.append(copy.deepcopy(loss_local))
 
 
         dict_len = [len(dict_users[idx]) for idx in idxs_users]
-        w_glob = FedAvg_noniid(w_locals, dict_len)
+        # w_glob = FedAvg_noniid(w_locals, dict_len)
 
         # Local test 
         acc_list = []
@@ -158,8 +145,8 @@ if __name__ == '__main__':
         f1_weighted_list = []
         acc_3shot_local_list = []       #####################
         for i in range(args.num_users):
-            # netglob.load_state_dict(copy.deepcopy(w_locals[i]))   # 本地adaption
-            netglob.load_state_dict(copy.deepcopy(w_glob))          # 直接用全局的
+            netglob.load_state_dict(copy.deepcopy(w_locals[i]))   # 本地adaption
+            # netglob.load_state_dict(copy.deepcopy(w_glob))          # 直接用全局的
             # print('copy sucess')
             acc_local, f1_macro, f1_weighted, acc_3shot_local = localtest_villina(copy.deepcopy(netglob).to(args.device), dataset_test, dataset_class = datasetObj, idxs=dict_localtest[i], user_id = i)
             # print('local test success')
@@ -218,9 +205,7 @@ if __name__ == '__main__':
         netglob.load_state_dict(copy.deepcopy(w_glob))
         acc_s2, global_3shot_acc = globaltest_villina(copy.deepcopy(netglob).to(args.device), dataset_test, args, dataset_class = datasetObj)
         if save_switch == True:
-            torch.save(netglob, save_dir + "model_" + str(1000) + ".pth")
-            # torch.save(netglob, save_dir + "model_" + str(load_rnd) + ".pth")
-
+            torch.save(netglob, save_dir + "model_" + str(load_rnd) + ".pth")
 
         # f_acc.write('round %d, local average test acc  %.4f \n'%(rnd, avg_local_acc))
         # f_acc.write('round %d, local macro average F1 score  %.4f \n'%(rnd, avg_f1_macro))
