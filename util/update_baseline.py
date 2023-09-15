@@ -12,9 +12,10 @@ import copy
 from util.losses import *
 
 import sklearn.metrics as metrics
-from util.losses import FocalLoss
+from util.losses import FocalLoss, Ratio_Cross_Entropy
 from util.etf_methods import *
 import matplotlib.pyplot as plt
+
 
 
 # 通过cient的id来划分local longtail的数据
@@ -96,6 +97,51 @@ class LocalUpdate(object):
             # print(label_debug)
         return net.state_dict(), sum(epoch_loss) / len(epoch_loss)
     
+    
+    def update_weights_ratio_loss(self, net, seed, net_glob, epoch, mu=1, lr=None):
+        net_glob = net_glob
+
+        net.train()
+        # train and update
+        if lr is None:
+            optimizer = torch.optim.SGD(
+                net.parameters(), lr=self.args.lr, momentum=self.args.momentum)
+        else:
+            optimizer = torch.optim.SGD(
+                net.parameters(), lr=lr, momentum=self.args.momentum)
+
+        epoch_loss = []
+        for iter in range(epoch):
+            batch_loss = []
+            # label_debug = [0 for i in range(100)]       ######
+            # use/load data from split training set "ldr_train"
+            for batch_idx, (images, labels) in enumerate(self.ldr_train):
+                images, labels = images.to(
+                    self.args.device), labels.to(self.args.device)
+                # for label in labels:
+                    # label_debug[label] += 1         #########
+                labels = labels.long()
+                net.zero_grad()
+                logits = net(images)
+                criterion = Ratio_Cross_Entropy(args=self.args, class_num=100, alpha=None, size_average=True)
+                loss = criterion(logits, labels)
+
+                if self.args.beta > 0:
+                    if batch_idx > 0:
+                        w_diff = torch.tensor(0.).to(self.args.device)
+                        for w, w_t in zip(net_glob.parameters(), net.parameters()):
+                            w_diff += torch.pow(torch.norm(w - w_t), 2)
+                        w_diff = torch.sqrt(w_diff)
+                        loss += self.args.beta * mu * w_diff
+
+                loss.backward()
+                optimizer.step()
+
+                batch_loss.append(loss.item())
+
+            epoch_loss.append(sum(batch_loss)/len(batch_loss))
+            # print(label_debug)
+        return net.state_dict(), sum(epoch_loss) / len(epoch_loss)
 
     def update_weights_backbone_only(self, net, seed, epoch, criterion=None, mu=1, lr=None):
         # 再固定head，训练表征
