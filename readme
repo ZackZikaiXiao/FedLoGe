@@ -376,21 +376,41 @@ nohup python fedrep.py --alpha_dirichlet 1 --IF 0.01 --beta 0 --gpu 3 > h_fedrep
 FedETF
 /home/zikaixiao/zikai/aaPFL/pfedlt/fedrod_etf.py
 nohup python fedrod_etf.py --alpha_dirichlet 0.5 --IF 0.02 --beta 0 --gpu 4 > a_fedetf.log 2>&1 &
-46265
+
 nohup python fedrod_etf.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 4 > b_fedetf.log 2>&1 &
-46634
+
 nohup python fedrod_etf.py --alpha_dirichlet 1 --IF 0.02 --beta 0 --gpu 5 > c_fedetf.log 2>&1 &
-46942
+
 nohup python fedrod_etf.py --alpha_dirichlet 1 --IF 0.01 --beta 0 --gpu 5 > d_fedetf.log 2>&1 &
-47236
+
 nohup python fedrod_etf.py --alpha_dirichlet 0.5 --IF 0.02 --beta 0 --gpu 6 > e_fedetf.log 2>&1 &
-47543
+
 nohup python fedrod_etf.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 6 > f_fedetf.log 2>&1 &
-47850
+
 nohup python fedrod_etf.py --alpha_dirichlet 1 --IF 0.02 --beta 0 --gpu 7 > g_fedetf.log 2>&1 &
-48151
+
 nohup python fedrod_etf.py --alpha_dirichlet 1 --IF 0.01 --beta 0 --gpu 7 > h_fedetf.log 2>&1 &
-48469
+
+
+
+ratio loss
+/home/zikaixiao/zikai/aaPFL/pfedlt/ratio_loss.py
+nohup python ratio_loss.py --alpha_dirichlet 0.5 --IF 0.02 --beta 0 --gpu 0 > a_ratio_loss.log 2>&1 &
+59798
+nohup python ratio_loss.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 0 > b_ratio_loss.log 2>&1 &
+59869
+nohup python ratio_loss.py --alpha_dirichlet 1 --IF 0.02 --beta 0 --gpu 1 > c_ratio_loss.log 2>&1 &
+59925
+nohup python ratio_loss.py --alpha_dirichlet 1 --IF 0.01 --beta 0 --gpu 1 > d_ratio_loss.log 2>&1 &
+59989
+nohup python ratio_loss.py --alpha_dirichlet 0.5 --IF 0.02 --beta 0 --gpu 2 > e_ratio_loss.log 2>&1 &
+60076
+nohup python ratio_loss.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 2 > f_ratio_loss.log 2>&1 &
+60155
+nohup python ratio_loss.py --alpha_dirichlet 1 --IF 0.02 --beta 0 --gpu 3 > g_ratio_loss.log 2>&1 &
+60239
+nohup python ratio_loss.py --alpha_dirichlet 1 --IF 0.01 --beta 0 --gpu 3 > h_ratio_loss.log 2>&1 &
+60320
 
 
 ditto

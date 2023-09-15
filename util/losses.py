@@ -7,7 +7,7 @@ import copy
 from util import *
 from functools import partial
 from torch.nn.modules.loss import _Loss
-
+from torch.autograd import Variable
 
 # def focal_loss(input_values, gamma):
 #     """Computes the focal loss"""
@@ -217,3 +217,66 @@ def balanced_softmax_loss(labels, logits, sample_per_class, reduction):
 def create_loss(freq_path):
     print('Loading Balanced Softmax Loss.')
     return BalancedSoftmax(freq_path)
+
+
+
+class Ratio_Cross_Entropy(nn.Module):
+    r"""
+            This criterion is a implemenation of Ratio Loss, which is proposed to solve the imbalanced
+            problem in Fderated Learning
+
+                Loss(x, class) = - \alpha  \log(softmax(x)[class])
+
+            The losses are averaged across observations for each minibatch.
+
+            Args:
+                alpha(1D Tensor, Variable) : the scalar factor for this criterion
+                size_average(bool): By default, the losses are averaged over observations for each minibatch.
+                                    However, if the field size_average is set to False, the losses are
+                                    instead summed for each minibatch.
+        """
+
+    def __init__(self, args, class_num, alpha=None, size_average=False):
+        self.args = args
+        super(Ratio_Cross_Entropy, self).__init__()
+        if alpha is None:
+            self.alpha = Variable(torch.ones(class_num, 1))
+        else:
+            if isinstance(alpha, Variable):
+                self.alpha = alpha
+            else:
+                self.alpha = Variable(alpha)
+        self.class_num = class_num
+        self.size_average = size_average
+
+    def forward(self, inputs, targets):
+        N = inputs.size(0)
+        C = inputs.size(1)
+        P = F.softmax(inputs)
+        # print(inputs)
+        # print(P)
+
+        class_mask = inputs.data.new(N, C).fill_(0)
+        class_mask = Variable(class_mask)
+        ids = targets.view(-1, 1)
+        class_mask.scatter_(1, ids.data, 1.)
+
+        if inputs.is_cuda and not self.alpha.is_cuda:
+            self.alpha = self.alpha.cuda()
+        alpha = self.alpha[ids.data.view(-1)]
+
+        probs = (P * class_mask).sum(1).view(-1, 1)
+
+        log_p = probs.log()
+
+        alpha = alpha.to(self.args.device)
+        probs = probs.to(self.args.device)
+        log_p = log_p.to(self.args.device)
+
+        batch_loss = - alpha * log_p
+
+        if self.size_average:
+            loss = batch_loss.mean()
+        else:
+            loss = batch_loss.sum()
+        return loss
