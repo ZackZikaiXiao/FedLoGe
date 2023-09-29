@@ -376,13 +376,13 @@ nohup python fedrep.py --alpha_dirichlet 1 --IF 0.01 --beta 0 --gpu 3 > h_fedrep
 FedETF
 /home/zikaixiao/zikai/aaPFL/pfedlt/fedrod_etf.py
 nohup python fedrod_etf.py --alpha_dirichlet 0.5 --IF 0.02 --beta 0 --gpu 4 > a_fedetf.log 2>&1 &
-
+3749078
 nohup python fedrod_etf.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 4 > b_fedetf.log 2>&1 &
-
+3749217
 nohup python fedrod_etf.py --alpha_dirichlet 1 --IF 0.02 --beta 0 --gpu 5 > c_fedetf.log 2>&1 &
-
+3749342
 nohup python fedrod_etf.py --alpha_dirichlet 1 --IF 0.01 --beta 0 --gpu 5 > d_fedetf.log 2>&1 &
-
+3749462
 nohup python fedrod_etf.py --alpha_dirichlet 0.5 --IF 0.02 --beta 0 --gpu 6 > e_fedetf.log 2>&1 &
 
 nohup python fedrod_etf.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 6 > f_fedetf.log 2>&1 &
@@ -395,22 +395,22 @@ nohup python fedrod_etf.py --alpha_dirichlet 1 --IF 0.01 --beta 0 --gpu 7 > h_fe
 
 ratio loss
 /home/zikaixiao/zikai/aaPFL/pfedlt/ratio_loss.py
-nohup python ratio_loss.py --alpha_dirichlet 0.5 --IF 0.02 --beta 0 --gpu 0 > a_ratio_loss.log 2>&1 &
-59798
-nohup python ratio_loss.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 0 > b_ratio_loss.log 2>&1 &
-59869
-nohup python ratio_loss.py --alpha_dirichlet 1 --IF 0.02 --beta 0 --gpu 1 > c_ratio_loss.log 2>&1 &
-59925
-nohup python ratio_loss.py --alpha_dirichlet 1 --IF 0.01 --beta 0 --gpu 1 > d_ratio_loss.log 2>&1 &
-59989
-nohup python ratio_loss.py --alpha_dirichlet 0.5 --IF 0.02 --beta 0 --gpu 2 > e_ratio_loss.log 2>&1 &
-60076
-nohup python ratio_loss.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 2 > f_ratio_loss.log 2>&1 &
-60155
-nohup python ratio_loss.py --alpha_dirichlet 1 --IF 0.02 --beta 0 --gpu 3 > g_ratio_loss.log 2>&1 &
-60239
-nohup python ratio_loss.py --alpha_dirichlet 1 --IF 0.01 --beta 0 --gpu 3 > h_ratio_loss.log 2>&1 &
-60320
+nohup python ratio_loss.py --alpha_dirichlet 0.5 --IF 0.02 --beta 0 --gpu 4 > a_ratio_loss.log 2>&1 &
+3727489
+nohup python ratio_loss.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 4 > b_ratio_loss.log 2>&1 &
+3727611
+nohup python ratio_loss.py --alpha_dirichlet 1 --IF 0.02 --beta 0 --gpu 5 > c_ratio_loss.log 2>&1 &
+3727737
+nohup python ratio_loss.py --alpha_dirichlet 1 --IF 0.01 --beta 0 --gpu 5 > d_ratio_loss.log 2>&1 &
+3727853
+nohup python ratio_loss.py --alpha_dirichlet 0.5 --IF 0.02 --beta 0 --gpu 6 > e_ratio_loss.log 2>&1 &
+3728002
+nohup python ratio_loss.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 6 > f_ratio_loss.log 2>&1 &
+3728124
+nohup python ratio_loss.py --alpha_dirichlet 1 --IF 0.02 --beta 0 --gpu 7 > g_ratio_loss.log 2>&1 &
+3728266
+nohup python ratio_loss.py --alpha_dirichlet 1 --IF 0.01 --beta 0 --gpu 7 > h_ratio_loss.log 2>&1 &
+3728469
 
 
 ditto
@@ -450,3 +450,38 @@ nohup python fedrod.py --alpha_dirichlet 1 --IF 0.02 --beta 0 --gpu 3 > g_ours.l
 12180
 nohup python fedrod.py --alpha_dirichlet 1 --IF 0.01 --beta 0 --gpu 3 > h_ours.log 2>&1 &
 12499
+
+
+测试不同的norm
+nohup python fedrod.py --alpha_dirichlet 1 --IF 0.01 --beta 0 --gpu 0 > norm0_02.log 2>&1 &
+391283
+nohup python fedrod.py --alpha_dirichlet 1 --IF 0.01 --beta 0 --gpu 0 > norm0_04.log 2>&1 &
+391397
+nohup python fedrod.py --alpha_dirichlet 1 --IF 0.01 --beta 0 --gpu 1 > norm0_06.log 2>&1 &
+391528
+nohup python fedrod.py --alpha_dirichlet 1 --IF 0.01 --beta 0 --gpu 1 > norm0_08.log 2>&1 &
+391649
+nohup python fedrod.py --alpha_dirichlet 1 --IF 0.01 --beta 0 --gpu 2 > norm0_1.log 2>&1 &
+391785
+nohup python fedrod.py --alpha_dirichlet 1 --IF 0.01 --beta 0 --gpu 2 > norm0_2.log 2>&1 &
+391910
+nohup python fedrod.py --alpha_dirichlet 1 --IF 0.01 --beta 0 --gpu 3 > norm0_4.log 2>&1 &
+392043
+nohup python fedrod.py --alpha_dirichlet 1 --IF 0.01 --beta 0 --gpu 3 > norm0_6.log 2>&1 &
+392168
+nohup python fedrod.py --alpha_dirichlet 1 --IF 0.01 --beta 0 --gpu 4 > norm0_8.log 2>&1 &
+392300
+nohup python fedrod.py --alpha_dirichlet 1 --IF 0.01 --beta 0 --gpu 4 > norm1.log 2>&1 &
+392433
+nohup python fedrod.py --alpha_dirichlet 1 --IF 0.01 --beta 0 --gpu 5 > norm2.log 2>&1 &
+392658
+nohup python fedrod.py --alpha_dirichlet 1 --IF 0.01 --beta 0 --gpu 5 > norm4.log 2>&1 &
+
+nohup python fedrod.py --alpha_dirichlet 1 --IF 0.01 --beta 0 --gpu 6 > norm6.log 2>&1 &
+
+nohup python fedrod.py --alpha_dirichlet 1 --IF 0.01 --beta 0 --gpu 6 > norm8.log 2>&1 &
+
+nohup python fedrod.py --alpha_dirichlet 1 --IF 0.01 --beta 0 --gpu 7 > norm10.log 2>&1 &
+
+nohup python fedrod.py --alpha_dirichlet 1 --IF 0.01 --beta 0 --gpu 7 > norm0_01.log 2>&1 &
+391135

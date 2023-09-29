@@ -33,7 +33,7 @@ elif last_char in ['e', 'f', 'g', 'h']:
 # dataset_switch = 'cifar10' # cifar10 / cifar100
 
 if load_switch:
-    load_dir = "./output/ours/" + last_char + '/'
+    load_dir = "./output/" + last_char + '/'
     if last_char == 'a':
         load_rnd = 85
     elif last_char == 'b':
@@ -110,14 +110,14 @@ if __name__ == '__main__':
 
     if load_switch == True:
         # load_dir = "./output1/" # output1  output_nospar
-        model = torch.load(load_dir + "model_" + str(load_rnd) + ".pth").to(args.device)
+        model = torch.load(load_dir + "model_" + str(1000) + ".pth").to(args.device)
         w_glob = model.state_dict()  # return a dictionary containing a whole state of the module
         
-        # netglob.load_state_dict(copy.deepcopy(w_glob))
-        # acc_s2, global_3shot_acc = globaltest_villina(copy.deepcopy(netglob).to(args.device), dataset_test, args, dataset_class = datasetObj)
-        # print("pretrain:")
-        # print("acc_s2", acc_s2)
-        # print("global_3shot_acc",global_3shot_acc)
+        netglob.load_state_dict(copy.deepcopy(w_glob))
+        acc_s2, global_3shot_acc = globaltest_villina(copy.deepcopy(netglob).to(args.device), dataset_test, args, dataset_class = datasetObj)
+        print("pretrain:")
+        print("acc_s2", acc_s2)
+        print("global_3shot_acc",global_3shot_acc)
         
 
         
@@ -129,10 +129,7 @@ if __name__ == '__main__':
                 
         for idx in range(args.num_users):  # training over the subset, in fedper, all clients train
             local = LocalUpdate(args=args, dataset=dataset_train, idxs=dict_users[idx])
-            if rnd < 50:
-                w_local, loss_local = local.update_weights(net=copy.deepcopy(netglob).to(args.device), seed=args.seed, net_glob=netglob.to(args.device), epoch=args.local_ep)
-            else:
-                w_local, loss_local = local.update_weights_ratio_loss(net=copy.deepcopy(netglob).to(args.device), seed=args.seed, net_glob=netglob.to(args.device), epoch=args.local_ep)
+            w_local, loss_local = local.update_weights_ratio_loss(net=copy.deepcopy(netglob).to(args.device), seed=args.seed, net_glob=netglob.to(args.device), epoch=args.local_ep)
             w_locals.append(copy.deepcopy(w_local))  # store every updated model
             loss_locals.append(copy.deepcopy(loss_local))
 

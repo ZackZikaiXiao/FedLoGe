@@ -20,7 +20,7 @@ from model.build_model import build_model
 np.set_printoptions(threshold=np.inf)
 load_switch = True
 save_switch = True
-save_dir = "./output/f/"
+save_dir = "./output/e/"
 # Get the last character before the trailing slash
 last_char = save_dir.split("/")[-2]
 

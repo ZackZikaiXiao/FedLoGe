@@ -696,7 +696,7 @@ class LocalUpdate(object):
 
         criterion_l = nn.CrossEntropyLoss()
             
-        num_classes = 100
+        num_classes = 10
         epoch_loss = []
         for iter in range(epoch):
             batch_loss = []
@@ -1609,6 +1609,32 @@ def globaltest_classmean(net, g_head, test_dataset, args, dataset_class=None, he
     class_norms = {label: torch.norm(mean, p=2) for label, mean in class_means.items()}
     acc_class_wise = [predict_true_class[i] / total_class_label[i] for i in range(args.num_classes)]
     angle = compute_angle(0, 1, class_means)
+    
+    tsne_switch = True
+    if tsne_switch:
+        from sklearn.manifold import TSNE
+
+        # 提取class_means字典中的特征并转换为NumPy数组
+        features = np.array([tensor.cpu().numpy() for tensor in class_means.values()])
+
+        # 使用t-SNE进行降维
+        tsne = TSNE(n_components=2, random_state=42)
+        features_2d = tsne.fit_transform(features)
+
+        # 可视化
+        plt.figure(figsize=(10, 8))
+
+        for i, class_label in enumerate(class_means.keys()):
+            plt.scatter(features_2d[i, 0], features_2d[i, 1], label=str(class_label))
+
+        plt.legend(loc='best')
+        plt.xlabel('t-SNE component 1')
+        plt.ylabel('t-SNE component 2')
+        plt.title('t-SNE Visualization of Class Means')
+        plt.show()
+    # 保存图表到本地PDF文件
+        plt.savefig('t-SNE_Visualization_of_Class_Means.pdf', format='pdf')
+
     # 假设有100个类别
 
     # 初始化一个全零的矩阵来保存角度
@@ -1802,7 +1828,7 @@ def globaltest_feat_collapse(net, g_head, test_dataset, args, dataset_class=None
     # 对cls进行裁剪
     # 初始化一个字典来存储被设置为0的位置
     zero_positions = {}
-    beta = 0.99
+    beta = 0.9
     # 遍历 class_means 字典中的每一项
     for class_label, tensor in class_means.items():
         # 对数据进行排序
@@ -1811,13 +1837,14 @@ def globaltest_feat_collapse(net, g_head, test_dataset, args, dataset_class=None
         # threshold_index = int(len(sorted_values) * beta)
         threshold_index = int(len(sorted_values) * (1-beta))
         threshold_value = sorted_values[threshold_index]
-        # 记录所有小于阈值的元素的位置
-        # zero_positions[class_label] = (tensor < threshold_value)
-        zero_positions[class_label] = (tensor > threshold_value)
+        
+        # 裁剪negligible features
+        zero_positions[class_label] = (tensor < threshold_value)
+        tensor[tensor < threshold_value] = 0
 
-        # 将所有小于阈值的元素设置为 0
-        # tensor[tensor < threshold_value] = 0
-        tensor[tensor > threshold_value] = 0
+        # 裁剪dominant features
+        # zero_positions[class_label] = (tensor > threshold_value)
+        # tensor[tensor > threshold_value] = 0
 
 
 
@@ -1938,93 +1965,6 @@ def globaltest_feat_collapse(net, g_head, test_dataset, args, dataset_class=None
         # 将所有小于阈值的元素设置为 0
         tensor[tensor < threshold_value] = 0
 
-    # # 裁剪过之后再inference
-    # count_after = 0
-    # for i in range(100):
-    #     value, indice = torch.max(g_head(class_means[i]), 0)
-    #     if indice.item() == i:
-    #         # print(indice)
-    #         count_after += 1
-    # print("裁剪后的class means作为features的预测准确率")
-    # print(count_after/100)
-
-
-    # 裁剪之后的inference
-    # with torch.no_grad():
-    #     correct = 0
-    #     total = 0
-    #     for images, labels in test_loader:
-    #         images = images.to(args.device)
-    #         labels = labels.to(args.device)
-    #         features = net(images, latent_output=True)
-
-    #         # 根据之前记录的位置信息，将特征置零
-    #         for i, label in enumerate(labels):
-    #             zero_pos = zero_positions[label.item()]
-    #             features[i][zero_pos] = 0
-
-
-    #         # features_list.append(features)
-    #         if head_switch == True:
-    #             outputs = g_head(features)
-    #         else:
-    #             outputs = features
-    #         _, predicted = torch.max(outputs.data, 1)
-    #         total += labels.size(0)
-    #         correct += (predicted == labels).sum().item()
-
-    #         #####################
-    #         # 计算class mean
-    #             # 遍历每个样本
-    #         for i in range(images.size(0)):
-    #             # 获取样本的类别和特征值
-    #             label = labels[i].item()
-    #             feature = features[i]
-
-    #             # 更新类别的总和和计数
-    #             if label not in class_sums:
-    #                 class_sums[label] = feature
-    #                 class_counts[label] = 1
-    #             else:
-    #                 class_sums[label] += feature
-    #                 class_counts[label] += 1
-    #     ##############
-
-    #         # class-wise acc calc
-    #         for i in range(len(labels)):
-    #             total_class_label[int(labels[i])] += 1      # total
-    #             if predicted[i] == labels[i]:
-    #                 predict_true_class[int(labels[i])] += 1
-
-    #         # start: cal 3shot metrics
-    #         for label in labels:
-    #             if label in three_shot_dict["head"]:
-    #                 total_3shot["head"] += 1
-    #             elif label in three_shot_dict["middle"]:
-    #                 total_3shot["middle"] += 1
-    #             else:
-    #                 total_3shot["tail"] += 1
-    #         for i in range(len(predicted)):
-    #             if predicted[i] == labels[i] and labels[i] in three_shot_dict["head"]:   # 预测正确且在head中
-    #                 correct_3shot["head"] += 1
-    #             # 预测正确且在middle中
-    #             elif predicted[i] == labels[i] and labels[i] in three_shot_dict["middle"]:
-    #                 correct_3shot["middle"] += 1
-    #             # 预测正确且在tail中
-    #             elif predicted[i] == labels[i] and labels[i] in three_shot_dict["tail"]:
-    #                 correct_3shot["tail"] += 1      # 在tail中
-
-    # acc = correct / total
-    # acc_3shot_global["head"] = correct_3shot["head"] / \
-    #     (total_3shot["head"] + 1e-10)
-    # acc_3shot_global["middle"] = correct_3shot["middle"] / \
-    #     (total_3shot["middle"] + 1e-10)
-    # acc_3shot_global["tail"] = correct_3shot["tail"] / \
-    #     (total_3shot["tail"] + 1e-10)
-    # print("裁剪后inference性能:")
-    # print(acc, acc_3shot_global)
-
-
     # 初始化用于存储方差和均值的变量
     variance_zero_pos = 0.0
     variance_non_zero_pos = 0.0
@@ -2085,7 +2025,7 @@ def globaltest_feat_collapse(net, g_head, test_dataset, args, dataset_class=None
     features_list = []
 
     # 假设第一个类的标签是 0
-    first_class_label = 50
+    first_class_label = 8
 
     # 遍历 test_loader 以获取所有的特征和标签
     for images, labels in test_loader:
@@ -2665,8 +2605,8 @@ def localtest(net, g_head, l_head, test_dataset, dataset_class, idxs, user_id):
             features = net(images, latent_output=True)
 
             if p_mode != 8:
-                outputs = g_head(features) 
-                # outputs = g_head(features) 
+                outputs = g_head(features) + l_head(features) 
+                # outputs = l_head(features) 
                 _, predicted = torch.max(outputs.data, 1)
             else:
                  # use l_head for initial prediction

@@ -142,13 +142,13 @@ class ETF_Classifier(nn.Module):
 
         # Number of optimization steps
         n_steps = 10000
-
+        loss_log = []
         for step in range(n_steps):
             optimizer.zero_grad()
             
             # Constraint 1: L2 norm of each row should be 1
             row_norms = torch.norm(sparse_etf, p=2, dim=0)
-            norm_loss = torch.sum((row_norms - 0.1)**2)
+            norm_loss = torch.sum((row_norms - 1)**2)
             
             # Constraint 2: Maximize the angle between vectors (minimize cosine similarity)
             normalized_etf = sparse_etf / row_norms
@@ -168,7 +168,7 @@ class ETF_Classifier(nn.Module):
                 
                 
             optimizer.step()
-            
+            loss_log.append(loss)
             if step % 100 == 0:
                 print(f"Step {step}, Loss {loss.item()}")
                 

@@ -23,7 +23,7 @@ from util.etf_methods import *
 
 np.set_printoptions(threshold=np.inf)
 
-last_char = "h"
+last_char = "d"
 
 load_switch = True  # True / False
 save_switch = False # True / False
@@ -40,7 +40,7 @@ etf_layer = True
 loss_switch = "dot_reg_loss" # focous_loss / dot_reg_loss / any others
 
 if load_switch:
-    load_dir = "/home/zikaixiao/zikai/aaPFL/pfedlt/output/ours/" + last_char + '/'
+    load_dir = "/home/zikaixiao/zikai/aapfl/pfed_lastest/output/" + last_char + '/'
     if last_char == 'a':
         load_rnd = 85
     elif last_char == 'b':
@@ -167,7 +167,7 @@ if __name__ == '__main__':
     
     if load_switch == True:
         # load_dir = "./output1/" # output1  output_nospar
-        model_load = torch.load(load_dir + "model_" + str(load_rnd) + ".pth").to(args.device)
+        model_load = torch.load(load_dir + "model_" + str(1000) + ".pth").to(args.device)
         w_glob_load = model_load.state_dict()  # return a dictionary containing a whole state of the module 
         
         for key, value in w_glob.items():
@@ -181,6 +181,7 @@ if __name__ == '__main__':
         w_locals = [copy.deepcopy(w_glob) for i in range(args.num_users)]
         
     # acc_s2, global_3shot_acc = globaltest(copy.deepcopy(model).to(args.device), g_head, dataset_test, args, dataset_class = datasetObj)
+    # print(acc_s2)
     # if loss_switch == "dot_reg_loss":
 
     # add fl training

@@ -300,7 +300,7 @@ if __name__ == '__main__':
 
     if load_switch == True:
             rnd = 400
-            load_dir = "./output_nospar/"
+            load_dir = "/home/zikaixiao/zikai/aapfl/pfed_lastest/cifar100_100_0_05_dense/"
             model = torch.load(load_dir + "model_" + str(rnd) + ".pth").to(args.device)
             g_head = torch.load(load_dir + "g_head_" + str(rnd) + ".pth").to(args.device)
             # g_head_t = torch.load(load_dir + "g_head_" + str(rnd) + ".pth").to(args.device)
@@ -310,7 +310,7 @@ if __name__ == '__main__':
                 l_heads[i] = torch.load(load_dir + "l_head_" + str(i) + ".pth").to(args.device)
             w_glob = model.state_dict()  # return a dictionary containing a whole state of the module
             w_locals = [copy.deepcopy(w_glob) for i in range(args.num_users)]
-    # acc_s2, global_3shot_acc = globaltest_classmean(copy.deepcopy(model).to(args.device), g_head, dataset_test, args, dataset_class = datasetObj)
+    acc_s2, global_3shot_acc = globaltest_classmean(copy.deepcopy(model).to(args.device), g_head, dataset_test, args, dataset_class = datasetObj)
     # globaltest_classmean
     # acc_s2, global_3shot_acc = globaltest_calibra(copy.deepcopy(model).to(args.device), copy.deepcopy(g_head).to(args.device), copy.deepcopy(g_aux).to(args.device), dataset_test, args, dataset_class = datasetObj)
     # add fl training

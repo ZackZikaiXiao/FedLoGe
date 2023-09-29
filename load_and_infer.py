@@ -11,7 +11,7 @@ import pdb
 import torch.nn as nn
 from tqdm import tqdm
 from options import args_parser, args_parser_cifar10
-from util.update_baseline import LocalUpdate, globaltest, localtest, globaltest_calibra
+from util.update_baseline import *
 from util.fedavg import *
 # from util.util import add_noise
 from util.dataset import *
@@ -101,7 +101,7 @@ if __name__ == '__main__':
     # acc_s2, global_3shot_acc = globaltest(copy.deepcopy(model).to(args.device), g_head, dataset_test, args, dataset_class = datasetObj)
 
     # add fl training
-    load_dir = "./output/ours/h/"
+    load_dir = "/home/zikaixiao/zikai/aapfl/pfed_lastest/cifar100_100_0_05_dense/"
     # save_id = "73"
     model = torch.load(load_dir + "model_499.pth").to(args.device)
     g_head = torch.load(load_dir + "g_head_499.pth").to(args.device)
@@ -125,7 +125,7 @@ if __name__ == '__main__':
     w_glob = model.state_dict()  # return a dictionary containing a whole state of the module
     w_locals = [copy.deepcopy(w_glob) for i in range(args.num_users)]
     g_auxs_intervaria = []
-    epoch = 50
+    epoch = 0
     for client_id in range(args.num_users):  # training over the subset, in fedper, all clients train
         local = LocalUpdate(args=args, dataset=dataset_train, idxs=dict_users[client_id])
         w_locals[client_id], g_aux_intervaria, l_heads[client_id], loss_local = local.update_weights_norm_init(net=copy.deepcopy(model).to(args.device), g_head = copy.deepcopy(g_head).to(args.device), g_aux = copy.deepcopy(g_aux).to(args.device), l_head = copy.deepcopy(l_heads[client_id]).to(args.device), seed=args.seed, net_glob=model.to(args.device), epoch=epoch)
@@ -133,23 +133,19 @@ if __name__ == '__main__':
 
 
     # global tuning
-    
-
-
-
 
     # global test
     # 将g_head除以norm
     # g_head.weight = g_head.weight / norm.unsqueeze(1)
-    acc_s2, global_3shot_acc = globaltest_calibra(copy.deepcopy(model).to(args.device), g_aux = copy.deepcopy(g_aux).to(args.device), test_dataset = dataset_test, args = args, dataset_class = datasetObj)
+    acc_s2, global_3shot_acc = globaltest_feat_collapse(copy.deepcopy(model).to(args.device), g_head = copy.deepcopy(g_head).to(args.device), test_dataset = dataset_test, args = args, dataset_class = datasetObj)
 
     # acc_s2, global_3shot_acc = globaltest(copy.deepcopy(model).to(args.device), copy.deepcopy(g_head).to(args.device), dataset_test, args, dataset_class = datasetObj)
-    print(acc_s2)
-    print(global_3shot_acc)
+    # print(acc_s2)
+    # print(global_3shot_acc)
 
 
 
-     # local test 
+    # local test 
     acc_list = []
     f1_macro_list = []
     f1_weighted_list = []
@@ -212,12 +208,11 @@ if __name__ == '__main__':
     print('round %d, local average test acc  %.4f \n'%(rnd, avg_local_acc))
     print('round %d, local macro average F1 score  %.4f \n'%(rnd, avg_f1_macro))
     print('round %d, local weighted average F1 score  %.4f \n'%(rnd, avg_f1_weighted))
-    print('round %d, global test acc  %.4f \n'%(rnd, acc_s2))
     print('round %d, average 3shot acc: [head: %.4f, middle: %.4f, tail: %.4f] \n'%(rnd, avg3shot_acc["head"], avg3shot_acc["middle"], avg3shot_acc["tail"]))
+    
     print('round %d, global 3shot acc: [head: %.4f, middle: %.4f, tail: %.4f] \n'%(rnd, global_3shot_acc["head"], global_3shot_acc["middle"], global_3shot_acc["tail"]))
-
-    print("l_head", torch.norm(l_heads[0].weight, p=2, dim=1))
-    print("g_head", torch.norm(g_head.weight, p=2, dim=1))
-    print("g_aux", torch.norm(g_aux.weight, p=2, dim=1))
-    # for i in range(args.num_users):
-    #         torch.save(l_heads[i], "./output/aux_ghead_lhead/" + "l_head_" + str(i) + ".pth")
+    print('round %d, global test acc  %.4f \n'%(rnd, acc_s2))
+    
+    # print("l_head", torch.norm(l_heads[0].weight, p=2, dim=1))
+    # print("g_head", torch.norm(g_head.weight, p=2, dim=1))
+    # print("g_aux", torch.norm(g_aux.weight, p=2, dim=1))

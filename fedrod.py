@@ -19,6 +19,8 @@ from model.build_model import build_model
 from util.dispatch import *
 from util.losses import *
 from util.etf_methods import ETF_Classifier
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 np.set_printoptions(threshold=np.inf)
 
@@ -28,7 +30,7 @@ cls_switch = "ETF" # ETF / sparfix / dropout_ETF / w_dropout_ETF / PR_ETF
 pretrain_cls = False
 dataset_switch = 'cifar100' # cifar10 / cifar100
 aggregation_switch = 'fedavg' # fedavg / class_wise
-global_test_head = 'g_head'  # g_aux / g_head
+global_test_head = 'g_aux'  # g_aux / g_head
 internal_frozen = False  # True / False
 loss_switch = "None" # focous_loss / any others
 
@@ -234,6 +236,56 @@ if __name__ == '__main__':
         # 新建线性层,权重使用ETF分类器的ori_M
         g_head = nn.Linear(in_features, out_features).to(args.device) 
         sparse_etf_mat = etf.gen_sparse_ETF(feat_in = in_features, num_classes = out_features, beta=0.6)
+
+        etf_visual = True
+        if etf_visual:
+            # 设置全局字体
+            plt.rcParams['font.family'] = 'Times New Roman'
+            plt.rcParams['font.size'] = 13
+
+
+            # 假设sparse_etf_mat是您的向量矩阵
+            # sparse_etf_mat = torch.rand((512, 100))
+
+            # 计算模长
+            magnitudes = torch.norm(sparse_etf_mat, dim=0).cpu().detach().numpy()
+
+            # 初始化相似度矩阵
+            cosine_similarity_matrix = torch.zeros((100, 100))
+
+            # 计算余弦相似度
+            for i in range(100):
+                for j in range(100):
+                    if i != j:
+                        cosine_similarity_matrix[i, j] = torch.dot(sparse_etf_mat[:, i], sparse_etf_mat[:, j]) / (magnitudes[i] * magnitudes[j])
+                    else:
+                        cosine_similarity_matrix[i, j] = 1  # 向量与自身的相似度为1
+
+            # 设置坐标轴刻度位置和标签
+
+            # 使用seaborn的heatmap函数绘制热力图
+            plt.figure(figsize=(10, 8))
+            sns.heatmap(cosine_similarity_matrix.detach().numpy(), cmap="YlGnBu")
+            
+            xticks_positions = range(0, 100, 10)  # 横坐标每10个向量标记一次
+            xticks_labels = map(str, range(0, 100, 10))
+            plt.xticks(ticks=xticks_positions, labels=xticks_labels)
+
+            yticks_positions = range(0, 100, 10)  # 纵坐标每10个向量标记一次
+            yticks_labels = map(str, range(0, 100, 10))
+            plt.yticks(ticks=yticks_positions, labels=yticks_labels)
+            
+            # plt.title('Cosine Similarity Between Vectors')
+            plt.xlabel('Classes')
+            plt.ylabel('Classes')
+
+            # 保存图像
+            plt.savefig("cosine_similarity_heatmap.pdf", dpi=500)
+
+            plt.show()
+
+
+
         # g_head.weight.data = etf.ori_M.to(args.device)
         g_head.weight.data = sparse_etf_mat.to(args.device)
         g_head.weight.data = g_head.weight.data.t()
