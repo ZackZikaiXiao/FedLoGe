@@ -300,7 +300,7 @@ if __name__ == '__main__':
 
     if load_switch == True:
             rnd = 400
-            load_dir = "/home/zikaixiao/zikai/aapfl/pfed_lastest/cifar100_100_0_05_dense/"
+            load_dir = "/home/zikaixiao/zikai/aapfl/pfed_lastest/cifar100_100_0_05_sparse_etf/"
             model = torch.load(load_dir + "model_" + str(rnd) + ".pth").to(args.device)
             g_head = torch.load(load_dir + "g_head_" + str(rnd) + ".pth").to(args.device)
             # g_head_t = torch.load(load_dir + "g_head_" + str(rnd) + ".pth").to(args.device)

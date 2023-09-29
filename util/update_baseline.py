@@ -1612,13 +1612,19 @@ def globaltest_classmean(net, g_head, test_dataset, args, dataset_class=None, he
     
     tsne_switch = True
     if tsne_switch:
+        import numpy as np
+        import matplotlib.pyplot as plt
         from sklearn.manifold import TSNE
+        from sklearn.preprocessing import StandardScaler
 
         # 提取class_means字典中的特征并转换为NumPy数组
-        features = np.array([tensor.cpu().numpy() for tensor in class_means.values()])
+        features = np.array([value.cpu().numpy() for value in class_means.values()])
+
+        # 标准化特征
+        features = StandardScaler().fit_transform(features)
 
         # 使用t-SNE进行降维
-        tsne = TSNE(n_components=2, random_state=42)
+        tsne = TSNE(n_components=2, random_state=42, learning_rate=200)
         features_2d = tsne.fit_transform(features)
 
         # 可视化
@@ -1631,8 +1637,8 @@ def globaltest_classmean(net, g_head, test_dataset, args, dataset_class=None, he
         plt.xlabel('t-SNE component 1')
         plt.ylabel('t-SNE component 2')
         plt.title('t-SNE Visualization of Class Means')
-        plt.show()
     # 保存图表到本地PDF文件
+        plt.savefig('t-SNE_Visualization_of_Class_Means.png', dpi=400)
         plt.savefig('t-SNE_Visualization_of_Class_Means.pdf', format='pdf')
 
     # 假设有100个类别
@@ -2605,7 +2611,7 @@ def localtest(net, g_head, l_head, test_dataset, dataset_class, idxs, user_id):
             features = net(images, latent_output=True)
 
             if p_mode != 8:
-                outputs = g_head(features) + l_head(features) 
+                outputs = l_head(features) 
                 # outputs = l_head(features) 
                 _, predicted = torch.max(outputs.data, 1)
             else:

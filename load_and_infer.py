@@ -101,7 +101,7 @@ if __name__ == '__main__':
     # acc_s2, global_3shot_acc = globaltest(copy.deepcopy(model).to(args.device), g_head, dataset_test, args, dataset_class = datasetObj)
 
     # add fl training
-    load_dir = "/home/zikaixiao/zikai/aapfl/pfed_lastest/cifar100_100_0_05_dense/"
+    load_dir = "/home/zikaixiao/zikai/aapfl/pfed_lastest/cifar100_100_0_05_sparse_etf/"
     # save_id = "73"
     model = torch.load(load_dir + "model_499.pth").to(args.device)
     g_head = torch.load(load_dir + "g_head_499.pth").to(args.device)
