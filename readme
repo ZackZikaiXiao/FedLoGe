@@ -491,3 +491,9 @@ nohup python fedrod.py --alpha_dirichlet 1 --IF 0.01 --beta 0 --gpu 7 > norm10.l
 
 nohup python fedrod.py --alpha_dirichlet 1 --IF 0.01 --beta 0 --gpu 7 > norm0_01.log 2>&1 &
 391135
+
+
+
+
+Rebuttal
+nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 0 --num_users 40 --frac 0.3 > a_ours.log 2>&1 &

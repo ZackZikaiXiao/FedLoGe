@@ -125,7 +125,7 @@ if __name__ == '__main__':
     w_glob = model.state_dict()  # return a dictionary containing a whole state of the module
     w_locals = [copy.deepcopy(w_glob) for i in range(args.num_users)]
     g_auxs_intervaria = []
-    epoch = 0
+    epoch = 1
     for client_id in range(args.num_users):  # training over the subset, in fedper, all clients train
         local = LocalUpdate(args=args, dataset=dataset_train, idxs=dict_users[client_id])
         w_locals[client_id], g_aux_intervaria, l_heads[client_id], loss_local = local.update_weights_norm_init(net=copy.deepcopy(model).to(args.device), g_head = copy.deepcopy(g_head).to(args.device), g_aux = copy.deepcopy(g_aux).to(args.device), l_head = copy.deepcopy(l_heads[client_id]).to(args.device), seed=args.seed, net_glob=model.to(args.device), epoch=epoch)

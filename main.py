@@ -20,7 +20,7 @@ from model.build_model import build_model
 np.set_printoptions(threshold=np.inf)
 load_switch = True
 save_switch = True
-save_dir = "./output/e/"
+save_dir = "./output/a/"
 # Get the last character before the trailing slash
 last_char = save_dir.split("/")[-2]
 
@@ -119,7 +119,7 @@ if __name__ == '__main__':
     w_glob = netglob.state_dict()  # return a dictionary containing a whole state of the module
 
     # training
-    args.frac = 1
+    # args.frac = 1
     m = max(int(args.frac * args.num_users), 1) #num_select_clients 
     prob = [1/args.num_users for j in range(args.num_users)]
 
