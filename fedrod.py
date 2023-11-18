@@ -24,8 +24,8 @@ import seaborn as sns
 
 np.set_printoptions(threshold=np.inf)
 
-load_switch = False  # True / False
-save_switch = False # True / False
+load_switch = True  # True / False
+save_switch = True # True / False
 cls_switch = "ETF" # ETF / sparfix / dropout_ETF / w_dropout_ETF / PR_ETF
 pretrain_cls = False
 dataset_switch = 'cifar100' # cifar10 / cifar100
@@ -223,7 +223,7 @@ if __name__ == '__main__':
     # w_locals = dispatch_fedper(w_locals, w_glob)
 
     # training
-    args.frac = 1
+    # args.frac = 1
     m = max(int(args.frac * args.num_users), 1) #num_select_clients 
     prob = [1/args.num_users for j in range(args.num_users)]
 
@@ -237,7 +237,7 @@ if __name__ == '__main__':
         g_head = nn.Linear(in_features, out_features).to(args.device) 
         sparse_etf_mat = etf.gen_sparse_ETF(feat_in = in_features, num_classes = out_features, beta=0.6)
 
-        etf_visual = True
+        etf_visual = False
         if etf_visual:
             # 设置全局字体
             plt.rcParams['font.family'] = 'Times New Roman'
@@ -289,7 +289,7 @@ if __name__ == '__main__':
         # g_head.weight.data = etf.ori_M.to(args.device)
         g_head.weight.data = sparse_etf_mat.to(args.device)
         g_head.weight.data = g_head.weight.data.t()
-        # nn.init.sparse_(g_head.weight, sparsity=0.5)
+        
 
     elif cls_switch == "dropout_ETF":    
         g_head = dropout_ETF(in_features, out_features, dropout_rate=0.5).to(args.device)
@@ -345,17 +345,15 @@ if __name__ == '__main__':
         l_heads.append(nn.Linear(in_features, out_features).to(args.device))
 
     if load_switch == True:
-            rnd = 499
-            load_dir = "./output1/" # output1  output_nospar
-            model = torch.load(load_dir + "model_" + str(rnd) + ".pth").to(args.device)
-            g_head = torch.load(load_dir + "g_head_" + str(rnd) + ".pth").to(args.device)
-            # g_head_t = torch.load(load_dir + "g_head_" + str(rnd) + ".pth").to(args.device)
-            # g_head.linear = g_head_t
-            g_aux = torch.load(load_dir + "g_aux_" + str(rnd) + ".pth").to(args.device)
-            for i in range(args.num_users):
-                l_heads[i] = torch.load(load_dir + "l_head_" + str(i) + ".pth").to(args.device)
-            w_glob = model.state_dict()  # return a dictionary containing a whole state of the module
-            w_locals = [copy.deepcopy(w_glob) for i in range(args.num_users)]
+        rnd = 150
+        load_dir = "./output/f/" # output1  output_nospar
+        model = torch.load(load_dir + "model_" + str(rnd) + ".pth").to(args.device)
+        # g_head = torch.load(load_dir + "g_head_" + str(rnd) + ".pth").to(args.device)
+        # g_aux = torch.load(load_dir + "g_aux_" + str(rnd) + ".pth").to(args.device)
+        # for i in range(args.num_users):
+        #     l_heads[i] = torch.load(load_dir + "l_head_" + str(i) + ".pth").to(args.device)
+        w_glob = model.state_dict()  # return a dictionary containing a whole state of the module
+            # w_locals = [copy.deepcopy(w_glob) for i in range(args.num_users)]
 
     # acc_s2, global_3shot_acc, g_head = globaltest_feat_collapse(copy.deepcopy(model).to(args.device), g_head, dataset_test, args, dataset_class = datasetObj)
     # globaltest_classmean
@@ -366,16 +364,18 @@ if __name__ == '__main__':
         # if rnd % 1 == 0:
         #     g_head.reassign()
         g_auxs = []
+        w_locals = []
         # w_locals, loss_locals = [], []
         idxs_users = np.random.choice(range(args.num_users), m, replace=False, p=prob)
 
         ## local training       
         g_head.train()  # 开启dropout
-        for client_id in range(args.num_users):  # training over the subset, in fedper, all clients train
-            model.load_state_dict(copy.deepcopy(w_locals[client_id]))
+        for client_id in idxs_users:  # training over the subset, in fedper, all clients train
+            # model.load_state_dict(copy.deepcopy(w_locals[client_id]))
             local = LocalUpdate(args=args, dataset=dataset_train, idxs=dict_users[client_id])
-            w_locals[client_id], g_aux_temp, l_heads[client_id], loss_local = local.update_weights_gaux(net=copy.deepcopy(model).to(args.device), g_head = copy.deepcopy(g_head).to(args.device), g_aux = copy.deepcopy(g_aux).to(args.device), l_head = l_heads[client_id], epoch=args.local_ep, loss_switch = loss_switch)
+            w_local, g_aux_temp, l_heads[client_id], loss_local = local.update_weights_gaux(net=copy.deepcopy(model).to(args.device), g_head = copy.deepcopy(g_head).to(args.device), g_aux = copy.deepcopy(g_aux).to(args.device), l_head = l_heads[client_id], epoch=args.local_ep, loss_switch = loss_switch)
             g_auxs.append(g_aux_temp)
+            w_locals.append(w_local)
         g_head.eval()  # 关闭dropout
         ## aggregation 
         dict_len = [len(dict_users[idx]) for idx in idxs_users]
@@ -416,7 +416,7 @@ if __name__ == '__main__':
             acc_3shot_local_list.append(acc_3shot_local) ###################
 
         if save_switch == True:
-            save_dir = "./output/ours/h/"
+            save_dir = "./output/40_30/"
             torch.save(model, save_dir + "model_" + str(rnd) + ".pth")
             torch.save(g_head, save_dir + "g_head_" + str(rnd) + ".pth")
             torch.save(g_aux, save_dir + "g_aux_" + str(rnd) + ".pth")

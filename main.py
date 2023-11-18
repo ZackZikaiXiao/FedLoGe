@@ -20,7 +20,7 @@ from model.build_model import build_model
 np.set_printoptions(threshold=np.inf)
 load_switch = True
 save_switch = True
-save_dir = "./output/a/"
+save_dir = "./output/f/"
 # Get the last character before the trailing slash
 last_char = save_dir.split("/")[-2]
 
@@ -60,7 +60,7 @@ if load_switch:
     elif last_char == 'e':
         load_rnd = 252
     elif last_char == 'f':
-        load_rnd = 285
+        load_rnd = 30      # 285
     elif last_char == 'g':
         load_rnd = 351
     elif last_char == 'h':
@@ -142,7 +142,7 @@ if __name__ == '__main__':
         w_locals, loss_locals = [], []
         idxs_users = np.random.choice(range(args.num_users), m, replace=False, p=prob)
                 
-        for idx in range(args.num_users):  # training over the subset, in fedper, all clients train
+        for idx in idxs_users:  # training over the subset, in fedper, all clients train
             local = LocalUpdate(args=args, dataset=dataset_train, idxs=dict_users[idx])
             w_local, loss_local = local.update_weights(net=copy.deepcopy(netglob).to(args.device), seed=args.seed, net_glob=netglob.to(args.device), epoch=args.local_ep)
             w_locals.append(copy.deepcopy(w_local))  # store every updated model

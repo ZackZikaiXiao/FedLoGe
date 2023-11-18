@@ -9,9 +9,9 @@ def args_parser():
     parser.add_argument('--iteration1', type=int, default=5, help="enumerate iteration in preprocessing stage")
     parser.add_argument('--rounds', type=int, default=500, help="rounds of training in fine_tuning stage")
     parser.add_argument('--local_ep', type=int, default=5, help="number of local epochs in preprocessing stage")    # 5
-    parser.add_argument('--frac', type=float, default=0.2, help="fration of selected clients in preprocessing stage")
+    parser.add_argument('--frac', type=float, default=1, help="fration of selected clients in preprocessing stage")
 
-    parser.add_argument('--num_users', type=int, default=20, help="number of uses: K")      # 40   
+    parser.add_argument('--num_users', type=int, default=40, help="number of uses: K")      # 40   
     parser.add_argument('--local_bs', type=int, default=8, help="local batch size: B")    
     parser.add_argument('--lr', type=float, default=0.03, help="learning rate")         # 0.03 
     parser.add_argument('--momentum', type=float, default=0.5, help="SGD momentum, default 0.5")    
@@ -66,6 +66,6 @@ def args_parser_cifar10():
     parser.add_argument('--loss_type', default="CE", type=str, help='loss type')
 
     parser.add_argument('--balanced_global', default=False, action='store_true', help="balanced global distribution or long tailed global distribution, clients are heterogeneous.")
-    parser.add_argument('--IF', type=float, default=0.01, help="imbalance factor: Min/Max") # 0.1
+    parser.add_argument('--IF', type=float, default=0.02, help="imbalance factor: Min/Max") # 0.1
     parser.add_argument('--gpu', type=int, default=5, help="gpu")
     return parser.parse_args()

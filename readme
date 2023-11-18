@@ -496,4 +496,35 @@ nohup python fedrod.py --alpha_dirichlet 1 --IF 0.01 --beta 0 --gpu 7 > norm0_01
 
 
 Rebuttal
-nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 0 --num_users 40 --frac 0.3 > a_ours.log 2>&1 &
+
+FedAvg
+nohup python main.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 5 --num_users 40 --frac 0.3 > rebu_fedavg_40_30.log 2>&1 &
+nohup python main.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 5 --num_users 100 --frac 1 > rebu_fedavg_100_100.log 2>&1 &
+nohup python main.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 7 --num_users 100 --frac 0.3 > rebu_fedavg_100_30.log 2>&1 &
+
+
+
+FedLoGe
+nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 4 --num_users 40 --frac 0.3 > rebu_fedloge_40_30.log 2>&1 &
+1298768
+nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 7 --num_users 100 --frac 0.3 > rebu_fedloge_100_30.log 2>&1 &
+
+
+
+FedROD
+/home/zikaixiao/zikai/aapfl/pfedlt_cifar100_fedrod/fedrod.py
+nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 7 --num_users 40 --frac 0.3 > rebu_fedrod_40_30.log 2>&1 &
+
+nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 5 --num_users 100 --frac 0.3 > rebu_fedrod_100_30.log 2>&1 &
+
+
+FedETF
+nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.02 --beta 0 --gpu 5 --num_users 40 --frac 0.3 > rebu_fedetf_40_30.log 2>&1 &
+
+nohup python fedrod.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 5 --num_users 100 --frac 0.3 > rebu_fedetf_100_30.log 2>&1 &
+
+
+
+
+New Clients
+python new_clients.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 7 --num_users 20 --frac 1 --local_ep 1

@@ -123,12 +123,12 @@ if __name__ == '__main__':
 
     # local tuning
     w_glob = model.state_dict()  # return a dictionary containing a whole state of the module
-    w_locals = [copy.deepcopy(w_glob) for i in range(args.num_users)]
+    # w_locals = [copy.deepcopy(w_glob) for i in range(args.num_users)]
     g_auxs_intervaria = []
-    epoch = 1
+    epoch = 0
     for client_id in range(args.num_users):  # training over the subset, in fedper, all clients train
         local = LocalUpdate(args=args, dataset=dataset_train, idxs=dict_users[client_id])
-        w_locals[client_id], g_aux_intervaria, l_heads[client_id], loss_local = local.update_weights_norm_init(net=copy.deepcopy(model).to(args.device), g_head = copy.deepcopy(g_head).to(args.device), g_aux = copy.deepcopy(g_aux).to(args.device), l_head = copy.deepcopy(l_heads[client_id]).to(args.device), seed=args.seed, net_glob=model.to(args.device), epoch=epoch)
+        _, g_aux_intervaria, l_heads[client_id], loss_local = local.update_weights_norm_init(net=copy.deepcopy(model).to(args.device), g_head = copy.deepcopy(g_head).to(args.device), g_aux = copy.deepcopy(g_aux).to(args.device), l_head = copy.deepcopy(l_heads[client_id]).to(args.device), seed=args.seed, net_glob=model.to(args.device), epoch=epoch)
         g_auxs_intervaria.append(g_aux_intervaria)
 
 
@@ -137,7 +137,9 @@ if __name__ == '__main__':
     # global test
     # 将g_head除以norm
     # g_head.weight = g_head.weight / norm.unsqueeze(1)
-    acc_s2, global_3shot_acc = globaltest_feat_collapse(copy.deepcopy(model).to(args.device), g_head = copy.deepcopy(g_head).to(args.device), test_dataset = dataset_test, args = args, dataset_class = datasetObj)
+    # acc_s2, global_3shot_acc = globaltest_feat_collapse(copy.deepcopy(model).to(args.device), g_head = copy.deepcopy(g_head).to(args.device), test_dataset = dataset_test, args = args, dataset_class = datasetObj)
+    
+    acc_s2, global_3shot_acc = globaltest_calibra(copy.deepcopy(model).to(args.device), copy.deepcopy(g_aux).to(args.device), dataset_test, args, dataset_class = datasetObj)
 
     # acc_s2, global_3shot_acc = globaltest(copy.deepcopy(model).to(args.device), copy.deepcopy(g_head).to(args.device), dataset_test, args, dataset_class = datasetObj)
     # print(acc_s2)

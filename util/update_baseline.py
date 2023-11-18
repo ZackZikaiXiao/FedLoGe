@@ -458,7 +458,38 @@ class LocalUpdate(object):
         return net.state_dict(), g_aux, l_head, sum(epoch_loss) / len(epoch_loss)
 
 
+    def update_weights_new_client(self, net, g_head, g_aux, l_head, epoch, mu=1, lr=None, loss_switch=None):
+            net.train()
+            # train and update
+            optimizer = torch.optim.SGD(list(g_aux.parameters()), lr=self.args.lr, momentum=self.args.momentum)
 
+
+
+            criterion = nn.CrossEntropyLoss()
+
+            
+            epoch_loss = []
+            for iter in range(epoch):
+                batch_loss = []
+                # use/load data from split training set "ldr_train"
+                for batch_idx, (images, labels) in enumerate(self.ldr_train):
+                    images, labels = images.to(
+                        self.args.device), labels.to(self.args.device)
+
+                    labels = labels.long()
+                    optimizer.zero_grad()
+
+                    features = net(images, latent_output=True)
+
+                    output = g_aux(features)
+                    loss = criterion(output, labels)
+                    loss.backward()
+
+                    optimizer.step()
+                    batch_loss.append(loss.item())
+
+                epoch_loss.append(sum(batch_loss)/(len(batch_loss)+1e-10))
+            return net.state_dict(), g_aux, l_head, sum(epoch_loss) / (len(epoch_loss)+1e-10)
 
 
     def update_weights_class_mean(self, net, g_head, g_aux, l_head, epoch, class_means, mu=1, lr=None, loss_switch=None):
@@ -1458,7 +1489,8 @@ def globaltest_calibra(net, g_aux, test_dataset, args, dataset_class=None, head_
     predict_true_class = [0 for i in range(args.num_classes)]
     cali_alpha = torch.norm(g_aux.weight, dim=1)
 
-
+    import time
+    start_time = time.time()
     # 矫正feats
     # 计算 cali_alpha 的倒数
     cali_alpha = torch.pow(cali_alpha, 1)
@@ -1469,6 +1501,10 @@ def globaltest_calibra(net, g_aux, test_dataset, args, dataset_class=None, head_
 
     # 矫正cls
     g_aux.weight = torch.nn.Parameter(g_aux.weight * inverse_cali_alpha)
+    end_time = time.time()
+
+    # 计算并打印运行时间
+    print("运行时间：", end_time - start_time, "秒")
     with torch.no_grad():
         correct = 0
         total = 0
@@ -2560,9 +2596,9 @@ def localtest(net, g_head, l_head, test_dataset, dataset_class, idxs, user_id):
     if p_mode == 1:
         # 方案1：
         zero_classes = np.where(class_distribution == 0)[0]
-        for i in zero_classes:
-            g_head.weight.data[i, :] = -1e10
-            l_head.weight.data[i, :] = -1e10
+        # for i in zero_classes:
+        #     g_head.weight.data[i, :] = -1e10
+        #     l_head.weight.data[i, :] = -1e10
     elif p_mode == 2:
         # 方案2：
         norm = torch.norm(l_head.weight, p=2, dim=1)
@@ -2611,7 +2647,8 @@ def localtest(net, g_head, l_head, test_dataset, dataset_class, idxs, user_id):
             features = net(images, latent_output=True)
 
             if p_mode != 8:
-                outputs = l_head(features) 
+                outputs = g_head(features)
+                # outputs = l_head(features) + g_head(features)
                 # outputs = l_head(features) 
                 _, predicted = torch.max(outputs.data, 1)
             else:
