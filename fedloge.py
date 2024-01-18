@@ -24,9 +24,9 @@ import seaborn as sns
 
 np.set_printoptions(threshold=np.inf)
 
-load_switch = True  # True / False
+load_switch = False  # True / False
 save_switch = True # True / False
-cls_switch = "ETF" # ETF / sparfix / dropout_ETF / w_dropout_ETF / PR_ETF
+cls_switch = "SSE-C" # SSE-C / sparfix / dropout_ETF / w_dropout_ETF / PR_ETF
 pretrain_cls = False
 dataset_switch = 'cifar100' # cifar10 / cifar100
 aggregation_switch = 'fedavg' # fedavg / class_wise
@@ -230,7 +230,7 @@ if __name__ == '__main__':
     in_features = model.linear.in_features
     out_features = model.linear.out_features
 
-    if cls_switch == "ETF":
+    if cls_switch == "SSE-C":
         # 初始化ETF分类器 
         etf = ETF_Classifier(in_features, out_features) 
         # 新建线性层,权重使用ETF分类器的ori_M
