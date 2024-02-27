@@ -4,7 +4,7 @@ This repository contains the official source code for the paper: "Joint Local an
 
 **"Federated Local and Generic Model Training in Fed-LT (FedLoGe)"** innovates federated learning by enhancing both local and global model performances in data-imbalanced environments. By merging representation learning with classifier alignment in a neural collapse framework, FedLoGe addresses the traditional challenges of data imbalance and personalization in federated settings. It introduces mechanisms like the Static Sparse Equiangular Tight Frame Classifier (SSE-C) for feature optimization and Global and Local Adaptive Feature Realignment (GLA-FR) for tailored feature alignment, demonstrating superior results on datasets like CIFAR-10/100-LT, ImageNet, and iNaturalist compared to existing methods.
 
-![Example Image](/pfed_lastest/Framework.png " The framework of FedLoGe")
+![The framework of FedLoGe](Framework.png)
 
 ## Usage
 
