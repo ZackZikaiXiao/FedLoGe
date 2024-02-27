@@ -1,6 +1,0 @@
-Code for FedLoGe: Joint Local and Generic Federated Learning under Long-tailed Data 
-Run:
-Step 1: Training backbone with SSE-C
-nohup python fedloge.py --alpha_dirichlet 0.5 --IF 0.01 --beta 0 --gpu 0 --num_users 40 --frac 0.3 > sse_c.log 2>&1 &
-Step 2: Global and Local feature realignment
-python Realignment.py

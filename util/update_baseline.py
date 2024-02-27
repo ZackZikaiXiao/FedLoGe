@@ -2596,9 +2596,9 @@ def localtest(net, g_head, l_head, test_dataset, dataset_class, idxs, user_id):
     if p_mode == 1:
         # 方案1：
         zero_classes = np.where(class_distribution == 0)[0]
-        # for i in zero_classes:
-        #     g_head.weight.data[i, :] = -1e10
-        #     l_head.weight.data[i, :] = -1e10
+        for i in zero_classes:
+            g_head.weight.data[i, :] = -1e10
+            l_head.weight.data[i, :] = -1e10
     elif p_mode == 2:
         # 方案2：
         norm = torch.norm(l_head.weight, p=2, dim=1)
