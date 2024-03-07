@@ -6,6 +6,10 @@ This repository contains the official source code for ICLR 2024 paper: "Joint Lo
 
 ![The framework of FedLoGe](Framework.png)
 
+
+
+> We also provide implementation for baselines under Fed-LT setup, which can be found in the '**baseline**' folder.
+
 ## Usage
 
 To train a universal model (for any data distribution), follow step 1, and infer with:
