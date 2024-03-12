@@ -30,7 +30,7 @@ cls_switch = "SSE-C" # SSE-C / sparfix / dropout_ETF / w_dropout_ETF / PR_ETF
 pretrain_cls = False
 dataset_switch = 'cifar100' # cifar10 / cifar100
 aggregation_switch = 'fedavg' # fedavg / class_wise
-global_test_head = 'g_aux'  # g_aux / g_head
+global_test_head = 'g_head'  # g_aux / g_head
 internal_frozen = False  # True / False
 loss_switch = "None" # focous_loss / any others
 

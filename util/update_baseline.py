@@ -2647,8 +2647,8 @@ def localtest(net, g_head, l_head, test_dataset, dataset_class, idxs, user_id):
             features = net(images, latent_output=True)
 
             if p_mode != 8:
-                outputs = g_head(features)
-                # outputs = l_head(features) + g_head(features)
+                # outputs = g_head(features)
+                outputs = l_head(features) + g_head(features)
                 # outputs = l_head(features) 
                 _, predicted = torch.max(outputs.data, 1)
             else:
