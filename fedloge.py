@@ -361,8 +361,10 @@ if __name__ == '__main__':
     # acc_s2, global_3shot_acc = globaltest_calibra(copy.deepcopy(model).to(args.device), copy.deepcopy(g_head).to(args.device), copy.deepcopy(g_aux).to(args.device), dataset_test, args, dataset_class = datasetObj)
     # add fl training
     # 初始化为1吧
-    constant_scalar = torch.ones(1, requires_grad=True, device=args.device)
-    # constant_scalar = constant_scalar.cuda()
+        
+    # constant_scalar = torch.ones(1, requires_grad=True, device=args.device)
+    constant_scalar_per_cls = torch.ones(1, 100, requires_grad=True, device=args.device)
+
     for rnd in tqdm(range(args.rounds)):
         # if rnd % 1 == 0:
         #     g_head.reassign()
@@ -377,7 +379,7 @@ if __name__ == '__main__':
         for client_id in idxs_users:  # training over the subset, in fedper, all clients train
             # model.load_state_dict(copy.deepcopy(w_locals[client_id]))
             local = LocalUpdate(args=args, dataset=dataset_train, idxs=dict_users[client_id])
-            w_local, g_aux_temp, l_heads[client_id], loss_local, constant_scalar_tmp = local.update_weights_gaux(constant_scalar=copy.deepcopy(constant_scalar), net=copy.deepcopy(model).to(args.device), g_head = copy.deepcopy(g_head).to(args.device), g_aux = copy.deepcopy(g_aux).to(args.device), l_head = l_heads[client_id], epoch=args.local_ep, loss_switch = loss_switch)
+            w_local, g_aux_temp, l_heads[client_id], loss_local, constant_scalar_tmp = local.update_weights_gaux(constant_scalar=copy.deepcopy(constant_scalar_per_cls), net=copy.deepcopy(model).to(args.device), g_head = copy.deepcopy(g_head).to(args.device), g_aux = copy.deepcopy(g_aux).to(args.device), l_head = l_heads[client_id], epoch=args.local_ep, loss_switch = loss_switch)
             g_auxs.append(g_aux_temp)
             w_locals.append(w_local)
             constant_scalars.append(constant_scalar_tmp)

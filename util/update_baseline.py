@@ -334,7 +334,7 @@ class LocalUpdate(object):
     def update_weights_gaux(self, constant_scalar, net, g_head, g_aux, l_head, epoch, mu=1, lr=None, loss_switch=None):
         net.train()
         # train and update
-        optimizer_constant_sclar = torch.optim.SGD([constant_scalar], lr=self.args.lr)
+        optimizer_constant_sclar = torch.optim.SGD([constant_scalar], lr=self.args.lr, momentum=self.args.momentum)
         optimizer_g_backbone = torch.optim.SGD(list(net.parameters()), lr=self.args.lr, momentum=self.args.momentum)
         optimizer_g_aux = torch.optim.SGD(g_aux.parameters(), lr=self.args.lr, momentum=self.args.momentum)
         # optimizer_g_aux = torch.optim.SGD([
@@ -429,8 +429,9 @@ class LocalUpdate(object):
                 # mma_loss = get_mma_loss(features, labels)
                 # constant_scalar = constant_scalar.cuda("cuda:7")
                 # g_head就是sse-c分类器
-                output_g_backbone = g_head(features * constant_scalar)
-            
+                # output_g_backbone = g_head(features * constant_scalar)
+                output_g_backbone = g_head(features)
+                output_g_backbone = output_g_backbone * constant_scalar.expand(output_g_backbone.shape[0], output_g_backbone.shape[1])
 
                 
                 loss_g_backbone = criterion_g(output_g_backbone, labels)

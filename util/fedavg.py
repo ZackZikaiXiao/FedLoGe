@@ -141,17 +141,13 @@ def cls_norm_agg(w, dict_len, l_heads, distributions):
     return model
 
 def aggregate_scalers(scalers, dict_len):
-    # scaler = copy.deepcopy(scalers[0])
-    # scaler = scaler * dict_len[0]
-    # for i in range(1, len(dict_len)):
-    #     scaler += scalers[i] * dict_len[i]
 
-    # return scaler/(sum(dict_len))
     scaler = [scalers[i].data * dict_len[i] for i in range(len(dict_len))]
-    sum_of_scaler = sum(scaler)
-    return torch.tensor([sum_of_scaler/sum(dict_len)], device=scaler[0].device).clone().detach().requires_grad_(True)
-    # torch.full((1,1), sum_of_scaler/sum(dict_len), requires_grad=True, device=)
-    return scaler[0]
+    stacked_tensor = torch.stack(scaler, dim=0)
+    sum_tensor = torch.sum(stacked_tensor, dim=0)
+    # sum_of_scaler = sum(scaler)
+    # return torch.tensor([sum_of_scaler/sum(dict_len)], device=scaler[0].device).clone().detach().requires_grad_(True)
+    return torch.tensor(sum_tensor/sum(dict_len), device=scaler[0].device).clone().detach().requires_grad_(True)
 
 def FedAvg_noniid(w, dict_len):
     w_avg = copy.deepcopy(w[0])
