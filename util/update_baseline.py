@@ -331,9 +331,10 @@ class LocalUpdate(object):
         return net.state_dict(), sum(epoch_loss) / len(epoch_loss)
 
 
-    def update_weights_gaux(self, net, g_head, g_aux, l_head, epoch, mu=1, lr=None, loss_switch=None):
+    def update_weights_gaux(self, constant_scalar, net, g_head, g_aux, l_head, epoch, mu=1, lr=None, loss_switch=None):
         net.train()
         # train and update
+        optimizer_constant_sclar = torch.optim.SGD([constant_scalar], lr=self.args.lr)
         optimizer_g_backbone = torch.optim.SGD(list(net.parameters()), lr=self.args.lr, momentum=self.args.momentum)
         optimizer_g_aux = torch.optim.SGD(g_aux.parameters(), lr=self.args.lr, momentum=self.args.momentum)
         # optimizer_g_aux = torch.optim.SGD([
@@ -419,15 +420,16 @@ class LocalUpdate(object):
                 optimizer_g_backbone.zero_grad()
                 optimizer_g_aux.zero_grad()
                 optimizer_l_head.zero_grad()
+                optimizer_constant_sclar.zero_grad()
                 # net.zero_grad()
-
+                constant_scalar.retain_grad()
                 # backbone
                 features = net(images, latent_output=True)
-
+                # 这里features乘以一个scaler(requires_grad=True)
                 # mma_loss = get_mma_loss(features, labels)
-
-
-                output_g_backbone = g_head(features)
+                # constant_scalar = constant_scalar.cuda("cuda:7")
+                # g_head就是sse-c分类器
+                output_g_backbone = g_head(features * constant_scalar)
             
 
                 
@@ -437,8 +439,10 @@ class LocalUpdate(object):
                 loss_g_backbone.backward()
                 # max_grad = max(p.grad.data.abs().max() for p in net.parameters() if p.grad is not None)
                 # print('Max gradient:', max_grad)
+                # 更新一下
                 optimizer_g_backbone.step()
-                
+                optimizer_constant_sclar.step()
+                 
                 # g_aux
                 output_g_aux = g_aux(features.detach())
                 loss_g_aux = criterion_l(output_g_aux, labels)
@@ -455,7 +459,7 @@ class LocalUpdate(object):
                 batch_loss.append(loss.item())
 
             epoch_loss.append(sum(batch_loss)/len(batch_loss))
-        return net.state_dict(), g_aux, l_head, sum(epoch_loss) / len(epoch_loss)
+        return net.state_dict(), g_aux, l_head, sum(epoch_loss) / len(epoch_loss), constant_scalar
 
 
     def update_weights_new_client(self, net, g_head, g_aux, l_head, epoch, mu=1, lr=None, loss_switch=None):
