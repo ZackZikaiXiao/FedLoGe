@@ -163,6 +163,7 @@ class ETF_Classifier(nn.Module):
             loss.backward()
             
             # Apply the mask to the gradients
+            # try not to mask
             if sparse_etf.grad is not None:
                 sparse_etf.grad *= mask
                 

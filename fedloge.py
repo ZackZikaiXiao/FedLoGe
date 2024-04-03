@@ -24,8 +24,8 @@ import seaborn as sns
 
 np.set_printoptions(threshold=np.inf)
 
-load_switch = False  # True / False
-save_switch = False # True / False
+load_switch = True  # True / False
+save_switch = True # True / False
 cls_switch = "SSE-C" # SSE-C / sparfix / dropout_ETF / w_dropout_ETF / PR_ETF
 pretrain_cls = False
 dataset_switch = 'cifar100' # cifar10 / cifar100
@@ -120,7 +120,37 @@ class dropout_ETF(nn.Module):
 #         # restore RNG state
 #         torch.random.set_rng_state(rng_state)
 #         return mask
+def test_etf(sparse_etf):
+    # Normalize each column to have L2 norm = 1
+    col_norms = torch.norm(sparse_etf, p=2, dim=0, keepdim=True)
+    normalized_etf = sparse_etf / col_norms
 
+    # Compute cosine similarities
+    cosine_similarities = torch.mm(normalized_etf.t(), normalized_etf)
+
+    # Zero out the diagonal (we don't want to compare vectors with themselves)
+    torch.diagonal(cosine_similarities).fill_(float('nan'))
+
+    # Compute angles in radians
+    angles_radians = torch.acos(torch.clamp(cosine_similarities, -1, 1))
+
+    # Convert angles from radians to degrees
+    angles_degrees = angles_radians * (180 / np.pi)
+
+    # Convert to numpy array
+    angles_degrees_numpy = angles_degrees.cpu().detach().numpy()
+    print(angles_degrees)
+    # Calculate mean and variance of angles, ignoring NaNs
+    angle_mean = np.nanmean(angles_degrees_numpy)
+    angle_variance = np.nanvar(angles_degrees_numpy)
+
+    # Calculate mean and variance of norms
+    col_norms_numpy = col_norms.cpu().detach().numpy()
+    norm_mean = np.mean(col_norms_numpy)
+    norm_variance = np.var(col_norms_numpy)
+
+    print(f"Angle Mean: {angle_mean}, Angle Variance: {angle_variance}")
+    print(f"Norm Mean: {norm_mean}, Norm Variance: {norm_variance}")
 class w_dropout_ETF(nn.Module):
     def __init__(self, in_features, out_features, dropout_rate):
         super(w_dropout_ETF, self).__init__()
@@ -199,7 +229,23 @@ if __name__ == '__main__':
         dataset_train, dataset_test, dict_users, dict_localtest = datasetObj.get_balanced_dataset(datasetObj.get_args())  # CIFAR10
     else:
         dataset_train, dataset_test, dict_users, dict_localtest = datasetObj.get_imbalanced_dataset(datasetObj.get_args())  # IMBALANCEDCIFAR10
-         
+    list_of_targets = dataset_train.targets
+    from collections import Counter
+    count_dict = Counter(list_of_targets)
+    list_of_counts = []
+    for _,count in count_dict.items():
+        list_of_counts.append(count)
+    x = range(len(list_of_counts))  # 使用 range() 函数生成索引范围作为 x 值
+    
+    list_of_proporations = []
+    for item in list_of_counts:
+        list_of_proporations.append(item/500)
+    y = list_of_proporations
+    plt.plot(x, y)
+    plt.xlabel('Index')
+    plt.ylabel('Value')
+    plt.title('Plot of List Values')
+    plt.savefig('/home/jianhuiwei/rsch/jianhui/FedLoGe/figure.png')
     print(len(dict_users))
     # pdb.set_trace()
     # torch.manual_seed(args.seed)
@@ -345,26 +391,33 @@ if __name__ == '__main__':
         l_heads.append(nn.Linear(in_features, out_features).to(args.device))
 
     if load_switch == True:
-        rnd = 150
-        load_dir = "./output/f/" # output1  output_nospar
+        rnd = 486
+        load_dir = "output/constant_per_cls_2/" # output1  output_nospar
         model = torch.load(load_dir + "model_" + str(rnd) + ".pth").to(args.device)
-        # g_head = torch.load(load_dir + "g_head_" + str(rnd) + ".pth").to(args.device)
-        # g_aux = torch.load(load_dir + "g_aux_" + str(rnd) + ".pth").to(args.device)
+        g_head = torch.load(load_dir + "g_head_" + str(rnd) + ".pth").to(args.device)
+        g_aux = torch.load(load_dir + "g_aux_" + str(rnd) + ".pth").to(args.device)
         # for i in range(args.num_users):
         #     l_heads[i] = torch.load(load_dir + "l_head_" + str(i) + ".pth").to(args.device)
         w_glob = model.state_dict()  # return a dictionary containing a whole state of the module
             # w_locals = [copy.deepcopy(w_glob) for i in range(args.num_users)]
-
+    acc_s2, global_3shot_acc = globaltest(copy.deepcopy(model).to(args.device), copy.deepcopy(g_head).to(args.device), dataset_test, args, dataset_class = datasetObj)
     # acc_s2, global_3shot_acc, g_head = globaltest_feat_collapse(copy.deepcopy(model).to(args.device), g_head, dataset_test, args, dataset_class = datasetObj)
     # globaltest_classmean
     
-    # acc_s2, global_3shot_acc = globaltest_calibra(copy.deepcopy(model).to(args.device), copy.deepcopy(g_head).to(args.device), copy.deepcopy(g_aux).to(args.device), dataset_test, args, dataset_class = datasetObj)
+    # acc_s2, global_3shot_acc = globaltest_calibra(copy.deepcopy(model).to(args.device), copy.deepcopy(g_aux).to(args.device), dataset_test, args, dataset_class = datasetObj)
     # add fl training
-    # 初始化为1吧
-        
-    # constant_scalar = torch.ones(1, requires_grad=True, device=args.device)
-    constant_scalar_per_cls = torch.ones(1, 100, requires_grad=True, device=args.device)
-
+    # 初始化一个满秩矩阵
+    # while True:
+    #     matrix = np.random.rand(512, 512)
+    #     rank = np.linalg.matrix_rank(matrix)
+    #     if rank == 512:
+    #         break
+    # # 分解出正交矩阵Q，用它来旋转 
+    # Q,_= np.linalg.qr(matrix)
+    # rotation_matrix = torch.from_numpy(Q).to(torch.device(args.device)).to(torch.float32)  # 指定device为cuda
+    # rotation_matrix.requires_grad_(True)
+    constant_scalar = torch.ones(1, 100, requires_grad=True, device=args.device)
+    # constant_scalar_per_cls = torch.tensor(list_of_proporations, device=args.device, requires_grad=True)
     for rnd in tqdm(range(args.rounds)):
         # if rnd % 1 == 0:
         #     g_head.reassign()
@@ -379,7 +432,7 @@ if __name__ == '__main__':
         for client_id in idxs_users:  # training over the subset, in fedper, all clients train
             # model.load_state_dict(copy.deepcopy(w_locals[client_id]))
             local = LocalUpdate(args=args, dataset=dataset_train, idxs=dict_users[client_id])
-            w_local, g_aux_temp, l_heads[client_id], loss_local, constant_scalar_tmp = local.update_weights_gaux(constant_scalar=copy.deepcopy(constant_scalar_per_cls), net=copy.deepcopy(model).to(args.device), g_head = copy.deepcopy(g_head).to(args.device), g_aux = copy.deepcopy(g_aux).to(args.device), l_head = l_heads[client_id], epoch=args.local_ep, loss_switch = loss_switch)
+            w_local, g_aux_temp, l_heads[client_id], loss_local, constant_scalar_tmp = local.update_weights_gaux(constant_scalar=copy.deepcopy(constant_scalar), net=copy.deepcopy(model).to(args.device), g_head = copy.deepcopy(g_head).to(args.device), g_aux = copy.deepcopy(g_aux).to(args.device), l_head = l_heads[client_id], epoch=args.local_ep, loss_switch = loss_switch)
             g_auxs.append(g_aux_temp)
             w_locals.append(w_local)
             constant_scalars.append(constant_scalar_tmp)
@@ -389,7 +442,9 @@ if __name__ == '__main__':
         dict_len = [len(dict_users[idx]) for idx in idxs_users]
         w_glob = FedAvg_noniid(w_locals, dict_len)
         constant_scalar = aggregate_scalers(constant_scalars, dict_len)
-        print("The value of constant scaler: ", constant_scalar)
+        # print("g_head.weight", g_head.weight)
+        # test_etf(g_head.weight.T)
+        print("The value of constant scalar: ", constant_scalar)
         if aggregation_switch == 'fedavg':
             g_aux = FedAvg_noniid_classifier(g_auxs, dict_len)
         elif aggregation_switch == 'class_wise':
@@ -423,9 +478,9 @@ if __name__ == '__main__':
             f1_macro_list.append(f1_macro)
             f1_weighted_list.append(f1_weighted)
             acc_3shot_local_list.append(acc_3shot_local) ###################
-
-        if save_switch == True:
-            save_dir = "./output/40_30/"
+        # 保存的机制是什么？
+        if save_switch == True and rnd >= 350:
+            save_dir = "output/constant_per_cls_3_with_abs_2/"
             torch.save(model, save_dir + "model_" + str(rnd) + ".pth")
             torch.save(g_head, save_dir + "g_head_" + str(rnd) + ".pth")
             torch.save(g_aux, save_dir + "g_aux_" + str(rnd) + ".pth")

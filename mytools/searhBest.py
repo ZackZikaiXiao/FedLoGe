@@ -73,33 +73,42 @@ import matplotlib.pyplot as plt
 keyword = "global test acc"
 # fpath = "/home/zikaixiao/zikai/aaFL/fl_framework_lss/前向后向都没有weight_if100.log"
 # fpath = "/home/zikaixiao/zikai/aaFL/fl_framework_lss/weightmask[0,6]_if100.log"
-fpath = "/home/jianhui/jianhui/FedLoGe/sse_c.log"
+fpath = "/home/jianhuiwei/rsch/jianhui/FedLoGe/sse_c_2.log"
+fpath2 = "/home/jianhuiwei/rsch/jianhui/FedLoGe/scalars_per_cls_initialized_0.1_repeated4.log"
+fpath3 = "/home/jianhuiwei/rsch/jianhui/FedLoGe/scalars_per_cls_initialized_0.1_abs.log"
 # fpath = "/home/zikaixiao/zikai/aaFL/fl_framework_lss/eql参数8.log"
-context = []
-# fpath = os.path.join(basefolder,file)
-f = open(fpath,'r')
-for line in f.readlines():
-    if keyword in line:     # only the line containing keyword will be added to context
-        context.append(line)
-    else:
-        continue
-evaluationList = []
-heads = []
-middles = []
-tails = []
-for i in range(len(context)):
-    evaluationList.append(float(context[i].split(" ")[-2]))
-# search the top acc line
-loc = 0
-max_item = 0
-for i in range(len(evaluationList)):
-    if evaluationList[i] > max_item:
-        max_item = evaluationList[i] 
-        loc = i
-    
-print("File \"{0}\" containing keyword \"{1}\" reaches to \"{2}\"".format(fpath.split('/')[-1], keyword, max(evaluationList)))
-print(context[loc])
-
+fpaths = [fpath, fpath2,fpath3]
+for fpath in fpaths:
+    context = []
+    # fpath = os.path.join(basefolder,file)
+    f = open(fpath,'r')
+    for line in f.readlines():
+        if keyword in line:     # only the line containing keyword will be added to context
+            context.append(line)
+        else:
+            continue
+    evaluationList = []
+    heads = []
+    middles = []
+    tails = []
+    for i in range(len(context)):
+        evaluationList.append(float(context[i].split(" ")[-2]))
+    # search the top acc line
+    loc = 0
+    max_item = 0
+    for i in range(len(evaluationList)):
+        if evaluationList[i] > max_item:
+            max_item = evaluationList[i] 
+            loc = i
+        
+    print("File \"{0}\" containing keyword \"{1}\" reaches to \"{2}\"".format(fpath.split('/')[-1], keyword, max(evaluationList)))
+    print(context[loc])
+    x = range(len(evaluationList))
+    plt.plot(x, evaluationList)
+plt.xlabel('Index')
+plt.ylabel('Value')
+plt.title('Plot of List Values')
+plt.savefig('/home/jianhuiwei/rsch/jianhui/FedLoGe/Accuracy2.png')
 
 
 
