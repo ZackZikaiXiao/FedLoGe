@@ -483,7 +483,6 @@ class LocalUpdate(object):
                 # 这里要将g_head改一下.
                 
                 output_g_backbone = g_head(features)
-                constant_scalar = torch.abs(constant_scalar)
                 output_g_backbone = output_g_backbone * constant_scalar.expand(output_g_backbone.shape[0], output_g_backbone.shape[1])
                 # output_g_backbone = output_g_backbone * global_constant_scalar.expand(output_g_backbone.shape[0], output_g_backbone.shape[1])
                 # output_g_backbone = scaled_sigmoid(output_g_backbone, 1.0)
@@ -515,7 +514,7 @@ class LocalUpdate(object):
                 batch_loss.append(loss.item())
 
             epoch_loss.append(sum(batch_loss)/len(batch_loss))
-        return net.state_dict(), g_aux, l_head, sum(epoch_loss) / len(epoch_loss), torch.abs(constant_scalar)
+        return net.state_dict(), g_aux, l_head, sum(epoch_loss) / len(epoch_loss), torch.abs(constant_scalar), constant_scalar
 
 
     def update_weights_new_client(self, net, g_head, g_aux, l_head, epoch, mu=1, lr=None, loss_switch=None):
@@ -1129,18 +1128,34 @@ class LocalUpdate(object):
 
         net.train()
         # train and update
-
-
+        constant_scalars = nn.Parameter(torch.tensor([[10.0720,  9.4521,  8.5658,  6.1524,  6.9339,  7.1153,  6.1857,  5.9551,
+          7.0029,  6.4409,  6.5189,  6.3165,  6.8550,  6.4254,  6.1758,  5.7576,
+          6.2006,  5.3682,  6.1299,  6.2092,  6.1980,  5.4351,  5.8307,  5.3910,
+          5.2512,  5.5201,  5.8864,  5.7102,  5.1608,  5.0268,  5.2679,  4.9256,
+          5.2715,  4.1046,  4.9845,  5.3646,  4.7835,  5.2443,  4.4062,  5.3796,
+          4.8960,  4.8509,  4.9907,  4.5254,  4.8781,  4.9862,  4.7262,  4.0877,
+          4.5322,  4.9536,  4.6695,  4.6684,  4.2465,  4.6149,  4.3742,  4.5899,
+          4.4573,  4.7800,  4.0769,  4.0878,  4.4759,  4.3673,  4.6863,  4.3116,
+          4.4225,  3.9813,  4.5067,  4.4477,  4.0859,  3.7552,  4.3470,  3.7792,
+          4.2011,  3.7745,  3.7270,  3.5183,  3.8096,  3.1777,  4.0859,  3.7304,
+          3.4264,  4.1916,  3.6414,  3.7139,  3.0619,  3.7937,  4.2296,  3.1575,
+          3.4611,  2.8306,  3.3749,  3.6286,  3.5290,  3.0524,  3.1090,  3.4013,
+          3.1635,  3.2966,  3.1299,  2.8601]], device=self.args.device, requires_grad=True).T)
+        # constant_scalars = constant_scalars.T
         # 权重norm初始化
         norm = torch.norm(l_head.weight, p=2, dim=1)
         # 将g_head.weight转换为torch.nn.Parameter类型
         g_aux.weight = nn.Parameter(g_aux.weight * norm.unsqueeze(1))
-
-
-        optimizer_g = torch.optim.SGD(list(net.parameters()), lr=self.args.lr, momentum=self.args.momentum)
-        optimizer_l = torch.optim.SGD(l_head.parameters(), lr=self.args.lr, momentum=self.args.momentum)
-        optimizer_g_aux = torch.optim.SGD(g_aux.parameters(), lr=self.args.lr, momentum=self.args.momentum)
-        optimizer = torch.optim.SGD(list(g_aux.parameters()) + list(l_head.parameters()), lr=self.args.lr, momentum=self.args.momentum)
+        # 现在试着把g_head放进去。
+        l_head.weight = nn.Parameter(l_head.weight * 0.1 * constant_scalars)
+        # g_head.weight = nn.Parameter(g_head.weight * norm.unsqueeze(1) * constant_scalars)
+        g_head.weight = nn.Parameter(g_head.weight * constant_scalars)
+        # l_head.weight = nn.Parameter(l_head.weight * constant_scalars)
+        # optimizer_g = torch.optim.SGD(list(net.parameters()), lr=self.args.lr, momentum=self.args.momentum)
+        # optimizer_l = torch.optim.SGD(l_head.parameters(), lr=self.args.lr, momentum=self.args.momentum)
+        # optimizer_g_aux = torch.optim.SGD(g_aux.parameters(), lr=self.args.lr, momentum=self.args.momentum)
+        optimizer_g_head = torch.optim.SGD(g_head.parameters(), lr=self.args.lr, momentum=self.args.momentum)
+        # optimizer_constant_scalars = torch.optim.SGD([constant_scalars], lr=self.args.lr, momentum=self.args.momentum)
         # criterion_g = balsoft_loss
         criterion_l = nn.CrossEntropyLoss()
         criterion_g = nn.CrossEntropyLoss()
@@ -1161,7 +1176,9 @@ class LocalUpdate(object):
                 labels = labels.long()
                 # optimizer_g.zero_grad()
                 # optimizer_l.zero_grad()
-                optimizer_g_aux.zero_grad()
+                # optimizer_g_aux.zero_grad()
+                optimizer_g_head.zero_grad()
+                # optimizer_constant_scalars.zero_grad()
                 # optimizer.zero_grad()
 
                 # backbone更新
@@ -1178,7 +1195,8 @@ class LocalUpdate(object):
                 # optimizer_g_aux.step()
 
                 # 迁移学习
-                outputs_g_aux = g_aux(features.detach())
+                outputs_g_aux = g_head(features.detach())
+                # outputs_g_aux = outputs_g_aux * constant_scalars.expand(outputs_g_aux.shape[0], outputs_g_aux.shape[1])
                 # outputs_l_head = l_head(features.detach())
                 
                 # outputs_g_aux_normalized = F.normalize(outputs_g_aux, dim=1)
@@ -1190,7 +1208,8 @@ class LocalUpdate(object):
                 #                     nn.functional.softmax(outputs_g_aux_normalized, dim=1))
                 # loss = loss_kl
                 loss.backward()
-                optimizer_g_aux.step()
+                optimizer_g_head.step()
+                # optimizer_constant_scalars.step()
                 
 
 
@@ -1202,9 +1221,11 @@ class LocalUpdate(object):
 
                 # loss = loss_l
                 batch_loss.append(loss.item())
-
+ 
             epoch_loss.append(sum(batch_loss)/len(batch_loss))
-        return net.state_dict(), copy.deepcopy(g_aux), copy.deepcopy(l_head), sum(epoch_loss) / (len(epoch_loss) + 1e-10)
+        # g_head.weight = nn.Parameter(g_head.weight * constant_scalars.T)
+        # g_head.weight = nn.Parameter(g_head.weight * constant_scalars)
+        return net.state_dict(), copy.deepcopy(g_head), copy.deepcopy(l_head), sum(epoch_loss) / (len(epoch_loss) + 1e-10)
     
     def pfedme_update_weights(self, net, seed, net_glob, epoch, mu=1, lr=None):
         net_glob = net_glob
@@ -2707,8 +2728,8 @@ def localtest(net, g_head, l_head, test_dataset, dataset_class, idxs, user_id):
             features = net(images, latent_output=True)
 
             if p_mode != 8:
-                # outputs = g_head(features)
-                outputs = l_head(features) + g_head(features)
+                outputs = g_head(features)
+                # outputs = l_head(features) + g_head(features)
                 # outputs = l_head(features) 
                 _, predicted = torch.max(outputs.data, 1)
             else:

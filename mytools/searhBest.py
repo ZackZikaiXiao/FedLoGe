@@ -71,14 +71,14 @@ import matplotlib.pyplot as plt
 # 根据总的acc找
 # keyword = "local average test a"
 keyword = "global test acc"
-# fpath = "/home/zikaixiao/zikai/aaFL/fl_framework_lss/前向后向都没有weight_if100.log"
-# fpath = "/home/zikaixiao/zikai/aaFL/fl_framework_lss/weightmask[0,6]_if100.log"
-fpath = "/home/jianhuiwei/rsch/jianhui/FedLoGe/sse_c_2.log"
-fpath2 = "/home/jianhuiwei/rsch/jianhui/FedLoGe/scalars_per_cls_initialized_0.1_repeated4.log"
-fpath3 = "/home/jianhuiwei/rsch/jianhui/FedLoGe/scalars_per_cls_initialized_0.1_abs.log"
-# fpath = "/home/zikaixiao/zikai/aaFL/fl_framework_lss/eql参数8.log"
-fpaths = [fpath, fpath2,fpath3]
-for fpath in fpaths:
+
+fpath = "/home/jianhuiwei/rsch/jianhui/FedLoGe/Main_Table_experiments_alpha_1.0_IF_100_CIFAR100.log"
+fpath2 = "/home/jianhuiwei/rsch/jianhui/FedLoGe/scalars_per_cls_initialized_0.1_without_abs.log"
+fpath3 = "/home/jianhuiwei/rsch/jianhui/FedLoGe/sse_c_2.log"
+
+fpaths = [fpath]
+labels = ["Ours with abs", "Ours without abs", "FedLoge"]
+for index, fpath in enumerate(fpaths):
     context = []
     # fpath = os.path.join(basefolder,file)
     f = open(fpath,'r')
@@ -104,11 +104,12 @@ for fpath in fpaths:
     print("File \"{0}\" containing keyword \"{1}\" reaches to \"{2}\"".format(fpath.split('/')[-1], keyword, max(evaluationList)))
     print(context[loc])
     x = range(len(evaluationList))
-    plt.plot(x, evaluationList)
-plt.xlabel('Index')
-plt.ylabel('Value')
-plt.title('Plot of List Values')
-plt.savefig('/home/jianhuiwei/rsch/jianhui/FedLoGe/Accuracy2.png')
+    plt.plot(x, evaluationList, label = labels[index])
+plt.legend()
+plt.xlabel('Rounds')
+plt.ylabel('Best Accuracy')
+plt.title('Convergence graph')
+plt.savefig('/home/jianhuiwei/rsch/jianhui/FedLoGe/Accuracy2.eps', dpi=600, format='eps')
 
 
 

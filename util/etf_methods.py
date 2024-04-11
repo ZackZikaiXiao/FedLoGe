@@ -120,7 +120,8 @@ class ETF_Classifier(nn.Module):
         return x
 
     
-    def gen_sparse_ETF(self, feat_in=512, num_classes=100, beta=0.6):
+    def gen_sparse_ETF(self, feat_in=512, num_classes=100, beta=0.6, norm=0.1):
+        print("the value of beta:", beta)
         # Initialize ETF
         etf = copy.deepcopy(self.ori_M)
         # Sparsify ETF
@@ -148,7 +149,7 @@ class ETF_Classifier(nn.Module):
             
             # Constraint 1: L2 norm of each row should be 1
             row_norms = torch.norm(sparse_etf, p=2, dim=0)
-            norm_loss = torch.sum((row_norms - 0.1)**2)
+            norm_loss = torch.sum((row_norms - norm)**2)
             
             # Constraint 2: Maximize the angle between vectors (minimize cosine similarity)
             normalized_etf = sparse_etf / row_norms

@@ -24,11 +24,11 @@ import seaborn as sns
 
 np.set_printoptions(threshold=np.inf)
 
-load_switch = True  # True / False
+load_switch = False  # True / False
 save_switch = True # True / False
 cls_switch = "SSE-C" # SSE-C / sparfix / dropout_ETF / w_dropout_ETF / PR_ETF
 pretrain_cls = False
-dataset_switch = 'cifar100' # cifar10 / cifar100
+dataset_switch = 'cifar10' # cifar10 / cifar100
 aggregation_switch = 'fedavg' # fedavg / class_wise
 global_test_head = 'g_head'  # g_aux / g_head
 internal_frozen = False  # True / False
@@ -204,7 +204,7 @@ if __name__ == '__main__':
         args = args_parser()
     elif dataset_switch == 'cifar10':
         args = args_parser_cifar10()
-
+    print(args.alpha_dirichlet)
     # print("STOP")
     # return
     torch.manual_seed(args.seed)
@@ -281,7 +281,7 @@ if __name__ == '__main__':
         etf = ETF_Classifier(in_features, out_features) 
         # 新建线性层,权重使用ETF分类器的ori_M
         g_head = nn.Linear(in_features, out_features).to(args.device) 
-        sparse_etf_mat = etf.gen_sparse_ETF(feat_in = in_features, num_classes = out_features, beta=0.6)
+        sparse_etf_mat = etf.gen_sparse_ETF(feat_in = in_features, num_classes = out_features, beta=0.6, norm=0.1)
 
         etf_visual = False
         if etf_visual:
@@ -392,7 +392,7 @@ if __name__ == '__main__':
 
     if load_switch == True:
         rnd = 486
-        load_dir = "output/constant_per_cls_2/" # output1  output_nospar
+        load_dir = "output/alpha_0.5_IF50_CIFAR100/" # output1  output_nospar
         model = torch.load(load_dir + "model_" + str(rnd) + ".pth").to(args.device)
         g_head = torch.load(load_dir + "g_head_" + str(rnd) + ".pth").to(args.device)
         g_aux = torch.load(load_dir + "g_aux_" + str(rnd) + ".pth").to(args.device)
@@ -400,30 +400,20 @@ if __name__ == '__main__':
         #     l_heads[i] = torch.load(load_dir + "l_head_" + str(i) + ".pth").to(args.device)
         w_glob = model.state_dict()  # return a dictionary containing a whole state of the module
             # w_locals = [copy.deepcopy(w_glob) for i in range(args.num_users)]
-    acc_s2, global_3shot_acc = globaltest(copy.deepcopy(model).to(args.device), copy.deepcopy(g_head).to(args.device), dataset_test, args, dataset_class = datasetObj)
+    # acc_s2, global_3shot_acc = globaltest(copy.deepcopy(model).to(args.device), copy.deepcopy(g_head).to(args.device), dataset_test, args, dataset_class = datasetObj)
     # acc_s2, global_3shot_acc, g_head = globaltest_feat_collapse(copy.deepcopy(model).to(args.device), g_head, dataset_test, args, dataset_class = datasetObj)
     # globaltest_classmean
     
-    # acc_s2, global_3shot_acc = globaltest_calibra(copy.deepcopy(model).to(args.device), copy.deepcopy(g_aux).to(args.device), dataset_test, args, dataset_class = datasetObj)
-    # add fl training
-    # 初始化一个满秩矩阵
-    # while True:
-    #     matrix = np.random.rand(512, 512)
-    #     rank = np.linalg.matrix_rank(matrix)
-    #     if rank == 512:
-    #         break
-    # # 分解出正交矩阵Q，用它来旋转 
-    # Q,_= np.linalg.qr(matrix)
-    # rotation_matrix = torch.from_numpy(Q).to(torch.device(args.device)).to(torch.float32)  # 指定device为cuda
-    # rotation_matrix.requires_grad_(True)
-    constant_scalar = torch.ones(1, 100, requires_grad=True, device=args.device)
-    # constant_scalar_per_cls = torch.tensor(list_of_proporations, device=args.device, requires_grad=True)
+    best_acc = 0.0
+    constant_scalar = torch.ones(1, 10, requires_grad=True, device=args.device)
+    # constant_scalar = torch.full((1, 100), 1.0, requires_grad=True, device=args.device)
     for rnd in tqdm(range(args.rounds)):
         # if rnd % 1 == 0:
         #     g_head.reassign()
         g_auxs = []
         w_locals = []
         constant_scalars = []
+        constant_scalars2 = []
         # w_locals, loss_locals = [], []
         idxs_users = np.random.choice(range(args.num_users), m, replace=False, p=prob)
 
@@ -432,19 +422,22 @@ if __name__ == '__main__':
         for client_id in idxs_users:  # training over the subset, in fedper, all clients train
             # model.load_state_dict(copy.deepcopy(w_locals[client_id]))
             local = LocalUpdate(args=args, dataset=dataset_train, idxs=dict_users[client_id])
-            w_local, g_aux_temp, l_heads[client_id], loss_local, constant_scalar_tmp = local.update_weights_gaux(constant_scalar=copy.deepcopy(constant_scalar), net=copy.deepcopy(model).to(args.device), g_head = copy.deepcopy(g_head).to(args.device), g_aux = copy.deepcopy(g_aux).to(args.device), l_head = l_heads[client_id], epoch=args.local_ep, loss_switch = loss_switch)
+            w_local, g_aux_temp, l_heads[client_id], loss_local, constant_scalar_tmp, constant_scalar_tmp2 = local.update_weights_gaux(constant_scalar=copy.deepcopy(constant_scalar), net=copy.deepcopy(model).to(args.device), g_head = copy.deepcopy(g_head).to(args.device), g_aux = copy.deepcopy(g_aux).to(args.device), l_head = l_heads[client_id], epoch=args.local_ep, loss_switch = loss_switch)
             g_auxs.append(g_aux_temp)
             w_locals.append(w_local)
             constant_scalars.append(constant_scalar_tmp)
+            constant_scalars2.append(constant_scalar_tmp2)
         
         g_head.eval()  # 关闭dropout
         ## aggregation 
         dict_len = [len(dict_users[idx]) for idx in idxs_users]
         w_glob = FedAvg_noniid(w_locals, dict_len)
         constant_scalar = aggregate_scalers(constant_scalars, dict_len)
+        constant_scalar_without_abs = aggregate_scalers(constant_scalars2, dict_len)
         # print("g_head.weight", g_head.weight)
         # test_etf(g_head.weight.T)
         print("The value of constant scalar: ", constant_scalar)
+        # print("The value of constant scalar, without abs: ", constant_scalar_without_abs)
         if aggregation_switch == 'fedavg':
             g_aux = FedAvg_noniid_classifier(g_auxs, dict_len)
         elif aggregation_switch == 'class_wise':
@@ -479,14 +472,17 @@ if __name__ == '__main__':
             f1_weighted_list.append(f1_weighted)
             acc_3shot_local_list.append(acc_3shot_local) ###################
         # 保存的机制是什么？
-        if save_switch == True and rnd >= 350:
-            save_dir = "output/constant_per_cls_3_with_abs_2/"
-            torch.save(model, save_dir + "model_" + str(rnd) + ".pth")
-            torch.save(g_head, save_dir + "g_head_" + str(rnd) + ".pth")
-            torch.save(g_aux, save_dir + "g_aux_" + str(rnd) + ".pth")
-            for i in range(args.num_users):
-                torch.save(l_heads[i], save_dir + "l_head_" + str(i) + ".pth")
-
+        
+        if acc_s2 >= best_acc:
+            best_acc = acc_s2
+            if save_switch == True and rnd >= 400:
+                save_dir = "output/alpha_0.5_IF100_CIFAR10/"
+                torch.save(model, save_dir + "best_model" + ".pth")
+                torch.save(g_head, save_dir + "best_g_head" + ".pth")
+                torch.save(g_aux, save_dir + "best_g_aux" + ".pth")
+                for i in range(args.num_users):
+                    torch.save(l_heads[i], save_dir + "l_head_" + str(i) + ".pth")
+        
         # start:calculate acc_3shot_local
         avg3shot_acc={"head":0, "middle":0, "tail":0}
         divisor = {"head":0, "middle":0, "tail":0}

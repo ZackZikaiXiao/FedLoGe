@@ -40,6 +40,7 @@ def get_acc_file_path(args):
     return fpath
    
 if __name__ == '__main__':
+
     # parse args
     if dataset_switch == 'cifar100':
         args = args_parser()
@@ -47,6 +48,8 @@ if __name__ == '__main__':
         args = args_parser_cifar10()
     # print("STOP")
     # return
+    args.IF = 0.02
+    args.alpha_dirichlet = 0.5
     torch.manual_seed(args.seed)
     torch.cuda.manual_seed(args.seed)
     torch.cuda.manual_seed_all(args.seed)
@@ -101,12 +104,12 @@ if __name__ == '__main__':
     # acc_s2, global_3shot_acc = globaltest(copy.deepcopy(model).to(args.device), g_head, dataset_test, args, dataset_class = datasetObj)
 
     # add fl training
-    load_dir = "/home/jianhuiwei/rsch/jianhui/FedLoGe/output/constant_per_cls_2/"
+    load_dir = "/home/jianhuiwei/rsch/jianhui/FedLoGe/output/alpha_0.5_IF50_CIFAR100/"
     # save_id = "73"
     # 选择最好的round
-    model = torch.load(load_dir + "model_486.pth").to(args.device)
-    g_head = torch.load(load_dir + "g_head_486.pth").to(args.device)
-    g_aux = torch.load(load_dir + "g_aux_486.pth").to(args.device)
+    model = torch.load(load_dir + "best_model.pth").to(args.device)
+    g_head = torch.load(load_dir + "best_g_head.pth").to(args.device)
+    g_aux = torch.load(load_dir + "best_g_aux.pth").to(args.device)
     l_heads = []
     for i in range(args.num_users):
         l_heads.append(torch.load(load_dir +  "l_head_" + str(i) + ".pth").to(args.device))
@@ -128,7 +131,7 @@ if __name__ == '__main__':
     # w_locals = [copy.deepcopy(w_glob) for i in range(args.num_users)]
     g_auxs_intervaria = []
     epoch = 0
-    # 这里要用到的代码
+    # 这里是要用到的代码
     for client_id in range(args.num_users):  # training over the subset, in fedper, all clients train
         local = LocalUpdate(args=args, dataset=dataset_train, idxs=dict_users[client_id])
         _, g_aux_intervaria, l_heads[client_id], loss_local = local.update_weights_norm_init(net=copy.deepcopy(model).to(args.device), g_head = copy.deepcopy(g_head).to(args.device), g_aux = copy.deepcopy(g_aux).to(args.device), l_head = copy.deepcopy(l_heads[client_id]).to(args.device), seed=args.seed, net_glob=model.to(args.device), epoch=epoch)
