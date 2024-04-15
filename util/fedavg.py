@@ -141,19 +141,7 @@ def cls_norm_agg(w, dict_len, l_heads, distributions):
     return model
 
 def aggregate_scalers(scalars, dict_len):
-    # w_avg = copy.deepcopy(g_heads[0])
-    # g_head = [g_heads[i].weight.data * dict_len[i] for i in range(len(dict_len))]
-    # stacked_g_head = torch.stack(g_head, dim=0)
-    # sum_g_head = torch.sum(stacked_g_head, dim=0)
 
-    # g_head_bias = [g_heads[i].bias.data * dict_len[i] for i in range(len(dict_len))]
-    # stacked_bias = torch.stack(g_head_bias, dim=0)
-    # sum_bias = torch.sum(stacked_bias, dim=0)
-    # w_avg.weight.data = sum_g_head/sum(dict_len)
-    # w_avg.bias.data = sum_bias/sum(dict_len)
-    # returned_linear = nn.Linear(512, 100).to(g_heads[0].device)
-    # returned_linear.weight.data = torch.tensor(sum_g_head/sum(dict_len), device=scaler[0].device).clone().detach().requires_grad_(True)
-    # returned_linear.bias.data = 
 
     scaler = [scalars[i].data * dict_len[i] for i in range(len(dict_len))]
     stacked_tensor = torch.stack(scaler, dim=0)

@@ -25,10 +25,11 @@ import seaborn as sns
 np.set_printoptions(threshold=np.inf)
 
 load_switch = False  # True / False
-save_switch = True # True / False
+save_switch = False # True / False
 cls_switch = "SSE-C" # SSE-C / sparfix / dropout_ETF / w_dropout_ETF / PR_ETF
 pretrain_cls = False
-dataset_switch = 'cifar10' # cifar10 / cifar100
+dataset_switch = 'cifar100' # cifar10 / cifar100
+num_cls = 100
 aggregation_switch = 'fedavg' # fedavg / class_wise
 global_test_head = 'g_head'  # g_aux / g_head
 internal_frozen = False  # True / False
@@ -281,7 +282,7 @@ if __name__ == '__main__':
         etf = ETF_Classifier(in_features, out_features) 
         # 新建线性层,权重使用ETF分类器的ori_M
         g_head = nn.Linear(in_features, out_features).to(args.device) 
-        sparse_etf_mat = etf.gen_sparse_ETF(feat_in = in_features, num_classes = out_features, beta=0.6, norm=0.1)
+        sparse_etf_mat = etf.gen_sparse_ETF(feat_in = in_features, num_classes = out_features, beta=0.3, norm=0.1)
 
         etf_visual = False
         if etf_visual:
@@ -385,10 +386,20 @@ if __name__ == '__main__':
 
 
     g_aux = nn.Linear(in_features, out_features).to(args.device)
-    
+
     l_heads = []
     for i in range(args.num_users):
         l_heads.append(nn.Linear(in_features, out_features).to(args.device))
+
+    # for i in range(args.num_users):
+    #     class_distribution = datasetObj.local_test_distribution[i]
+    #     zero_classes = np.where(class_distribution == 0)[0]
+    #     tensor = torch.ones(1, num_cls)
+    #     for i in zero_classes:
+    #         tensor[:,i] = 0.0
+    #     l_heads.append(torch.tensor(tensor, requires_grad=True, device=args.device))
+        
+
 
     if load_switch == True:
         rnd = 486
@@ -405,7 +416,7 @@ if __name__ == '__main__':
     # globaltest_classmean
     
     best_acc = 0.0
-    constant_scalar = torch.ones(1, 10, requires_grad=True, device=args.device)
+    constant_scalar = torch.ones(1, num_cls, requires_grad=True, device=args.device)
     # constant_scalar = torch.full((1, 100), 1.0, requires_grad=True, device=args.device)
     for rnd in tqdm(range(args.rounds)):
         # if rnd % 1 == 0:
@@ -422,7 +433,7 @@ if __name__ == '__main__':
         for client_id in idxs_users:  # training over the subset, in fedper, all clients train
             # model.load_state_dict(copy.deepcopy(w_locals[client_id]))
             local = LocalUpdate(args=args, dataset=dataset_train, idxs=dict_users[client_id])
-            w_local, g_aux_temp, l_heads[client_id], loss_local, constant_scalar_tmp, constant_scalar_tmp2 = local.update_weights_gaux(constant_scalar=copy.deepcopy(constant_scalar), net=copy.deepcopy(model).to(args.device), g_head = copy.deepcopy(g_head).to(args.device), g_aux = copy.deepcopy(g_aux).to(args.device), l_head = l_heads[client_id], epoch=args.local_ep, loss_switch = loss_switch)
+            w_local, g_aux_temp, l_heads[client_id], loss_local, constant_scalar_tmp, constant_scalar_tmp2 = local.update_weights_gaux(constant_scalar=copy.deepcopy(constant_scalar), net=copy.deepcopy(model).to(args.device), g_head = copy.deepcopy(g_head).to(args.device), g_aux = copy.deepcopy(g_aux).to(args.device), l_head = copy.deepcopy(l_heads[client_id]), epoch=args.local_ep, loss_switch = loss_switch)
             g_auxs.append(g_aux_temp)
             w_locals.append(w_local)
             constant_scalars.append(constant_scalar_tmp)
@@ -434,10 +445,11 @@ if __name__ == '__main__':
         w_glob = FedAvg_noniid(w_locals, dict_len)
         constant_scalar = aggregate_scalers(constant_scalars, dict_len)
         constant_scalar_without_abs = aggregate_scalers(constant_scalars2, dict_len)
-        # print("g_head.weight", g_head.weight)
-        # test_etf(g_head.weight.T)
+        
+        # l_heads = [l_heads[i].data.clone().detach().requires_grad_(True) for i in range(args.num_users)]
+
+
         print("The value of constant scalar: ", constant_scalar)
-        # print("The value of constant scalar, without abs: ", constant_scalar_without_abs)
         if aggregation_switch == 'fedavg':
             g_aux = FedAvg_noniid_classifier(g_auxs, dict_len)
         elif aggregation_switch == 'class_wise':
@@ -456,7 +468,9 @@ if __name__ == '__main__':
         elif global_test_head == 'g_aux':
             acc_s2, global_3shot_acc = globaltest(copy.deepcopy(model).to(args.device), copy.deepcopy(g_aux).to(args.device), dataset_test, args, dataset_class = datasetObj)
 
-
+        # another_l_heads = []
+        # for i in range(args.num_users):
+        #     another_l_heads.append(l_heads[i].data.clone().detach())
         # local test 
         acc_list = []
         f1_macro_list = []
@@ -465,7 +479,7 @@ if __name__ == '__main__':
         for i in range(args.num_users):
             model.load_state_dict(copy.deepcopy(w_locals[i]))
             # print('copy sucess')
-            acc_local, f1_macro, f1_weighted, acc_3shot_local = localtest(copy.deepcopy(model).to(args.device), copy.deepcopy(g_aux).to(args.device), copy.deepcopy(l_heads[i]).to(args.device), dataset_test, dataset_class = datasetObj, idxs=dict_localtest[i], user_id = i)
+            acc_local, f1_macro, f1_weighted, acc_3shot_local = localtest(copy.deepcopy(constant_scalar), copy.deepcopy(model).to(args.device), copy.deepcopy(g_head).to(args.device), copy.deepcopy(l_heads[i]).to(args.device), dataset_test, dataset_class = datasetObj, idxs=dict_localtest[i], user_id = i)
             # print('local test success')
             acc_list.append(acc_local)
             f1_macro_list.append(f1_macro)
@@ -530,8 +544,8 @@ if __name__ == '__main__':
         print('round %d, global test acc  %.4f \n'%(rnd, acc_s2))
         print('round %d, average 3shot acc: [head: %.4f, middle: %.4f, tail: %.4f] \n'%(rnd, avg3shot_acc["head"], avg3shot_acc["middle"], avg3shot_acc["tail"]))
         print('round %d, global 3shot acc: [head: %.4f, middle: %.4f, tail: %.4f] \n'%(rnd, global_3shot_acc["head"], global_3shot_acc["middle"], global_3shot_acc["tail"]))
-        
-        print("l_head", torch.norm(l_heads[0].weight, p=2, dim=1))
+        # for i in range(args.num_users):
+        #     print("l_head ",i , l_heads[i])
         # print("g_head", torch.norm(g_head.weight, p=2, dim=1))
-        print("g_aux", torch.norm(g_aux.weight, p=2, dim=1))
+        # print("g_aux", torch.norm(g_aux.weight, p=2, dim=1))
     torch.cuda.empty_cache()

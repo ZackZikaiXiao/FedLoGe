@@ -335,13 +335,14 @@ class LocalUpdate(object):
         net.train()
         # train and update
         optimizer_g_backbone = torch.optim.SGD(list(net.parameters()), lr=self.args.lr, momentum=self.args.momentum)
-        optimizer_g_aux = torch.optim.SGD(g_aux.parameters(), lr=self.args.lr, momentum=self.args.momentum)
+        # optimizer_g_aux = torch.optim.SGD(g_aux.parameters(), lr=self.args.lr, momentum=self.args.momentum)
         # optimizer_g_aux = torch.optim.SGD([
         #                     {'params': g_aux.weight, 'weight_decay': 1e-1},  # 对权重使用weight_decay
         #                     {'params': g_aux.bias, 'weight_decay': 0}  # 对偏置不使用weight_decay
         #                 ], lr=self.args.lr, momentum=self.args.momentum)
         optimizer_l_head = torch.optim.SGD(l_head.parameters(), lr=self.args.lr, momentum=self.args.momentum)
         optimizer_constant_scalar = torch.optim.SGD([constant_scalar], lr=self.args.lr, momentum=self.args.momentum)
+        # optimizer_local_scalar = torch.optim.SGD(l_head.parameters(), lr=self.args.lr, momentum=self.args.momentum)
         # 定义优化器
         # optimizer_l_head = torch.optim.SGD([
         #                     {'params': l_head.weight, 'weight_decay': 1e-1},  # 对权重使用weight_decay
@@ -441,26 +442,8 @@ class LocalUpdate(object):
         def scaled_sigmoid(x, scale):
             return 1 / (1 + torch.exp(-x)) * scale
 
-    #     num_classes = 100
         epoch_loss = []
-    #     label_list = []
-    #     for (images, labels) in self.ldr_train:
-    #         label_list += (labels.tolist())
-    #     uni_label, count = np.unique(label_list, return_counts=True)
-    #     total_number_of_data = len(label_list)
-    #     uni_label_num = len(uni_label)
-    #     gamma = total_number_of_data / uni_label_num
-    #     Ew = torch.ones(1, num_classes).cuda(self.args.device)
-    #     for i in range(uni_label_num):
-    #         label_id = uni_label[i]
-    #         label_count = count[i]
-    #         length = np.sqrt(label_count / gamma)
-    # #        length = (gamma / label_count)
-    #         #length = torch.sqrt(label_count / gamma)
-    #         Ew[0, label_id] = length
-    #     Ew = Ew.T
-    #     Ew = Ew.expand(Ew.shape[0], g_head.weight.shape[1])
-    #     g_head.weight.data = g_head.weight.data * Ew
+
         for iter in range(epoch):
             batch_loss = []
             # use/load data from split training set "ldr_train"
@@ -470,39 +453,24 @@ class LocalUpdate(object):
 
                 labels = labels.long()
                 optimizer_g_backbone.zero_grad()
-                optimizer_g_aux.zero_grad()
                 optimizer_l_head.zero_grad()
                 optimizer_constant_scalar.zero_grad()
                 features = net(images, latent_output=True)
-                # 这里features乘以一个scaler(requires_grad=True)
-                # mma_loss = get_mma_loss(features, labels)
-                # constant_scalar = constant_scalar.cuda("cuda:7")
-                # g_head就是sse-c分类器
-                # output_g_backbone = g_head(features * global_constant_scalar)
-                # mask = (g_head.weight != 0).float()
-                # 这里要将g_head改一下.
+
                 
                 output_g_backbone = g_head(features)
                 output_g_backbone = output_g_backbone * constant_scalar.expand(output_g_backbone.shape[0], output_g_backbone.shape[1])
-                # output_g_backbone = output_g_backbone * global_constant_scalar.expand(output_g_backbone.shape[0], output_g_backbone.shape[1])
-                # output_g_backbone = scaled_sigmoid(output_g_backbone, 1.0)
                 loss_g_backbone = criterion_g(output_g_backbone, labels)
-                # dist_est = torch.pow(torch.norm(g_aux.weight, p=2, dim=1), 3)
-                # loss_g_backbone = balanced_softmax_loss(labels, output_g_backbone, sample_per_class = dist_est)
+
                 loss_g_backbone.backward()
-                # max_grad = max(p.grad.data.abs().max() for p in net.parameters() if p.grad is not None)
-                # print('Max gradient:', max_grad)
-                # 更新一下
 
                 optimizer_g_backbone.step()
                 optimizer_constant_scalar.step()
 
-
-
-                output_g_aux = g_aux(features.detach())
-                loss_g_aux = criterion_l(output_g_aux, labels)
-                loss_g_aux.backward()
-                optimizer_g_aux.step()
+                # output_g_aux = g_aux(features.detach())
+                # loss_g_aux = criterion_l(output_g_aux, labels)
+                # loss_g_aux.backward()
+                # optimizer_constant_scalar.step()
 
                 # p_head
                 output_l_head = l_head(features.detach())
@@ -510,7 +478,7 @@ class LocalUpdate(object):
                 loss_l_head.backward()
                 optimizer_l_head.step()
 
-                loss = loss_g_backbone + loss_g_aux + loss_l_head
+                loss = loss_g_backbone + loss_l_head
                 batch_loss.append(loss.item())
 
             epoch_loss.append(sum(batch_loss)/len(batch_loss))
@@ -1148,8 +1116,8 @@ class LocalUpdate(object):
         g_aux.weight = nn.Parameter(g_aux.weight * norm.unsqueeze(1))
         # 现在试着把g_head放进去。
         l_head.weight = nn.Parameter(l_head.weight * 0.1 * constant_scalars)
-        # g_head.weight = nn.Parameter(g_head.weight * norm.unsqueeze(1) * constant_scalars)
-        g_head.weight = nn.Parameter(g_head.weight * constant_scalars)
+        g_head.weight = nn.Parameter(g_head.weight * norm.unsqueeze(1) * constant_scalars)
+        # g_head.weight = nn.Parameter(g_head.weight * constant_scalars)
         # l_head.weight = nn.Parameter(l_head.weight * constant_scalars)
         # optimizer_g = torch.optim.SGD(list(net.parameters()), lr=self.args.lr, momentum=self.args.momentum)
         # optimizer_l = torch.optim.SGD(l_head.parameters(), lr=self.args.lr, momentum=self.args.momentum)
@@ -1501,6 +1469,22 @@ def globaltest(net, g_head, test_dataset, args, dataset_class=None, head_switch=
     total_3shot = {"head": 0, "middle": 0, "tail": 0}
     acc_3shot_global = {"head": None, "middle": None, "tail": None}
     net.eval()
+    
+
+    import time
+    # 原方法
+    # start_time = time.time()
+    # cali_alpha = torch.norm(g_head.weight, dim=1)
+    # # 矫正feats
+    # # 计算 cali_alpha 的倒数
+    # cali_alpha = torch.pow(cali_alpha, 1)
+    # inverse_cali_alpha = 1.7 / cali_alpha
+    # # 将 inverse_cali_alpha 扩展为 (100, 1) 的形状
+    # inverse_cali_alpha = inverse_cali_alpha.view(-1, 1)
+    # # 矫正cls
+    # g_head.weight = torch.nn.Parameter(g_head.weight * inverse_cali_alpha)
+    # end_time = time.time()
+
     test_loader = torch.utils.data.DataLoader(
         dataset=test_dataset, batch_size=100, shuffle=False)
     # 监视真实情况下所有样本的类别分布
@@ -1575,7 +1559,7 @@ def globaltest_calibra(net, g_aux, test_dataset, args, dataset_class=None, head_
     # 矫正feats
     # 计算 cali_alpha 的倒数
     cali_alpha = torch.pow(cali_alpha, 1)
-    inverse_cali_alpha = 1.0 / cali_alpha
+    inverse_cali_alpha = 1.7 / cali_alpha
     # 将 inverse_cali_alpha 扩展为 (100, 1) 的形状
     inverse_cali_alpha = inverse_cali_alpha.view(-1, 1)
     
@@ -2655,22 +2639,24 @@ def localtest_villina(net, test_dataset, dataset_class, idxs, user_id):
     return acc, f1_macro, f1_weighted, acc_3shot_local
 
 
-def localtest(net, g_head, l_head, test_dataset, dataset_class, idxs, user_id):
+def localtest(constant_scalars, net, g_head, l_head, test_dataset, dataset_class, idxs, user_id):
     from sklearn.metrics import f1_score
     import copy
     args = dataset_class.get_args()
     net.eval()
     test_loader = torch.utils.data.DataLoader(DatasetSplit(
         test_dataset, idxs), batch_size=args.local_bs, shuffle=False)
+    norm = torch.norm(l_head.weight, p=2, dim=1)
 
+    g_head.weight = nn.Parameter(g_head.weight * norm.unsqueeze(1) * constant_scalars.T)
     # get overall distribution
     # class_distribution = [0 for _ in range(10000)]  # 10000 >
     # for images, labels in test_loader:
     #     labels = labels.tolist()
     class_distribution_dict = {}
-
+    # copied_l_head = copy.deepcopy(l_head)
     class_distribution = dataset_class.local_test_distribution[user_id]
-
+    # g_head.weight.data = g_head.weight.data * l_head.T * constant_scalar.T
     # torch.norm(l_head.weight, dim=1)
     p_mode = 1
 
@@ -2680,6 +2666,7 @@ def localtest(net, g_head, l_head, test_dataset, dataset_class, idxs, user_id):
         for i in zero_classes:
             g_head.weight.data[i, :] = -1e10
             l_head.weight.data[i, :] = -1e10
+            # l_head[:,i] = -1e10
     elif p_mode == 2:
         # 方案2：
         norm = torch.norm(l_head.weight, p=2, dim=1)
@@ -2703,7 +2690,7 @@ def localtest(net, g_head, l_head, test_dataset, dataset_class, idxs, user_id):
         g_head.weight = nn.Parameter(g_head.weight * l_head.weight)
         # g_head.bias = nn.Parameter(g_head.bias * l_head.bias)
 
-
+    
 
     three_shot_dict, _ = shot_split(
         class_distribution, threshold_3shot=[75, 95])
