@@ -1,4 +1,4 @@
-# FedLoGe: Federated Local and Generic Model Training in Fed-LT
+# FedLoGe: Federated Local and Generic Model Training in Fed-LT (ICLR 2024, Official Code)
 
 This repository contains the official source code for the paper: "Joint Local and Generic Federated Learning under Long-tailed Data." You can access the paper [here](https://openreview.net/pdf?id=V3j5d0GQgH).
 
