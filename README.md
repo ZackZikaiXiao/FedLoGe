@@ -128,10 +128,13 @@ https://drive.google.com/file/d/1HLqF_n1Z8VUCIV3jDHhLmQXFrqs3CacR/view?usp=drive
 If you find our work useful in your research, please consider citing:
 
 ```
-@inproceedings{xiaofedloge,
-  title={FedLoGe: Joint Local and Generic Federated Learning under Long-tailed Data},
-  author={Xiao, Zikai and Chen, Zihan and Liu, Liyinglan and FENG, YANG and Zhou, Joey Tianyi and Wu, Jian and Liu, Wanlu and Yang, Howard Hao and Liu, Zuozhu},
-  booktitle={The Twelfth International Conference on Learning Representations}
+@inproceedings{
+xiao2024fedloge,
+title={FedLoGe: Joint Local and Generic Federated Learning under Long-tailed Data},
+author={Zikai Xiao and Zihan Chen and Liyinglan Liu and YANG FENG and Joey Tianyi Zhou and Jian Wu and Wanlu Liu and Howard Hao Yang and Zuozhu Liu},
+booktitle={The Twelfth International Conference on Learning Representations},
+year={2024},
+url={https://openreview.net/forum?id=V3j5d0GQgH}
 }
 ```
 
